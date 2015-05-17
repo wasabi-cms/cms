@@ -1,0 +1,4 @@
+.idea
+node_modules
+src/Assets/_build/*
+src/Assets/js/vendor/*
