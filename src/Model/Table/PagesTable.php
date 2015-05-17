@@ -39,7 +39,7 @@ class PagesTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        $validator->notEmpty('name', __d('wasabi_core', 'Please enter a name for this page.'));
+        $validator->notEmpty('name', __d('wasabi_cms', 'Please enter a name for this page.'));
         return $validator;
     }
 }
