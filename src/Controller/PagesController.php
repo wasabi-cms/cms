@@ -17,7 +17,6 @@ use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Utility\Hash;
-use Wasabi\Core\Controller\BackendAppController;
 use Wasabi\Cms\Model\Table\PagesTable;
 
 /**
