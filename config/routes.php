@@ -16,14 +16,16 @@
 use Cake\Routing\Router;
 use Cake\Routing\RouteBuilder;
 
-Router::scope('/backend', ['plugin' => 'Wasabi/Cms'], function (RouteBuilder $routes) {
+Router::scope('/backend/cms', ['plugin' => 'Wasabi/Cms'], function (RouteBuilder $routes) {
 
     $routes->scope('/pages', ['controller' => 'Pages'], function (RouteBuilder $routes) {
         $routes->connect('/', ['action' => 'index']);
+        $routes->connect('/add/:parentId', ['action' => 'add'], ['pass' => ['parentId'], 'parentId' => '[0-9]+']);
         $routes->connect('/add', ['action' => 'add']);
         $routes->connect('/reorder-pages', ['action' => 'reorderPages']);
         $routes->connect('/edit/:id', ['action' => 'edit'], ['pass' => ['id'], 'id' => '[0-9]+']);
         $routes->connect('/delete/:id', ['action' => 'delete'], ['pass' => ['id'], 'id' => '[0-9]+']);
+        $routes->connect('/clone/:id', ['action' => 'copy'], ['pass' => ['id'], 'id' => '[0-9]+']);
         $routes->connect('/publish/:id', ['action' => 'publish'], ['pass' => ['id'], 'id' => '[0-9]+']);
         $routes->connect('/unpublish/:id', ['action' => 'unpublish'], ['pass' => ['id'], 'id' => '[0-9]+']);
     });
