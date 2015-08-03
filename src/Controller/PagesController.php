@@ -16,6 +16,8 @@ namespace Wasabi\Cms\Controller;
 use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Exception\NotFoundException;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Wasabi\Cms\Model\Table\PagesTable;
 
@@ -42,14 +44,24 @@ class PagesController extends BackendAppController
     public function index()
     {
         $pages = $this->Pages->find('threaded')->order(['lft' => 'ASC']);
-        $this->set('pages', $pages);
+        $this->set([
+            'pages' => $pages,
+            'closedPages' => isset($_COOKIE['closed_pages']) ? explode(',', $_COOKIE['closed_pages']) : [],
+            'reorderUrl' => Router::url([
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'Pages',
+                'action' => 'reorder'
+            ])
+        ]);
     }
 
     /**
      * Add action
      * GET | POST
+     *
+     * @param string $parentId
      */
-    public function add()
+    public function add($parentId = null)
     {
         $page = $this->Pages->newEntity();
         if ($this->request->is('post') && !empty($this->request->data)) {
@@ -62,7 +74,14 @@ class PagesController extends BackendAppController
                 $this->Flash->error($this->formErrorMessage);
             }
         }
-        $this->set('page', $page);
+        $this->set([
+            'page' => $page,
+            'changeAttributesUrl' => Router::url([
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'Pages',
+                'action' => 'attributes'
+            ])
+        ]);
     }
 
     /**
@@ -121,6 +140,22 @@ class PagesController extends BackendAppController
         }
         $this->redirect(['action' => 'index']);
         return;
+    }
+
+    /**
+     * Clone/copy an existing page action
+     * POST
+     *
+     * @param string $id
+     */
+    public function copy($id)
+    {
+        if (!$id || !$this->Pages->exists(['id' => $id])) {
+            throw new NotFoundException();
+        }
+        if (!$this->request->is(['post'])) {
+            throw new MethodNotAllowedException();
+        }
     }
 
     /**
