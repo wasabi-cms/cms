@@ -27,6 +27,7 @@ class PagesTable extends Table
      */
     public function initialize(array $config)
     {
+        $this->table('cms_pages');
         $this->addBehavior('Tree');
         $this->addBehavior('Timestamp');
     }

@@ -1,0 +1,111 @@
+<?php
+/**
+ * @var \Wasabi\Cms\View\AppView $this
+ * @var bool $closed
+ * @var int $langId
+ * @var \Wasabi\Cms\Model\Entity\Page $page
+ */
+?>
+<div class="row">
+    <div class="grid-1-16 center">
+        <a href="javascript:void(0)" class="move" title="<?= __d('wasabi_cms', 'Change the position of this Page') ?>"><i class="icon-grab"></i></a>
+    </div>
+    <div class="grid-9-16">
+        <div class="page-info">
+            <span class="expander wicon-<?= ($closed ? 'expand' : 'collapse') ?>"></span>
+            <span class="wicon-page"></span>
+            <?= $this->Html->link(
+                $page->name,
+                [
+                    'plugin' => 'Wasabi/Cms',
+                    'controller' => 'Pages',
+                    'action' => 'edit',
+                    'id' => $page->id
+                ], [
+                    'title' => __d('wasabi_cms', 'Edit this Page')
+                ]
+            ) ?>
+            <div class="page-meta">
+                <small class="layout"><?= $page->getLayout()->getName() ?></small>
+    <!--//                ($collection ? ' <small class="collection">' . $collection . '</small>' : '') .
+    //                ($collectionItem ? ' <small class="collection-item">' . $collectionItem . '</small>' : '') .-->
+            </div>
+        </div>
+    </div>
+    <div class="grid-2-16 center">
+        <?= $this->Html->link(
+            $page->getStatus(),
+            [
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'Pages',
+                'action' => 'toggle',
+                'id' => $page->id
+            ],
+            [
+                'title' => ($page->status === \Wasabi\Cms\Model\Entity\Page::STATUS_DRAFT) ? __d('wasabi_cms', 'Publish this page') : __d('wasabi_cms', 'Unpublish this page')
+            ]
+        ) ?>
+    </div>
+    <div class="grid-2-16 center">
+        <?= $this->Html->link(
+            '<i class="wicon-preview"></i>',
+            [
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'FrontendPages',
+                'action' => 'preview',
+                'langId' => $langId,
+                'id' => $page->id
+            ],
+            [
+                'title' => __d('wasabi_cms', 'Preview this Page'),
+                'target' => '_blank',
+                'escapeTitle' => false
+            ]
+        ) ?>
+    </div>
+    <div class="grid-2-16 center">
+        <?= $this->Html->link(
+            '<i class="wicon-add"></i>',
+            [
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'Pages',
+                'action' => 'add',
+                'parentId' => $page->id
+            ],
+            [
+                'title' => __d('wasabi_cms', 'Add a new child Page'),
+                'escapeTitle' => false
+            ]
+        ) ?>
+        <?= $this->Html->link(
+            '<i class="wicon-remove"></i>',
+            [
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'Pages',
+                'action' => 'delete',
+                'id' => $page->id
+            ],
+            [
+                'title' => __d('wasabi_cms', 'Delete this Page'),
+                'escapeTitle' => false,
+                'data-toggle' => 'confirm',
+                'data-method' => 'post',
+                'data-modal-header' => __d('wasabi_cms', 'Delete Page'),
+                'data-modal-body' => '<p>' . __d('wasabi_cms', 'Do you really want to delete Page <strong>{0}</strong>?', $page->name) . '</p>',
+            ]
+        ) ?>
+        <?= $this->Html->link(
+            '<i class="wicon-copy"></i>',
+            [
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'Pages',
+                'action' => 'copy',
+                'id' => $page->id
+            ],
+            [
+                'title' => __d('wasabi_cms', 'Create a clone of this Page'),
+                'escapeTitle' => false
+            ]
+        ) ?>
+    </div>
+</div>

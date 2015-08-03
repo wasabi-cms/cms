@@ -14,6 +14,8 @@ namespace Wasabi\Cms\View;
 
 /**
  * Class AppView
+ *
+ * @property \Wasabi\Cms\View\Helper\CmsPageHelper $CmsPage
  */
 class AppView extends \Wasabi\Core\View\AppView
 {
@@ -30,5 +32,9 @@ class AppView extends \Wasabi\Core\View\AppView
     public function initialize()
     {
         parent::initialize();
+
+        $this->loadHelper('CmsPage', [
+            'className' => 'Wasabi/Cms.CmsPage'
+        ]);
     }
 }

@@ -1,3 +1,37 @@
 @import "../../../../Core/src/Assets/less/__colors";
 @import "../../../../Core/src/Assets/less/__config";
 @import "../../../../Core/src/Assets/less/__mixins";
+@import "__mixins";
+
+@import "components/pages-table";
+@import "components/pages-form";
+
+.list.routes, .list.layout-attributes {
+  margin-top: 2px;
+}
+
+.page-form {
+
+  .collection, .collection-item {
+    display: none;
+
+    &.active {
+      display: table;
+    }
+  }
+}
+
+table.layout-attributes tr > td  {
+  label {
+    display: inline !important;
+  }
+
+  & > label {
+    display: block !important;
+    padding-top: 5px;
+  }
+
+  div.input.radio, div.input.checkbox {
+    padding-top: 5px;
+  }
+}

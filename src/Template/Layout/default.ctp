@@ -2,14 +2,19 @@
 /**
  * @var \Wasabi\Cms\View\AppView $this
  */
-use Cake\Routing\Router;
+use Cake\Core\Configure;
 
 $this->extend('Wasabi/Core.default');
+
+$this->append('head_css');
+echo $this->Asset->css('cms' . (!Configure::read('debug') ? '.min' : ''), 'Wasabi/Cms');
+$this->end();
 
 $this->start('requirejs'); ?>
             require.config({
                 paths: {
-                    'wasabi.cms': '../../wasabi_cms/js/cms'
+                    'wasabi.cms': '../../wasabi_cms/js/cms',
+                    'wasabi.cms.package': '../../wasabi_cms/js'
                 }
             });
             WS.registerModule('wasabi.cms', {});
