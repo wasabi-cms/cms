@@ -50,13 +50,13 @@ class MenuListener implements EventListenerInterface
         $menu->addMenuItem([
             'alias' => 'cms-pages',
             'name' => __d('wasabi_cms', 'Pages'),
+            'parent' => 'content',
             'priority' => 1,
             'url' => [
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',
                 'action' => 'index'
-            ],
-            'parent' => 'content'
+            ]
         ]);
     }
 }
