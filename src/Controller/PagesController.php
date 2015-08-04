@@ -20,6 +20,8 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Wasabi\Cms\Model\Table\PagesTable;
+use Wasabi\Cms\View\Layout\LayoutManager;
+use Wasabi\Core\Routing\RouteTypes;
 
 /**
  * Class PagesController
@@ -76,11 +78,13 @@ class PagesController extends BackendAppController
         }
         $this->set([
             'page' => $page,
+            'layouts' => LayoutManager::getLayoutsForSelect(),
             'changeAttributesUrl' => Router::url([
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',
                 'action' => 'attributes'
-            ])
+            ]),
+            'routeTypes' => RouteTypes::getForSelect()
         ]);
     }
 
@@ -112,7 +116,14 @@ class PagesController extends BackendAppController
             }
         }
         $this->set([
-            'page' => $page
+            'page' => $page,
+            'layouts' => LayoutManager::getLayoutsForSelect(),
+            'changeAttributesUrl' => Router::url([
+                'plugin' => 'Wasabi/Cms',
+                'controller' => 'Pages',
+                'action' => 'attributes'
+            ]),
+            'routeTypes' => RouteTypes::getForSelect()
         ]);
         $this->render('add');
     }

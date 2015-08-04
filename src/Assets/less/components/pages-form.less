@@ -2,7 +2,95 @@
 @import "../../../../../Core/src/Assets/less/__config";
 @import "../../../../../Core/src/Assets/less/__mixins";
 
+@page-aside-width: 360px;
+
 .page-form {
-  border-top: 1px solid @form-row-border-color;
-  background-color: @form-row-bg-color;
+
+  & > .row {
+    margin-right: @page-aside-width;
+  }
+
+  .box {
+    margin-bottom: @computed-height;
+    background-color: #fbfbfb;
+  }
+
+  .box-title {
+    padding: 5px @computed-height--half 3px;
+    background-color: @table-th-bg-color;
+    border: 1px solid @border-dark;
+    font-size: 10px;
+    font-family: @font-os-semibold;
+  }
+
+  .box-content {
+    //padding: @computed-height--half;
+    border: 1px solid @border-light;
+    border-top-width: 0;
+  }
+
+  .form-row {
+    border: none;
+  //  display: block;
+  //  background-color: transparent;
+  //  border: none;
+  //  margin-top: @computed-height--half;
+  //
+  //  &:first-child {
+  //    margin-top: 0;
+  //  }
+  //
+    & > label {
+      padding: 17px @computed-height @computed-height--half;
+      min-width: 170px;
+  //    float: none;
+  //    width: auto;
+  //    min-width: 0;
+  //    display: block;
+  //    padding: 0;
+  //    margin-bottom: 2px;
+    }
+
+    & > .field {
+      padding: @computed-height--half
+    }
+  //
+  //  small {
+  //    display: block;
+  //    color: @gray-lighter;
+  //    padding-top: 2px;
+  //  }
+  }
+
+  .box--layout {
+
+    .form-row {
+      display: block;
+
+      & > .field {
+        display: block;
+        background-color: transparent;
+        border-left: none;
+
+        &.layout-attributes {
+          padding-top: 0;
+        }
+      }
+    }
+
+    #cms-layout {
+      width: 100%;
+    }
+  }
+}
+
+.page-main {
+  float: left;
+  width: 100%;
+}
+
+.page-aside {
+  float: right;
+  margin-right: -@page-aside-width;
+  width: (@page-aside-width - @computed-height);
 }

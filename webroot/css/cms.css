@@ -160,9 +160,56 @@
   border-left: 0 none;
   border-bottom: 1px dotted #e3e5e6;
 }
-.page-form {
-  border-top: 1px solid #e3e5e6;
-  background-color: #fcfcfc;
+.page-form > .row {
+  margin-right: 360px;
+}
+.page-form .box {
+  margin-bottom: 21px;
+  background-color: #fbfbfb;
+}
+.page-form .box-title {
+  padding: 5px 10px 3px;
+  background-color: #f2f3f4;
+  border: 1px solid #d5d7d7;
+  font-size: 10px;
+  font-family: 'open_sans_webfont_semibold', sans-serif;
+}
+.page-form .box-content {
+  border: 1px solid #e3e5e6;
+  border-top-width: 0;
+}
+.page-form .form-row {
+  border: none;
+}
+.page-form .form-row > label {
+  padding: 17px 21px 10px;
+  min-width: 170px;
+}
+.page-form .form-row > .field {
+  padding: 10px;
+}
+.page-form .box--layout .form-row {
+  display: block;
+}
+.page-form .box--layout .form-row > .field {
+  display: block;
+  background-color: transparent;
+  border-left: none;
+}
+.page-form .box--layout .form-row > .field.layout-attributes {
+  padding-top: 0;
+}
+.page-form .box--layout #cms-layout {
+  width: 100%;
+}
+.page-main {
+  float: left;
+  width: 100%;
+}
+.page-aside {
+  float: right;
+  margin-right: -360px;
+  width: 339px;
 }
 .list.routes,
 .list.layout-attributes {

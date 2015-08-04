@@ -10,7 +10,6 @@
  */
 
 use Cake\Core\Configure;
-use Cake\Routing\Router;
 
 if ($this->request->params['action'] == 'add') {
     $this->Html->setTitle(__d('wasabi_cms', 'Add a new Page') . '<span class="lang">' . Configure::read('contentLanguage')->iso2 . '</span>');
@@ -19,7 +18,11 @@ if ($this->request->params['action'] == 'add') {
     $this->Html->setSubTitle($page->name);
 }
 
-echo $this->Form->create($page, ['novalidate' => true, 'class' => 'page-form']);
+echo $this->Form->create($page, [
+    'novalidate' => true,
+    'class' => 'page-form',
+//    'templates' => 'Wasabi/Cms.form_templates'
+]);
 if ($this->request->params['action'] == 'edit') {
     echo $this->Form->input('id', ['type' => 'hidden']);
 
@@ -30,9 +33,20 @@ if ($this->request->params['action'] == 'edit') {
 ?>
 <div class="row">
     <div class="page-main">
-        <?= $this->Form->input('name', ['label' => __d('wasabi_cms', 'Page Name')]) ?>
-        <?= $this->Form->input('page_title', ['label' => __d('wasabi_cms', 'Page Title')]) ?>
-        <?= $this->Form->input('meta_description', ['label' => __d('wasabi_cms', 'Meta Description'), 'type' => 'textarea', 'rows' => 2, 'info' => __d('wasabi_cms', 'Describe in short what this page is about.')]) ?>
+        <div class="box box--general">
+            <div class="box-title"><?= __d('wasabi_cms', 'General') ?></div>
+            <div class="box-content">
+                <?= $this->Form->input('name', [
+                    'label' => [
+                        'text' => __d('wasabi_cms', 'Page Name'),
+//                        'class' => 'visuallyhidden'
+                    ],
+                    'placeholder' => __d('wasabi_cms', 'Enter page title')
+                ]) ?>
+                <?= $this->Form->input('page_title', ['label' => __d('wasabi_cms', 'Page Title')]) ?>
+                <?= $this->Form->input('meta_description', ['label' => __d('wasabi_cms', 'Meta Description'), 'type' => 'textarea', 'rows' => 2, 'info' => __d('wasabi_cms', 'Describe in short what this page is about.')]) ?>
+            </div>
+        </div>
     </div>
     <div class="page-aside">
         <div class="box box--cache">
@@ -42,9 +56,16 @@ if ($this->request->params['action'] == 'edit') {
         <div class="box box--layout">
             <div class="box-title"><?= __d('wasabi_cms', 'Layout') ?></div>
             <div class="box-content">
-                <?= $this->Form->input('cms_layout', ['options' => $layouts, 'label' => __d('wasabi_cms', 'Layout'), 'info' => __d('wasabi_cms', 'Choose a layout for this page.')]); ?>
+                <?= $this->Form->input('cms_layout', [
+                    'options' => $layouts,
+                    'label' => [
+                        'text' => __d('wasabi_cms', 'Layout'),
+                        'class' => 'visuallyhidden'
+                    ],
+                    'info' => __d('wasabi_cms', 'Choose a layout for this page.')
+                ]); ?>
                 <div class="form-row row">
-                    <label><?= __d('wasabi_cms', 'Layout Fields') ?>:</label>
+                    <label class="visuallyhidden"><?= __d('wasabi_cms', 'Layout Fields') ?>:</label>
                     <div class="field layout-attributes" data-change-url="<?= $changeAttributesUrl ?>">
                         <?= $this->element('Wasabi/Cms.Pages/layout-attributes') ?>
                     </div>
