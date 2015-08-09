@@ -146,5 +146,9 @@ module.exports = function(grunt) {
     'copy:js'
   ]);
 
+  grunt.registerTask('watch2', [
+    'watch:less'
+  ]);
+
   require('jit-grunt')(grunt);
 };

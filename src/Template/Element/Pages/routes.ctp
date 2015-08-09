@@ -23,9 +23,9 @@ $addRouteUrl = Router::url([
 <table class="list routes valign-middle" data-add-route-url="<?= $addRouteUrl ?>">
 	<thead>
 	<tr>
-		<th class="t11"><?= __d('wasabi_cms', 'URL') ?></th>
-		<th class="t3 center"><?= __d('wasabi_cms', 'Route Type') ?></th>
-		<th class="t2 center"><?= __d('wasabi_cms', 'Actions') ?></th>
+		<th class="t-10-16"><?= __d('wasabi_cms', 'URL') ?></th>
+		<th class="t-4-16 center"><?= __d('wasabi_cms', 'Type') ?></th>
+		<th class="t-2-16 center"><?= __d('wasabi_cms', 'Actions') ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -83,10 +83,10 @@ $addRouteUrl = Router::url([
 	<?php endforeach; ?>
 	<tr class="new-route<?= $error ? ' valign-top' : '' ?>">
 		<td>
-			<?= $this->Form->input('Route.url', ['label' => false, 'type' => 'text']) ?>
+			<?= $this->Form->input('Route.url', ['label' => false, 'type' => 'text', 'templates' => 'Wasabi/Cms.form_templates']) ?>
 		</td>
 		<td class="center">
-			<?= $this->Form->input('Route.type', ['label' => false, 'options' => $routeTypes, 'default' => (count($routes) >= 1) ? RouteTypes::get(RouteTypes::TYPE_REDIRECT_ROUTE) : RouteTypes::get(RouteTypes::TYPE_DEFAULT_ROUTE)]) ?>
+			<?= $this->Form->input('Route.type', ['label' => false, 'options' => $routeTypes, 'default' => (count($routes) >= 1) ? RouteTypes::get(RouteTypes::TYPE_REDIRECT_ROUTE) : RouteTypes::get(RouteTypes::TYPE_DEFAULT_ROUTE), 'templates' => 'Wasabi/Cms.form_templates']) ?>
 		</td>
 		<td class="actions center">
 			<?= $this->Form->button(__d('wasabi_cms', 'Submit'), ['div' => false, 'class' => 'button small']) ?>

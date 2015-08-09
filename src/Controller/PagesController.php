@@ -13,6 +13,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Wasabi\Cms\Controller;
+use Cake\Core\Configure;
 use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Exception\NotFoundException;
@@ -21,12 +22,14 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Wasabi\Cms\Model\Table\PagesTable;
 use Wasabi\Cms\View\Layout\LayoutManager;
+use Wasabi\Core\Model\Table\RoutesTable;
 use Wasabi\Core\Routing\RouteTypes;
 
 /**
  * Class PagesController
  *
  * @property PagesTable $Pages
+ * @property RoutesTable $Routes
  */
 class PagesController extends BackendAppController
 {
@@ -37,6 +40,7 @@ class PagesController extends BackendAppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
+        $this->loadModel('Routes');
     }
 
     /**
@@ -75,6 +79,98 @@ class PagesController extends BackendAppController
             } else {
                 $this->Flash->error($this->formErrorMessage);
             }
+        } else {
+            $page->set(
+                'content',
+                json_encode([
+                    'content' => [
+                        [
+                            'meta' => [
+                                'type' => 'ContentArea',
+                                'contentAreaId' => 'after_head',
+                                'name' => 'After Head',
+                                'grid' => [
+                                    'colWidth' => 16,
+                                    'baseWidth' => 16
+                                ]
+                            ],
+                            'data' => []
+                        ],
+                        [
+                            'meta' => [
+                                'type' => 'ContentArea',
+                                'contentAreaId' => 'main',
+                                'name' => 'Main',
+                                'grid' => [
+                                    'colWidth' => 12,
+                                    'baseWidth' => 16
+                                ]
+                            ],
+                            'data' => [
+                                [
+                                    'meta' => [
+                                        'type' => 'Row'
+                                    ],
+                                    'data' => [
+                                        [
+                                            'meta' => [
+                                                'type' => 'Cell',
+                                                'grid' => [
+                                                    'colWidth' => 4,
+                                                    'baseWidth' => 16
+                                                ]
+                                            ],
+                                            'data' => []
+                                        ],
+                                        [
+                                            'meta' => [
+                                                'type' => 'Cell',
+                                                'grid' => [
+                                                    'colWidth' => 4,
+                                                    'baseWidth' => 16
+                                                ]
+                                            ],
+                                            'data' => []
+                                        ],
+                                        [
+                                            'meta' => [
+                                                'type' => 'Cell',
+                                                'grid' => [
+                                                    'colWidth' => 4,
+                                                    'baseWidth' => 16
+                                                ]
+                                            ],
+                                            'data' => []
+                                        ],
+                                        [
+                                            'meta' => [
+                                                'type' => 'Cell',
+                                                'grid' => [
+                                                    'colWidth' => 4,
+                                                    'baseWidth' => 16
+                                                ]
+                                            ],
+                                            'data' => []
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'meta' => [
+                                'type' => 'ContentArea',
+                                'contentAreaId' => 'sidebar',
+                                'name' => 'Sidebar',
+                                'grid' => [
+                                    'colWidth' => 4,
+                                    'baseWidth' => 16
+                                ]
+                            ],
+                            'data' => []
+                        ],
+                    ]
+                ])
+            );
         }
         $this->set([
             'page' => $page,
@@ -123,7 +219,15 @@ class PagesController extends BackendAppController
                 'controller' => 'Pages',
                 'action' => 'attributes'
             ]),
-            'routeTypes' => RouteTypes::getForSelect()
+            'routeTypes' => RouteTypes::getForSelect(),
+            'routes' => $this->Routes->find('all', array(
+                'conditions' => array(
+                    'model' => 'Wasabi\Cms.Page',
+                    'foreign_key' => $id,
+                    'language_id' => Configure::read('contentLanguage')->id
+                ),
+                'order' => 'url ASC'
+            ))
         ]);
         $this->render('add');
     }
