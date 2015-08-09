@@ -10,10 +10,17 @@ define(function(require) {
 
     },
 
+    /**
+     * Holds the content container of the row.
+     */
+    $contentContainer: {},
+
     pageBuilder: null,
+    parent: null,
 
-    initialize: function() {
-
+    initialize: function(options) {
+      this.pageBuilder = options.pageBuilder;
+      this.parent = options.parent;
     },
 
     /**
@@ -24,6 +31,18 @@ define(function(require) {
     render: function() {
       this.setElement(this.template());
       this.$el.data('view', this);
+      this.$contentContainer = this.$('.cells');
+      this.$el.appendTo(this.parent.$contentContainer);
+
+      this.model.cells.each(_.bind(function(cell) {
+        var viewClass = this.pageBuilder.getViewClass(cell.modelName);
+        var viewInstance = new viewClass({
+          pageBuilder: this.pageBuilder,
+          parent: this,
+          model: cell
+        });
+        viewInstance.render();
+      }, this));
 
       return this;
     }

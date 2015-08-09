@@ -21,20 +21,19 @@ define(function(require) {
     var $loader = $('.page-builder-loader');
 
     // Create the view to display the page builder.
-    var pageBuilderView = WS.createView(PageBuilderView, {
+    WS.Cms.views.pageBuilder = WS.createView(PageBuilderView, {
       model: pageBuilderModel
     });
 
     WS.eventBus.on('pb-page-builder-rendered', function() {
       $loader.fadeOut(200, function() {
-        pageBuilderView.attach($('.page-builder-wrapper'));
+        WS.Cms.views.pageBuilder.attach($('.page-builder-wrapper'));
       });
     });
 
-    pageBuilderView.render();
-    pageBuilderView.setDataField('input[name="content"]');
-
-    WS.Cms.views.pageBuilder = pageBuilderView;
+    WS.Cms.views.pageBuilder
+      .render()
+      .setDataField('input[name="content"]');
 
     //WS.Cms.collections.contentAreas = new ContentAreas()
   }

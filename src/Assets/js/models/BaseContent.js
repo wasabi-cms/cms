@@ -28,7 +28,7 @@ define(function(require) {
       }, options);
 
       /** @var {ContentAreaModel|RowModel|CellModel|ModuleModel} modelClass **/
-      var modelClass = this.pageBuilder.models[this.get('meta').get('type')];
+      var modelClass = this.pageBuilder.models[data.meta.type];
       var collection = this.getCollection();
       var modelInstance = new modelClass(data, {
         pageBuilder: this.pageBuilder,

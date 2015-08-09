@@ -43,7 +43,7 @@
 </script>
 
 <script id="pb-cell" type="text/x-handlebars-template">
-    <div class="grid-{{meta.grid.colWidth}}-{{meta.grid.baseWidth}}" data-type="cell">
+    <div class="grid-{{grid.colWidth}}-{{grid.baseWidth}}" data-type="cell">
         <div class="resize-handle"></div>
         <div class="cell-wrapper">
 

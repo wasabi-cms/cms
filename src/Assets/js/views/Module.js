@@ -11,9 +11,11 @@ define(function(require) {
     },
 
     pageBuilder: null,
+    parent: null,
 
-    initialize: function() {
-
+    initialize: function(options) {
+      this.pageBuilder = options.pageBuilder;
+      this.parent = options.parent;
     },
 
     /**
@@ -22,8 +24,12 @@ define(function(require) {
      * @returns {ModuleView}
      */
     render: function() {
-      this.setElement(this.template());
+      this.setElement(this.template({
+        title: this.model.get('meta').get('title'),
+        description: this.model.get('meta').get('description')
+      }));
       this.$el.data('view', this);
+      this.$el.appendTo(this.parent.$contentContainer);
 
       return this;
     }

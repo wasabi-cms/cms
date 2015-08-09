@@ -120,7 +120,19 @@ class PagesController extends BackendAppController
                                                     'baseWidth' => 16
                                                 ]
                                             ],
-                                            'data' => []
+                                            'data' => [
+                                                [
+                                                    'meta' => [
+                                                        'type' => 'Module',
+                                                        'moduleId' => 'flicker-slider',
+                                                        'title' => 'Flicker Slider',
+                                                        'description' => 'bla blub'
+                                                    ],
+                                                    'data' => [
+                                                        'foo' => 'bar'
+                                                    ]
+                                                ]
+                                            ]
                                         ],
                                         [
                                             'meta' => [

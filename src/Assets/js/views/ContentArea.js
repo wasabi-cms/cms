@@ -15,6 +15,11 @@ define(function(require) {
     $contentArea: null,
 
     /**
+     * Holds the content container of the content area.
+     */
+    $contentContainer: {},
+
+    /**
      * The inner content of the ContentArea view.
      */
     $content: null,
@@ -39,7 +44,7 @@ define(function(require) {
     initialize: function(options) {
       this.pageBuilder = options.pageBuilder;
       this.model.on('change:selected', this.onChangeSelectedState, this);
-      this.model.content.on('add', this.onAddContent, this);
+      //this.model.content.on('add', this.onAddContent, this);
     },
 
     /**
@@ -54,7 +59,18 @@ define(function(require) {
         grid: this.model.get('meta').get('grid').toJSON()
       }));
       this.$contentArea = this.$el.find('.content-area');
+      this.$contentContainer = this.$('.ca-content');
       this.$el.data('view', this);
+
+      this.model.content.each(_.bind(function(contentElement) {
+        var viewClass = this.pageBuilder.getViewClass(contentElement.modelName);
+        var viewInstance = new viewClass({
+          pageBuilder: this.pageBuilder,
+          parent: this,
+          model: contentElement
+        });
+        viewInstance.render();
+      }, this));
 
       return this;
     },
@@ -84,32 +100,33 @@ define(function(require) {
       this.$contentArea.toggleClass('content-area--selected', value);
     },
 
-    onAddContent: function(contentModel, collection, options) {
-      console.log('here');
-      options = _.extend({
-        skipAnimation: false
-      }, options);
-
-      /** @var {ContentAreaView|RowView|CellView|ModuleView} contentViewClass */
-      var contentViewClass = this.pageBuilder.contentViewClasses[contentModel.modelName];
-      var contentView = new contentViewClass({
-        model: contentModel,
-        pageBuilder: this.pageBuilder
-      });
-      contentView.render();
-
-      // Attach the content to the page builder DOM.
-      if (typeof options.at === 'undefined' || collection.length <= 1) {
-        // Insert the content at the end of the container.
-        contentView.$el.appendTo(this.$contentContainer);
-        console.log(contentView.$el.html());
-      } else {
-        // Insert the content at a specific position
-        //contentView.$el.insertAfter(
-        //  this.$contentContainer.find('> div').eq(options.at - 1)
-        //);
-      }
-    }
+    //onAddContent: function(contentModel, options) {
+    //  options = _.extend({
+    //    skipAnimation: false
+    //  }, options);
+    //
+    //  console.log(contentModel.modelName);
+    //
+    //  /** @var {ContentAreaView|RowView|CellView|ModuleView} contentViewClass */
+    //  var contentViewClass = this.pageBuilder.contentViewClasses[contentModel.modelName];
+    //  var contentView = new contentViewClass({
+    //    model: contentModel,
+    //    pageBuilder: this.pageBuilder
+    //  });
+    //  contentView.render();
+    //
+    //  // Attach the content to the page builder DOM.
+    //  if (typeof options.at === 'undefined' || collection.length <= 1) {
+    //    // Insert the content at the end of the container.
+    //    contentView.$el.appendTo(this.$contentContainer);
+    //    console.log(contentView.$el.html());
+    //  } else {
+    //    // Insert the content at a specific position
+    //    //contentView.$el.insertAfter(
+    //    //  this.$contentContainer.find('> div').eq(options.at - 1)
+    //    //);
+    //  }
+    //}
   });
 
   return ContentAreaView;

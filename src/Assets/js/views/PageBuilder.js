@@ -202,6 +202,10 @@ define(function(require) {
       }
     },
 
+    getViewClass: function(modelName) {
+      return this.contentViewClasses[modelName];
+    },
+
     storeModelData: function() {
 
     },

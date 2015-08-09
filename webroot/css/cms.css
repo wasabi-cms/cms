@@ -238,12 +238,8 @@
   min-height: 90px;
   background-color: #fcfcfc;
 }
-.page-builder .content-area--selected,
-.page-builder .content-area--selected .ca-header {
-  border-color: #bbbdbd;
-}
 .page-builder .content-area--selected .ca-content {
-  background-color: #dae5f1;
+  background-color: #ffeca0;
 }
 .page-builder [data-type="row"] {
   position: relative;
@@ -316,6 +312,10 @@
 }
 .page-builder [data-type="cell"]:first-child .resize-handle {
   display: none;
+}
+.page-builder .cell--selected .cell-wrapper {
+  border-color: #008ccc;
+  background-color: #b2d5f1;
 }
 .page-builder .module {
   margin-bottom: 10px;
