@@ -1,8 +1,6 @@
 define(function(require) {
 
-  var BaseView = require('common/BaseView');
-
-  return BaseView.extend({
+  var DroppableMixin = {
 
     events: {
       'drag-over': 'onDragOver',
@@ -47,6 +45,8 @@ define(function(require) {
       console.info('Implement the "onDropped" method on the child class!');
     }
 
-  });
+  };
+
+  return DroppableMixin;
 
 });

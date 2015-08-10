@@ -1,7 +1,6 @@
 define(function(require) {
 
   var $ = require('jquery');
-  var BaseView = require('common/BaseView');
   require('jquery.scrollParent');
   require('jquery.position');
 
@@ -39,11 +38,7 @@ define(function(require) {
     dropTargetViews: null
   };
 
-  return BaseView.extend({
-
-    events: {
-      'mousedown': 'onMouseDown'
-    },
+  var DraggableMixin = {
 
     /**
      * @type {object}
@@ -88,20 +83,29 @@ define(function(require) {
     $scrollParent: null,
 
     /**
+     * The drag handle element.
+     */
+    $dragHandle: null,
+
+    /**
      * The current drop target view the draggable view is dragged over.
      *
      * @type {object}
      */
     activeDropTargetView: null,
 
-    initialize: function(options) {
+    initializeDraggable: function(options) {
       this.options = $.extend(defaults, {}, options);
       this.model.view = this;
+      this.$dragHandle.on('mousedown', _.bind(this.onMouseDown, this));
       this.$doc = $(document);
       this.$win = $(window);
     },
 
     onMouseDown: function(event) {
+      if (event.currentTarget !== this.$dragHandle[0]) {
+        return;
+      }
       event.preventDefault();
       this._initStart(event);
       this.$doc.on('mousemove', _.bind(this.onMouseMove, this));
@@ -233,8 +237,8 @@ define(function(require) {
 
     _getStopPosition: function() {
       return {
-        top: this.position.top,
-        left: this.$el.offset().left
+        top: this.$el.offset().top - this.$win.scrollTop(),
+        left: this.$el.offset().left - this.$el.css('marginLeft').split('px')[0]
       };
     },
 
@@ -266,6 +270,8 @@ define(function(require) {
       }
     }
 
-  });
+  };
+
+  return DraggableMixin;
 
 });
