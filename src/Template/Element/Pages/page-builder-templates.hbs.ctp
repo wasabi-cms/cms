@@ -17,7 +17,7 @@
                 <h5>{{name}}</h5>
                 <nav class="ca-actions">
                     <ul>
-                        <li><a href="javascript:void(0)" class="ca-settings"><i class="icon-settings"></i></a></li>
+                        <li><a href="javascript:void(0)" class="ca-settings" title="<?= __d('wasabi_cms', 'Settings') ?>"><i class="icon-settings"></i></a></li>
                     </ul>
                 </nav>
             </header>
@@ -35,8 +35,8 @@
         </div>
         <nav class="row-actions">
             <ul>
-                <li><a href="javascript:void(0)" class="row-sort"><i class="icon-grab"></i></a></li>
-                <li><a href="javascript:void(0)" class="row-settings"><i class="icon-settings"></i></a></li>
+                <li><a href="javascript:void(0)" class="row-sort" title="<?= __d('wasabi_cms', 'Move') ?>"><i class="icon-grab"></i></a></li>
+                <li><a href="javascript:void(0)" class="row-settings" title="<?= __d('wasabi_cms', 'Settings') ?>"><i class="icon-settings"></i></a></li>
             </ul>
         </nav>
     </div>
@@ -44,7 +44,7 @@
 
 <script id="pb-cell" type="text/x-handlebars-template">
     <div class="grid-{{grid.colWidth}}-{{grid.baseWidth}}" data-type="cell">
-        <div class="resize-handle"></div>
+        <div class="resize-handle" title="<?= __d('wasabi_cms', 'Resize') ?>"></div>
         <div class="cell-wrapper">
 
         </div>
@@ -57,9 +57,9 @@
             <h6>{{title}}</h6>
             <nav class="module-actions">
                 <ul>
-                    <li><a href="javascript:void(0)" class="module-edit"><i class="icon-edit"></i></a></li>
-                    <li><a href="javascript:void(0)" class="module-duplicate"><i class="icon-duplicate"></i></a></li>
-                    <li><a href="javascript:void(0)" class="module-remove"><i class="icon-remove"></i></a></li>
+                    <li><a href="javascript:void(0)" class="module-edit" title="<?= __d('wasabi_cms', 'Edit') ?>"><i class="icon-edit"></i></a></li>
+                    <li><a href="javascript:void(0)" class="module-duplicate" title="<?= __d('wasabi_cms', 'Duplicate') ?>"><i class="icon-duplicate"></i></a></li>
+                    <li><a href="javascript:void(0)" class="module-remove" title="<?= __d('wasabi_cms', 'Remove') ?>"><i class="icon-remove"></i></a></li>
                 </ul>
             </nav>
         </div>
