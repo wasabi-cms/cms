@@ -109,6 +109,17 @@ class PagesController extends BackendAppController
                             'data' => [
                                 [
                                     'meta' => [
+                                        'type' => 'Module',
+                                        'moduleId' => 'text',
+                                        'title' => 'Text',
+                                        'description' => 'foo bar'
+                                    ],
+                                    'data' => [
+                                        'foo' => 'bar'
+                                    ]
+                                ],
+                                [
+                                    'meta' => [
                                         'type' => 'Row'
                                     ],
                                     'data' => [

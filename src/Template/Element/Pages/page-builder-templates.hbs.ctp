@@ -21,7 +21,7 @@
                     </ul>
                 </nav>
             </header>
-            <div class="ca-content">
+            <div class="ca-content row">
 
             </div>
         </div>

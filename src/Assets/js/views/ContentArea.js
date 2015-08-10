@@ -1,40 +1,25 @@
 define(function(require) {
 
-  var BaseView = require('common/BaseView');
+  var BaseContentView = require('wasabi.cms.package/views/BaseContent');
   var Handlebars = require('handlebars');
 
-  var ContentAreaView = BaseView.extend({
+  var ContentAreaView = BaseContentView.extend({
     /**
      * The template used to render the ContentArea view.
      */
     template: Handlebars.compile($('#pb-content-area').html()),
 
     /**
-     * The actual .content-area div.
+     * Holds a reference to the .content-area div.
      */
-    $contentArea: null,
-
-    /**
-     * Holds the content container of the content area.
-     */
-    $contentContainer: {},
-
-    /**
-     * The inner content of the ContentArea view.
-     */
-    $content: null,
+    $contentArea: {},
 
     /**
      * Registered DOM events of the ContentArea view.
      */
     events: {
-      'click .ca-header': 'selectContentArea'
+      'click .ca-content': 'selectContentArea'
     },
-
-    /**
-     * Reference to the PageBuilder view instance.
-     */
-    pageBuilder: null,
 
     /**
      * Initialize the ContentArea view.
@@ -42,37 +27,23 @@ define(function(require) {
      * @param {Object} options
      */
     initialize: function(options) {
-      this.pageBuilder = options.pageBuilder;
+      this.contentContainer = '.ca-content';
+      this.iterateOver = this.model.content;
+      BaseContentView.prototype.initialize.call(this, options);
+
       this.model.on('change:selected', this.onChangeSelectedState, this);
-      //this.model.content.on('add', this.onAddContent, this);
     },
 
-    /**
-     * Render the content area.
-     *
-     * @returns {ContentAreaView}
-     */
-    render: function() {
-      this.setElement(this.template({
+    getTemplateData: function() {
+      return {
         contentAreaId: this.model.get('meta').get('contentAreaId'),
         name: this.model.get('meta').get('name'),
         grid: this.model.get('meta').get('grid').toJSON()
-      }));
-      this.$contentArea = this.$el.find('.content-area');
-      this.$contentContainer = this.$('.ca-content');
-      this.$el.data('view', this);
+      }
+    },
 
-      this.model.content.each(_.bind(function(contentElement) {
-        var viewClass = this.pageBuilder.getViewClass(contentElement.modelName);
-        var viewInstance = new viewClass({
-          pageBuilder: this.pageBuilder,
-          parent: this,
-          model: contentElement
-        });
-        viewInstance.render();
-      }, this));
-
-      return this;
+    afterRender: function() {
+      this.$contentArea = this.$('.content-area');
     },
 
     /**
@@ -83,7 +54,7 @@ define(function(require) {
      * @returns {boolean}
      */
     selectContentArea: function(event) {
-      if ($(event.target).closest('a').length > 0) {
+      if (!$(event.target).is('.ca-content')) {
         return false;
       }
       this.pageBuilder.selectElement(this);
@@ -98,35 +69,7 @@ define(function(require) {
      */
     onChangeSelectedState: function(model, value) {
       this.$contentArea.toggleClass('content-area--selected', value);
-    },
-
-    //onAddContent: function(contentModel, options) {
-    //  options = _.extend({
-    //    skipAnimation: false
-    //  }, options);
-    //
-    //  console.log(contentModel.modelName);
-    //
-    //  /** @var {ContentAreaView|RowView|CellView|ModuleView} contentViewClass */
-    //  var contentViewClass = this.pageBuilder.contentViewClasses[contentModel.modelName];
-    //  var contentView = new contentViewClass({
-    //    model: contentModel,
-    //    pageBuilder: this.pageBuilder
-    //  });
-    //  contentView.render();
-    //
-    //  // Attach the content to the page builder DOM.
-    //  if (typeof options.at === 'undefined' || collection.length <= 1) {
-    //    // Insert the content at the end of the container.
-    //    contentView.$el.appendTo(this.$contentContainer);
-    //    console.log(contentView.$el.html());
-    //  } else {
-    //    // Insert the content at a specific position
-    //    //contentView.$el.insertAfter(
-    //    //  this.$contentContainer.find('> div').eq(options.at - 1)
-    //    //);
-    //  }
-    //}
+    }
   });
 
   return ContentAreaView;

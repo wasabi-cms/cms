@@ -186,7 +186,8 @@ define(function(require) {
       var contentViewClass = this.contentViewClasses[contentModel.modelName];
       var contentView = new contentViewClass({
         model: contentModel,
-        pageBuilder: this
+        pageBuilder: this,
+        parent: this
       });
       contentView.render();
 

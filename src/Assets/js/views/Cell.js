@@ -1,54 +1,27 @@
 define(function(require) {
 
-  var BaseView = require('common/BaseView');
+  var BaseContentView = require('wasabi.cms.package/views/BaseContent');
   var Handlebars = require('handlebars');
 
-  var CellView = BaseView.extend({
+  var CellView = BaseContentView.extend({
     template: Handlebars.compile($('#pb-cell').html()),
 
     events: {
       'click .cell-wrapper': 'selectCell'
     },
 
-    /**
-     * Holds the content container of the cell.
-     */
-    $contentContainer: {},
-
-    pageBuilder: null,
-    parent: null,
-
     initialize: function(options) {
-      this.pageBuilder = options.pageBuilder;
-      this.parent = options.parent;
+      this.iterateOver = this.model.modules;
+      this.contentContainer = '.cell-wrapper';
+      BaseContentView.prototype.initialize.call(this, options);
 
       this.model.on('change:selected', this.onChangeSelectedState, this);
     },
 
-    /**
-     * Render the cell.
-     *
-     * @returns {CellView}
-     */
-    render: function() {
-      this.setElement(this.template({
+    getTemplateData: function() {
+      return {
         grid: this.model.get('meta').get('grid').toJSON()
-      }));
-      this.$el.data('view', this);
-      this.$contentContainer = this.$('.cell-wrapper');
-      this.$el.appendTo(this.parent.$contentContainer);
-
-      this.model.modules.each(_.bind(function(module) {
-        var viewClass = this.pageBuilder.getViewClass(module.modelName);
-        var viewInstance = new viewClass({
-          pageBuilder: this.pageBuilder,
-          parent: this,
-          model: module
-        });
-        viewInstance.render();
-      }, this));
-
-      return this;
+      };
     },
 
     /**
@@ -71,7 +44,7 @@ define(function(require) {
      */
     onChangeSelectedState: function(model, value) {
       this.$el.toggleClass('cell--selected', value);
-    },
+    }
   });
 
   return CellView;

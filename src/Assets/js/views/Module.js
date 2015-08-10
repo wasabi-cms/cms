@@ -1,39 +1,32 @@
 define(function(require) {
 
-  var BaseView = require('common/BaseView');
+  var _ = require('underscore');
+  var BaseContentView = require('wasabi.cms.package/views/BaseContent');
+  var DraggableView = require('wasabi.cms.package/views/DraggableView');
   var Handlebars = require('handlebars');
 
-  var ModuleView = BaseView.extend({
+  var ModuleView = BaseContentView.extend({
     template: Handlebars.compile($('#pb-module').html()),
 
-    events: {
+    events: function() {
+      return _.extend(DraggableView.prototype.events, {
 
+      });
     },
-
-    pageBuilder: null,
-    parent: null,
 
     initialize: function(options) {
-      this.pageBuilder = options.pageBuilder;
-      this.parent = options.parent;
+      BaseContentView.prototype.initialize.call(this, options);
+      DraggableView.prototype.initialize.call(this, options);
+      console.log(this);
     },
 
-    /**
-     * Render the module.
-     *
-     * @returns {ModuleView}
-     */
-    render: function() {
-      this.setElement(this.template({
+    getTemplateData: function() {
+      return {
         title: this.model.get('meta').get('title'),
         description: this.model.get('meta').get('description')
-      }));
-      this.$el.data('view', this);
-      this.$el.appendTo(this.parent.$contentContainer);
-
-      return this;
+      };
     }
   });
 
-  return ModuleView;
+  return _.extend(ModuleView, DraggableView);
 });
