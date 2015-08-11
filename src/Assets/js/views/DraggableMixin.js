@@ -5,24 +5,6 @@ define(function(require) {
   require('jquery.position');
 
   /**
-   * Returns whether an element is touching an x/y coordinate.
-   *
-   * @param {number} x The coordinate's X position.
-   * @param {number} y The coordinate's Y position.
-   * @param {object} elem Either an actual element or a jQuery collection.
-   * @return boolean
-   */
-  function hitTest(x, y, elem) {
-    var $el = $(elem);
-    var offset = $el.offset();
-    var x1 = offset.left;
-    var y1 = offset.top;
-    var x2 = x1 + $el.outerWidth();
-    var y2 = y1 + $el.outerHeight();
-    return (x >= x1 && x < x2 && y >= y1 && y < y2);
-  }
-
-  /**
    * Default options
    *
    * @type {{opacity: number, scroll: boolean, scrollSensitivity: number, scrollSpeed: number, animateTarget: boolean, animationLength: number, hideDraggable: boolean}}
@@ -115,6 +97,7 @@ define(function(require) {
     onMouseMove: function(event) {
       if (!this.isDragging) {
         this._initClone();
+        this._initPlaceholder();
         if (this.options.hideDraggable) {
           this.getDraggableElement().hide();
         }
@@ -130,10 +113,29 @@ define(function(require) {
       if (this.options.dropTargetViews !== null) {
         this.activeDropTargetView = null;
 
-        for (var i = 0, length = this.options.dropTargetViews.length; i < length; i++) {
-          if (hitTest(event.pageX, event.pageY, this.options.dropTargetViews[i].$el)) {
-            this.activeDropTargetView = this.options.dropTargetViews[i];
+        // cells should have a bigger weight than content areas
+        var cells = _.filter(this.options.dropTargetViews, function(v) {
+          return v.viewType === 'Cell';
+        });
+        var contentAreas = _.filter(this.options.dropTargetViews, function(v) {
+          return v.viewType === 'ContentArea';
+        });
+
+        for (var i = 0, length = cells.length; i < length; i++) {
+          if (this.hitTest(event.pageX, event.pageY, cells[i].$el)) {
+            this.activeDropTargetView = cells[i];
             break;
+          }
+        }
+
+        if (this.activeDropTargetView === null) {
+          i = 0;
+          length = contentAreas.length;
+          for (; i < length; i++) {
+            if (this.hitTest(event.pageX, event.pageY, contentAreas[i].$el)) {
+              this.activeDropTargetView = contentAreas[i];
+              break;
+            }
           }
         }
       }
@@ -143,8 +145,9 @@ define(function(require) {
       });
 
       if (this.activeDropTargetView !== null) {
-        if (this.activeDropTargetView.canDrop(this)) {
-          this.activeDropTargetView.$el.trigger('drag-over');
+        console.log(this.activeDropTargetView.viewType, this.activeDropTargetView.canDrop(this));
+        if (this.activeDropTargetView.canDrop(this) === true) {
+          this.activeDropTargetView.$el.trigger('drag-over', [event, this]);
         } else {
           this.activeDropTargetView.$el.trigger('drag-over-forbidden');
         }
@@ -161,13 +164,12 @@ define(function(require) {
         if (this.activeDropTargetView !== null && this.activeDropTargetView.canDrop(this)) {
           this.activeDropTargetView.$el.trigger('dropped', [this]);
           this.activeDropTargetView = null;
-          this.$clone.fadeOut(200, _stop);
+        }
+
+        if (this.options.animateTarget) {
+          this.$clone.animate(this._getStopPosition(), parseInt(this.options.animationLength), _stop);
         } else {
-          if (this.options.animateTarget) {
-            this.$clone.animate(this._getStopPosition(), parseInt(this.options.animationLength), _stop);
-          } else {
-            _stop();
-          }
+          _stop();
         }
 
         _.each(this.options.dropTargetViews, function(view) {
@@ -176,7 +178,9 @@ define(function(require) {
       }
 
       function _stop() {
+        that.$placeholder.remove();
         that.$clone.remove();
+        that.$el.show();
         that.$clone = null;
         if (that.options.hideDraggable) {
           this.getDraggableElement().show();
@@ -188,6 +192,24 @@ define(function(require) {
 
     getDraggableElement: function() {
       return this.$el;
+    },
+
+    /**
+     * Returns whether an element is touching an x/y coordinate.
+     *
+     * @param {number} x The coordinate's X position.
+     * @param {number} y The coordinate's Y position.
+     * @param {object} elem Either an actual element or a jQuery collection.
+     * @return boolean
+     */
+    hitTest: function(x, y, elem) {
+      var $el = $(elem);
+      var offset = $el.offset();
+      var x1 = offset.left;
+      var y1 = offset.top;
+      var x2 = x1 + $el.outerWidth(true);
+      var y2 = y1 + $el.outerHeight(true);
+      return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
     },
 
     _initStart: function(event) {
@@ -219,6 +241,7 @@ define(function(require) {
         opacity: this.options.opacity
       });
       this.$el.parent().append(this.$clone);
+      this.$el.hide();
     },
 
     _updateClonePosition: function(event) {
@@ -226,6 +249,18 @@ define(function(require) {
         my: 'left-' + this.mouseStartRelativeToElement.x + ' top-' + this.mouseStartRelativeToElement.y,
         of: event
       });
+    },
+
+    _initPlaceholder: function() {
+      this.$placeholder = this.$el.clone()
+        .html('')
+        .addClass('placeholder')
+        .css({
+          display: 'block',
+          height: this.$el.innerHeight()
+        });
+      this.afterInitPlaceholder(this.$placeholder);
+      this.$el.before(this.$placeholder);
     },
 
     _getStartPosition: function() {
@@ -237,8 +272,8 @@ define(function(require) {
 
     _getStopPosition: function() {
       return {
-        top: this.$el.offset().top - this.$win.scrollTop(),
-        left: this.$el.offset().left - this.$el.css('marginLeft').split('px')[0]
+        top: this.$placeholder.offset().top - this.$win.scrollTop(),
+        left: this.$placeholder.offset().left - this.$placeholder.css('marginLeft').split('px')[0]
       };
     },
 
@@ -268,6 +303,10 @@ define(function(require) {
           $doc.scrollLeft($doc.scrollLeft() + this.options.scrollSpeed);
         }
       }
+    },
+
+    afterInitPlaceholder: function($placeholder){
+      // Implement this in your child view to modify the placeholder.
     }
 
   };

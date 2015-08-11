@@ -235,7 +235,7 @@
 }
 .page-builder .ca-content {
   padding-top: 10px;
-  min-height: 90px;
+  min-height: 92px;
   background-color: #fcfcfc;
 }
 .page-builder .ca-content > .module {
@@ -287,6 +287,11 @@
 .page-builder [data-type="row"] .row-actions li .row-sort {
   cursor: move;
 }
+.page-builder [data-type="row"].placeholder {
+  padding: 0;
+  margin: 0 10px 10px;
+  border: 1px dashed #909090;
+}
 .page-builder [data-type="cell"] {
   padding: 0 5px;
   position: relative;
@@ -322,6 +327,7 @@
 }
 .page-builder .module {
   margin-bottom: 10px;
+  padding: 5px 10px 4px;
   background-color: #fbfbfb;
   border: 1px solid #aeb0b0;
   cursor: move;
@@ -336,12 +342,12 @@
 .page-builder .module:hover .module-actions {
   display: block;
 }
-.page-builder .module:last-child {
-  margin-bottom: 0;
+.page-builder .module.placeholder {
+  background-color: transparent;
+  border-style: dashed;
 }
 .page-builder .module-title {
   position: relative;
-  padding: 5px 5px 0;
   margin-bottom: 2px;
 }
 .page-builder .module-title h6 {
@@ -349,6 +355,9 @@
   font-size: 13px;
   font-family: 'open_sans_webfont_semibold', sans-serif;
   font-weight: 400;
+  height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .page-builder .module-title .module-actions {
   display: none;
@@ -375,10 +384,9 @@
 }
 .page-builder .module-description {
   display: block;
-  padding: 0 5px 5px;
   font-size: 11px;
   overflow: hidden;
-  height: 20px;
+  height: 17px;
   white-space: nowrap;
 }
 .page-builder .add-row {

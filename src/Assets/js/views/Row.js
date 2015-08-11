@@ -6,6 +6,8 @@ define(function(require) {
   var Handlebars = require('handlebars');
 
   var RowView = BaseContentView.extend({
+    viewType: 'Row',
+
     template: Handlebars.compile($('#pb-row').html()),
 
     events: {
@@ -20,7 +22,13 @@ define(function(require) {
 
     afterRender: function() {
       this.$dragHandle = this.$('.row-actions').find('.row-sort');
-      this.initializeDraggable({});
+      this.initializeDraggable({
+        dropTargetViews: this.pageBuilder.droppableViews
+      });
+    },
+
+    afterInitPlaceholder: function($placeholder) {
+      $placeholder.css('minHeight', $placeholder.css('height').split('px')[0] - this.$el.css('marginBottom').split('px')[0] + 1);
     }
   });
 

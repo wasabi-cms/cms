@@ -12,7 +12,7 @@ define(function(require) {
     /**
      * The main template of the page builder.
      */
-    template: Handlebars.compile($('#pb-page-builder').html()),
+    template: '',
 
     /**
      * Holds all dialogs of the page builder.
@@ -38,6 +38,8 @@ define(function(require) {
      * Holds the content container of the page builder.
      */
     $contentContainer: {},
+
+    droppableViews: [],
 
     /**
      * The content element view classes used to render all content elements.
@@ -69,6 +71,10 @@ define(function(require) {
      * Initialize the Page Builder
      */
     initialize: function(options) {
+      var $tpl = $('#pb-page-builder');
+      if ($tpl.length > 0) {
+        this.template = Handlebars.compile($tpl.html());
+      }
       // create all dialog boxes that the page builder uses
       this.dialogs = {
         module: null,
@@ -92,6 +98,7 @@ define(function(require) {
     render: function() {
       this.$el.html(this.template());
       this.$el.addClass('page-builder');
+      this.$el.attr('data-page-builder', this.cid);
       this.$contentContainer = this.$('.page-builder-content');
       this.eventBus.trigger('pb-page-builder-rendered', this);
       return this;

@@ -7,6 +7,8 @@ define(function(require) {
   var Handlebars = require('handlebars');
 
   var ModuleView = BaseContentView.extend({
+    viewType: 'Module',
+
     template: Handlebars.compile($('#pb-module').html()),
 
     events: {
@@ -27,6 +29,10 @@ define(function(require) {
     afterRender: function() {
       this.$dragHandle = this.$el;
       this.initializeDraggable({});
+    },
+
+    afterInitPlaceholder: function($placeholder) {
+      $placeholder.css('height', parseInt($placeholder.css('height').split('px')[0]) + 2);
     }
   });
 
