@@ -1,7 +1,7 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var GridModel = require('wasabi.cms.package/models/grid');
+  var GridModel = require('wasabi.cms.package/models/Grid');
 
   var MetaModel = Backbone.Model.extend({
 
