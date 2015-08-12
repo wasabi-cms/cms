@@ -14,8 +14,7 @@ define(function(require) {
      * Default attributes for instances of this model.
      */
     defaults: {
-      type: '',
-      grid: {}
+      type: ''
     },
 
     /**
