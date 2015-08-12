@@ -1,5 +1,7 @@
 define(function(require) {
+
   var $ = require('jquery');
+  var _ = require('underscore');
   var WS = require('wasabi');
   var Routes = require('wasabi.cms.package/views/Routes');
   var PageBuilder = require('wasabi.cms.package/models/PageBuilder');
@@ -42,7 +44,9 @@ define(function(require) {
     /**
      * Initialize the wasabi.cms module.
      */
-    initialize: function() {
+    initialize: function(options) {
+      _.extend(this, options);
+
       WS.Cms = {
         collections: {},
         models: {},

@@ -11,6 +11,25 @@
 
 use Cake\Core\Configure;
 
+$this->set('jsCmsOptions', [
+    'translations' => [
+        'dialog' => [
+            'addRow' => [
+                'title' => __d('wasabi_cms', 'Add Row'),
+                'primaryAction' => __d('wasabi_cms', 'Add Row')
+            ],
+            'editRow' => [
+                'title' => __d('wasabi_cms', 'Edit Row'),
+                'primaryAction' => __d('wasabi_cms', 'Save')
+            ],
+            'addModule' => [
+                'title' => __d('wasabi_cms', 'Add Module'),
+                'primaryAction' => __d('wasabi_cms', 'Add Module')
+            ]
+        ]
+    ]
+]);
+
 if ($this->request->params['action'] == 'add') {
     $this->Html->setTitle(__d('wasabi_cms', 'Add a new Page') . '<span class="lang">' . Configure::read('contentLanguage')->iso2 . '</span>');
 } else {

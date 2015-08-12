@@ -1,5 +1,7 @@
 define(function(require) {
 
+  var WS = require('wasabi');
+
   var DroppableMixin = {
 
     /**
@@ -60,6 +62,10 @@ define(function(require) {
         case 'after':
           $intersectedItem.after(draggable.$placeholder);
           break;
+      }
+
+      if (draggable.viewType === 'Module') {
+        WS.eventBus.trigger('placeholder-moved');
       }
     },
 

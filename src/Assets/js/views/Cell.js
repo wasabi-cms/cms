@@ -36,6 +36,8 @@ define(function(require) {
       this.pageBuilder.droppableViews.push(this);
 
       this.model.on('change:selected', this.onChangeSelectedState, this);
+      this.model.modules.on('add', this.parent.syncCellHeight, this.parent);
+      this.model.modules.on('remove', this.parent.syncCellHeight, this.parent);
     },
 
     /**

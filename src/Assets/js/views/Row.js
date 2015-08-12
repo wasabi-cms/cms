@@ -1,5 +1,6 @@
 define(function(require) {
 
+  var $ = require('jquery');
   var BaseContentView = require('wasabi.cms.package/views/BaseContent');
   var Cocktail = require('cocktail');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
@@ -17,10 +18,10 @@ define(function(require) {
     templateSelector: '#pb-row',
 
     /**
-     * DOM events handled by this view.
+     * Global events (WS.eventBus) handled by this view.
      */
-    events: {
-
+    globalEvents: {
+      'placeholder-moved': 'syncCellHeight'
     },
 
     /**
@@ -67,6 +68,13 @@ define(function(require) {
      */
     getPlaceholderWidth: function() {
       return this.$placeholder.outerWidth() + 20;
+    },
+
+    syncCellHeight: function(event) {
+      var maxHeight = 0;
+      this.$contentContainer.find('.cell-wrapper').css('minHeight', '').each(function(i, c) {
+        maxHeight = Math.max(maxHeight, $(c).outerHeight());
+      }).css('minHeight', maxHeight);
     }
 
   });

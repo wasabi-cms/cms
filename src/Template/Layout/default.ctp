@@ -17,7 +17,7 @@ $this->start('requirejs'); ?>
                     'wasabi.cms.package': '../../wasabi_cms/js'
                 }
             });
-            WS.registerModule('wasabi.cms', {});
+            WS.registerModule('wasabi.cms', <?= json_encode($this->get('jsCmsOptions', [])) ?>);
 <?php
 $this->end();
 

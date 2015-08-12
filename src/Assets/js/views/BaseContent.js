@@ -1,6 +1,7 @@
 define(function(require) {
 
   var $ = require('jquery');
+  var WS = require('wasabi');
   var Handlebars = require('handlebars');
   var BaseView = require('common/BaseView');
 
@@ -60,7 +61,7 @@ define(function(require) {
       if (this.iterateOver) {
         this.iterateOver.each(_.bind(function(model) {
           var viewClass = this.pageBuilder.getViewClass(model.modelName);
-          var viewInstance = new viewClass({
+          var viewInstance = WS.createView(viewClass, {
             pageBuilder: this.pageBuilder,
             parent: this,
             model: model

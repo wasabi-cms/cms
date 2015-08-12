@@ -2,8 +2,11 @@ define(function(require) {
 
   var $ = require('jquery');
   var _ = require('underscore');
+  var WS = require('wasabi');
   var Handlebars = require('handlebars');
   var BaseView = require('common/BaseView');
+  var AddRowDialogView = require('wasabi.cms.package/views/AddRowDialog');
+  var AddModuleDialogView = require('wasabi.cms.package/views/AddModuleDialog');
 
   /**
    * This is the main view of the Page Builder interface.
@@ -71,11 +74,9 @@ define(function(require) {
 
       // create all dialog boxes that the page builder uses
       this.dialogs = {
-        module: null,
-        row: null
+        module: WS.createView(AddModuleDialogView),
+        row: WS.createView(AddRowDialogView)
       };
-
-      // set row dialog type to 'create'
 
       // Handle a new content element being added to the collection to display it in the interface.
       this.model.content.on('add', this.onAddContent, this);
@@ -151,12 +152,14 @@ define(function(require) {
       return this;
     },
 
-    showAddWidgetDialog: function() {
-
+    showAddModuleDialog: function() {
+      this.dialogs.module.render();
     },
 
     showAddRowDialog: function() {
-
+      this.dialogs.row
+        .setType('add')
+        .render();
     },
 
     /**
@@ -194,7 +197,7 @@ define(function(require) {
       var contentViewClass = this.getViewClass(contentModel.modelName);
 
       // Instantiate a new view for the provided model
-      var contentView = new contentViewClass({
+      var contentView = WS.createView(contentViewClass, {
         model: contentModel,
         pageBuilder: this,
         parent: this
