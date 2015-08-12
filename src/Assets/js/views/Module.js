@@ -1,11 +1,9 @@
 define(function(require) {
 
-  var $ = require('jquery');
   var _ = require('underscore');
   var Cocktail = require('cocktail');
   var BaseContentView = require('wasabi.cms.package/views/BaseContent');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
-  var Handlebars = require('handlebars');
 
   var ModuleView = BaseContentView.extend({
 
