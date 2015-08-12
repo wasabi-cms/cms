@@ -13,7 +13,7 @@ define(function(require) {
 
       this.set('meta', new MetaModel(this.get('meta')), {silent: true});
       var data = this.get('data');
-      if (data.length) {
+      if (typeof data !== 'undefined' && data.length) {
         _.each(data, _.bind(function(contentElement, i) {
           this.addContentElement(contentElement, {skipAnimation: true});
         }, this))
