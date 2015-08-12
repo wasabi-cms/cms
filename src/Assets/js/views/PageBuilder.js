@@ -74,8 +74,12 @@ define(function(require) {
 
       // create all dialog boxes that the page builder uses
       this.dialogs = {
-        module: WS.createView(AddModuleDialogView),
-        row: WS.createView(AddRowDialogView)
+        module: WS.createView(AddModuleDialogView, {
+          pageBuilder: this
+        }),
+        row: WS.createView(AddRowDialogView, {
+          pageBuilder: this
+        })
       };
 
       // Handle a new content element being added to the collection to display it in the interface.

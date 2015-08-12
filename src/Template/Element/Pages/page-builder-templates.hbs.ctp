@@ -66,3 +66,25 @@
         <span class="module-description">{{description}}</span>
     </div>
 </script>
+
+<script id="pb-row-editor" type="text/x-handlebars-template">
+    <div class="row-editor" data-type="row">
+        <div class="cells row">
+
+        </div>
+    </div>
+</script>
+
+<script id="pb-cell-editor" type="text/x-handlebars-template">
+    <div class="grid-{{grid.colWidth}}-{{grid.baseWidth}}" data-type="cell">
+        <div class="resize-handle" title="<?= __d('wasabi_cms', 'Resize') ?>"></div>
+        <div class="cell-wrapper">
+            <nav class="cell-actions">
+                <ul>
+                    <li><a href="javascript:void(0)" class="cell-remove" title="<?= __d('wasabi_cms', 'Remove') ?>"><i class="icon-close"></i></a></li>
+                </ul>
+            </nav>
+            <span class="cell-width">{{{cellWidth}}}</span>
+        </div>
+    </div>
+</script>
