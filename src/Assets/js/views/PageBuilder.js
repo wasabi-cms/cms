@@ -2,8 +2,8 @@ define(function(require) {
 
   var $ = require('jquery');
   var _ = require('underscore');
-  var BaseView = require('common/BaseView');
   var Handlebars = require('handlebars');
+  var BaseView = require('common/BaseView');
 
   /**
    * This is the main view of the Page Builder interface.
@@ -12,7 +12,7 @@ define(function(require) {
     /**
      * The main template of the page builder.
      */
-    template: '',
+    templateSelector: '#pb-page-builder',
 
     /**
      * Holds all dialogs of the page builder.
@@ -67,10 +67,8 @@ define(function(require) {
      * Initialize the Page Builder
      */
     initialize: function(options) {
-      var $tpl = $('#pb-page-builder');
-      if ($tpl.length > 0) {
-        this.template = Handlebars.compile($tpl.html());
-      }
+      this.template = Handlebars.compile($(this.templateSelector).html());
+
       // create all dialog boxes that the page builder uses
       this.dialogs = {
         module: null,

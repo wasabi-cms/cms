@@ -1,5 +1,6 @@
 define(function(require) {
 
+  var $ = require('jquery');
   var BaseContentView = require('wasabi.cms.package/views/BaseContent');
   var Cocktail = require('cocktail');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
@@ -15,7 +16,7 @@ define(function(require) {
     /**
      * The template used to render the Row view.
      */
-    template: Handlebars.compile($('#pb-row').html()),
+    templateSelector: '#pb-row',
 
     /**
      * DOM events handled by this view.

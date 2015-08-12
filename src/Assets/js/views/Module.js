@@ -1,5 +1,6 @@
 define(function(require) {
 
+  var $ = require('jquery');
   var _ = require('underscore');
   var Cocktail = require('cocktail');
   var BaseContentView = require('wasabi.cms.package/views/BaseContent');
@@ -16,7 +17,7 @@ define(function(require) {
     /**
      * The template used to render the Cell view.
      */
-    template: Handlebars.compile($('#pb-module').html()),
+    templateSelector: '#pb-module',
 
     /**
      * DOM events handled by this view.

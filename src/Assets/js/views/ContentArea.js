@@ -1,5 +1,6 @@
 define(function(require) {
 
+  var $ = require('jquery');
   var BaseContentView = require('wasabi.cms.package/views/BaseContent');
   var Cocktail = require('cocktail');
   var DroppableMixin = require('wasabi.cms.package/views/DroppableMixin');
@@ -13,9 +14,9 @@ define(function(require) {
     viewType: 'ContentArea',
 
     /**
-     * The template used to render the ContentArea view.
+     * The template view.
      */
-    template: Handlebars.compile($('#pb-content-area').html()),
+    templateSelector: '#pb-content-area',
 
     /**
      * Holds a reference to the .content-area div.

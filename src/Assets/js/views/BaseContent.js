@@ -1,5 +1,7 @@
 define(function(require) {
 
+  var $ = require('jquery');
+  var Handlebars = require('handlebars');
   var BaseView = require('common/BaseView');
 
   var BaseContentView = BaseView.extend({
@@ -38,6 +40,7 @@ define(function(require) {
     initialize: function(options) {
       this.pageBuilder = options.pageBuilder;
       this.parent = options.parent;
+      this.template = Handlebars.compile($(this.templateSelector).html());
     },
 
     /**
