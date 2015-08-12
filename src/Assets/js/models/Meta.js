@@ -4,8 +4,15 @@ define(function(require) {
   var GridModel = require('wasabi.cms.package/models/grid');
 
   var MetaModel = Backbone.Model.extend({
+
+    /**
+     * The name of this model.
+     */
     modelName: 'Meta',
 
+    /**
+     * Default attributes for instances of this model.
+     */
     defaults: {
       type: '',
       grid: {}
@@ -15,6 +22,7 @@ define(function(require) {
      * Initialize the meta model used by all other page builder models.
      *
      * @param {Object} attributes
+     * @param {Object} options
      * @returns {MetaModel}
      */
     initialize: function(attributes, options) {
@@ -29,6 +37,7 @@ define(function(require) {
 
       return this;
     }
+
   });
 
   return MetaModel;

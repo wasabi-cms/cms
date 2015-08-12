@@ -1,6 +1,6 @@
 define(function(require) {
 
-  var Backbone = require('backbone');
+  var BaseCollection = require('wasabi.cms.package/collections/BaseCollection');
 
   /**
    * The Content collection can hold the content models
@@ -8,7 +8,7 @@ define(function(require) {
    *
    * Each of these models extend the base model Content.
    */
-  return Backbone.Collection.extend({
+  return BaseCollection.extend({
     collectionType: 'ContentCollection'
   });
 

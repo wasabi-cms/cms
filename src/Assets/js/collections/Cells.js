@@ -1,9 +1,9 @@
 define(function(require) {
 
-  var Backbone = require('backbone');
+  var BaseCollection = require('wasabi.cms.package/collections/BaseCollection');
   var Cell = require('wasabi.cms.package/models/Cell');
 
-  var CellsCollection = Backbone.Collection.extend({
+  var CellsCollection = BaseCollection.extend({
     collectionType: 'CellsCollection',
     model: Cell
   });

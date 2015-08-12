@@ -41,6 +41,28 @@ define(function(require) {
 
     getCollection: function() {
       return Backbone.Collection.extend({});
+    },
+
+    /**
+     * Get all data for the current model instance.
+     *
+     * @returns {{meta: *, data: Array}}
+     */
+    getData: function() {
+      var data = [];
+      var collection = this.getCollection();
+      if (typeof collection !== 'function' && collection.models.length > 0) {
+        // If the current model has a collection of other content models, then retrieve
+        // their data.
+        data = collection.getData();
+      } else {
+        // Else return the data attribute of this model.
+        data = this.get('data');
+      }
+      return {
+        meta: this.get('meta').toJSON(),
+        data: data
+      }
     }
 
   });

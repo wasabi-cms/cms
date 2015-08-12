@@ -16,7 +16,6 @@ define(function(require) {
     scrollSpeed: 20,
     animateTarget: true,
     animationLength: 300,
-    hideDraggable: false,
     dropTargetViews: null
   };
 
@@ -76,6 +75,11 @@ define(function(require) {
      */
     activeDropTargetView: null,
 
+    /**
+     * This fn should be called by child views to initialize the drag behavior.
+     *
+     * @param options
+     */
     initializeDraggable: function(options) {
       this.options = $.extend(defaults, {}, options);
       this.model.view = this;
@@ -84,6 +88,11 @@ define(function(require) {
       this.$win = $(window);
     },
 
+    /**
+     * Handle mouse down event.
+     *
+     * @param {Event} event
+     */
     onMouseDown: function(event) {
       if (event.currentTarget !== this.$dragHandle[0]) {
         return;
@@ -94,13 +103,15 @@ define(function(require) {
       this.$doc.on('mouseup', _.bind(this.onMouseUp, this));
     },
 
+    /**
+     * Handle mouse movement.
+     *
+     * @param {Event} event
+     */
     onMouseMove: function(event) {
       if (!this.isDragging) {
         this._initClone();
         this._initPlaceholder();
-        if (this.options.hideDraggable) {
-          this.getDraggableElement().hide();
-        }
         this.$scrollParent = this.$clone.scrollParent();
         this.isDragging = true;
       }
@@ -140,20 +151,20 @@ define(function(require) {
         }
       }
 
-      _.each(this.options.dropTargetViews, function(view) {
-        view.$el.trigger('drag-out');
-      });
-
-      if (this.activeDropTargetView !== null) {
-        console.log(this.activeDropTargetView.viewType, this.activeDropTargetView.canDrop(this));
-        if (this.activeDropTargetView.canDrop(this) === true) {
-          this.activeDropTargetView.$el.trigger('drag-over', [event, this]);
-        } else {
-          this.activeDropTargetView.$el.trigger('drag-over-forbidden');
-        }
+      if (
+        this.activeDropTargetView !== null &&
+        this.activeDropTargetView.canDrop(this) === true &&
+        typeof this.activeDropTargetView.dragOver === 'function'
+      ) {
+        this.activeDropTargetView.dragOver(event, this);
       }
     },
 
+    /**
+     * Handle release of the mouse button.
+     *
+     * @param {Event} event
+     */
     onMouseUp: function(event) {
       event.preventDefault();
       var that = this;
@@ -162,7 +173,10 @@ define(function(require) {
       if (this.isDragging) {
 
         if (this.activeDropTargetView !== null && this.activeDropTargetView.canDrop(this)) {
-          this.activeDropTargetView.$el.trigger('dropped', [this]);
+          this.$placeholder.before(this.$el);
+          if (typeof this.activeDropTargetView.drop === 'function') {
+            this.activeDropTargetView.drop(this);
+          }
           this.activeDropTargetView = null;
         }
 
@@ -171,13 +185,10 @@ define(function(require) {
         } else {
           _stop();
         }
-
-        _.each(this.options.dropTargetViews, function(view) {
-          view.$el.trigger('drag-out');
-        });
       }
 
       function _stop() {
+        that.$el.css('width', '');
         that.$placeholder.remove();
         that.$clone.remove();
         that.$el.show();
@@ -188,10 +199,6 @@ define(function(require) {
         that.$scrollParent = null;
         that.isDragging = false;
       }
-    },
-
-    getDraggableElement: function() {
-      return this.$el;
     },
 
     /**
@@ -212,6 +219,12 @@ define(function(require) {
       return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
     },
 
+    /**
+     * Initialize all relevant positions whenenver a drag is started.
+     *
+     * @param {Event} event
+     * @private
+     */
     _initStart: function(event) {
       this.position = this.$el.position();
       this.startMouse = {
@@ -229,6 +242,11 @@ define(function(require) {
       this.startPosition = this._getStartPosition();
     },
 
+    /**
+     * Initialize a clone of the dragged element.
+     *
+     * @private
+     */
     _initClone: function() {
       this.$clone = this.$el.clone();
       this.$clone.addClass('dragging');
@@ -244,6 +262,12 @@ define(function(require) {
       this.$el.hide();
     },
 
+    /**
+     * Update the visual position of the clone.
+     *
+     * @param {Event} event
+     * @private
+     */
     _updateClonePosition: function(event) {
       this.$clone.position({
         my: 'left-' + this.mouseStartRelativeToElement.x + ' top-' + this.mouseStartRelativeToElement.y,
@@ -251,6 +275,11 @@ define(function(require) {
       });
     },
 
+    /**
+     * Initialize a placeholder element.
+     *
+     * @private
+     */
     _initPlaceholder: function() {
       this.$placeholder = this.$el.clone()
         .html('')
@@ -263,6 +292,12 @@ define(function(require) {
       this.$el.before(this.$placeholder);
     },
 
+    /**
+     * Get the start position of the drag.
+     *
+     * @returns {{x: *, y: *}}
+     * @private
+     */
     _getStartPosition: function() {
       return {
         x: this.offset.x,
@@ -270,13 +305,26 @@ define(function(require) {
       };
     },
 
+    /**
+     * Get the stop position that the draggable element is animated to.
+     *
+     * @returns {{top: number, left: number, width: (*|Number)}}
+     * @private
+     */
     _getStopPosition: function() {
       return {
         top: this.$placeholder.offset().top - this.$win.scrollTop(),
-        left: this.$placeholder.offset().left - this.$placeholder.css('marginLeft').split('px')[0]
+        left: this.$placeholder.offset().left - this.$placeholder.css('marginLeft').split('px')[0],
+        width: this.getPlaceholderWidth()
       };
     },
 
+    /**
+     * Scroll the window or parent whenever the drag leaves the visible page area.
+     *
+     * @param {Event} event
+     * @private
+     */
     _scroll: function(event) {
       var sParent = this.$scrollParent[0], overflowOffset = this.$scrollParent.offset();
       if (sParent != this.$doc[0] && sParent.tagName != 'HTML') {
@@ -305,6 +353,11 @@ define(function(require) {
       }
     },
 
+    /**
+     * afterInitPlaceholder callback
+     *
+     * @param $placeholder
+     */
     afterInitPlaceholder: function($placeholder){
       // Implement this in your child view to modify the placeholder.
     }

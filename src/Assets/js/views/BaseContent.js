@@ -43,7 +43,6 @@ define(function(require) {
     /**
      * Render the base content view.
      *
-     *
      * @returns {BaseContentView}
      */
     render: function() {
@@ -72,6 +71,10 @@ define(function(require) {
       return this;
     },
 
+    /**
+     * afterRender callback
+     * Should be implemented by Child views.
+     */
     afterRender: function() {
       return this;
     },
@@ -79,12 +82,11 @@ define(function(require) {
     /**
      * Should be implemented by the child view
      * and return all data needed to render the template.
-     *
-     * @returns {{}}
      */
     getTemplateData: function() {
       return {}
     }
+
   });
 
   return BaseContentView;

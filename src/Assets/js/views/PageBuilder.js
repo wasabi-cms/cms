@@ -39,6 +39,10 @@ define(function(require) {
      */
     $contentContainer: {},
 
+    /**
+     * Holds all droppable views.
+     * These are used for hit tests against draggable views.
+     */
     droppableViews: [],
 
     /**
@@ -52,19 +56,11 @@ define(function(require) {
     },
 
     /**
-     * All DOM events the page builder handles.
+     * DOM events handled by this view..
      */
     events: {
       'click [data-add="module"]': 'showAddModuleDialog',
       'click [data-add="row"]': 'showAddRowDialog'
-    },
-
-    /**
-     * All global events the page builder handles (triggered through WS.eventBus).
-     */
-    globalEvents: {
-      'pb-content-change': 'handleContentChange',
-      'pb-display-builder': 'handleDisplayBuilder'
     },
 
     /**
@@ -87,7 +83,7 @@ define(function(require) {
       this.model.content.on('add', this.onAddContent, this);
 
       // Store the model data in the hidden field whenever it changes.
-      //this.model.on('change:data', this.storeModelData, this);
+      this.model.on('change:data', this.updateHiddenDataField, this);
     },
 
     /**
@@ -184,18 +180,29 @@ define(function(require) {
       }
     },
 
+    /**
+     * Called whenever a new content model is added to the content collection.
+     *
+     * @param contentModel
+     * @param collection
+     * @param options
+     */
     onAddContent: function(contentModel, collection, options) {
       options = _.extend({
         skipAnimation: false
       }, options);
 
       /** @var {ContentAreaView|RowView|CellView|ModuleView} contentViewClass */
-      var contentViewClass = this.contentViewClasses[contentModel.modelName];
+      var contentViewClass = this.getViewClass(contentModel.modelName);
+
+      // Instantiate a new view for the provided model
       var contentView = new contentViewClass({
         model: contentModel,
         pageBuilder: this,
         parent: this
       });
+
+      // and render it.
       contentView.render();
 
       // Attach the content to the page builder DOM.
@@ -210,20 +217,25 @@ define(function(require) {
       }
     },
 
+    /**
+     * Get the corresponding view class for the
+     * provided modelName.
+     *
+     * @param modelName
+     * @returns {*}
+     */
     getViewClass: function(modelName) {
       return this.contentViewClasses[modelName];
     },
 
-    storeModelData: function() {
-
-    },
-
-    handleContentChange: function() {
-
-    },
-
-    handleDisplayBuilder: function() {
-
+    /**
+     * Update the value of the hidden data field.
+     *
+     * @param model
+     * @param {Object} data
+     */
+    updateHiddenDataField: function(model, data) {
+      this.$hiddenDataField.val(JSON.stringify(data));
     }
 
   });

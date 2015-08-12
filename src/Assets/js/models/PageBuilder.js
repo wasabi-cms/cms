@@ -4,7 +4,8 @@ define(function(require) {
   var Backbone = require('backbone');
   var ContentCollection = require('wasabi.cms.package/collections/Content');
 
-  return Backbone.Model.extend({
+  var PageBuilderModel = Backbone.Model.extend({
+
     /**
      * The name of this model.
      */
@@ -27,10 +28,13 @@ define(function(require) {
 
     /**
      * Initialize the page builder model.
+     *
+     * @returns {PageBuilderModel}
      */
     initialize: function() {
       // Collection that holds content areas or rows.
       this.content = new ContentCollection();
+      return this;
     },
 
     /**
@@ -87,7 +91,20 @@ define(function(require) {
     emptyOut: function() {
       _.invoke(this.content.toArray(), 'destroy');
       this.content.reset();
+    },
+
+    /**
+     * Rebuild the data for all content within the page builder instance.
+     */
+    rebuildContentField: function() {
+      var data = [];
+      this.content.each(function(contentModel) {
+        data.push(contentModel.getData());
+      });
+      this.set('data', data);
     }
   });
+
+  return PageBuilderModel;
 
 });

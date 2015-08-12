@@ -1,10 +1,17 @@
 define(function(require) {
 
   var BaseContentView = require('wasabi.cms.package/views/BaseContent');
+  var Cocktail = require('cocktail');
+  var DroppableMixin = require('wasabi.cms.package/views/DroppableMixin');
   var Handlebars = require('handlebars');
 
   var ContentAreaView = BaseContentView.extend({
+
+    /**
+     * The view type of this view.
+     */
     viewType: 'ContentArea',
+
     /**
      * The template used to render the ContentArea view.
      */
@@ -16,10 +23,9 @@ define(function(require) {
     $contentArea: {},
 
     /**
-     * Registered DOM events of the ContentArea view.
+     * DOM events handled by this view.
      */
     events: {
-      'drag-over': 'onDragOver',
       'click .ca-content': 'selectContentArea'
     },
 
@@ -38,6 +44,12 @@ define(function(require) {
       this.model.on('change:selected', this.onChangeSelectedState, this);
     },
 
+    /**
+     * Construct and return a json object that is passed to the template
+     * for rendering.
+     *
+     * @returns {{contentAreaId: *, name: *, grid: *}}
+     */
     getTemplateData: function() {
       return {
         contentAreaId: this.model.get('meta').get('contentAreaId'),
@@ -46,6 +58,9 @@ define(function(require) {
       }
     },
 
+    /**
+     * afterRender callback
+     */
     afterRender: function() {
       this.$contentArea = this.$('.content-area');
     },
@@ -75,61 +90,24 @@ define(function(require) {
       this.$contentArea.toggleClass('content-area--selected', value);
     },
 
+    /**
+     * canDrop callback
+     * Called whenever a draggable view is moved over this view.
+     * Return true to allow dropping of the draggable, false otherwise.
+     *
+     * @param draggable
+     * @returns {boolean}
+     */
     canDrop: function(draggable) {
       if (typeof draggable.viewType === 'undefined') {
         return false;
       }
-      return draggable.viewType === 'Row';
-    },
-
-    onDragOver: function(event, originalEvent, draggable) {
-      // when the draggable intersects the placeholder to nothing
-      if (draggable.hitTest(originalEvent.pageX, originalEvent.pageY, draggable.$placeholder)) {
-        return;
-      }
-
-      // get all items of this view
-      var $items = this.$contentContainer.find('> div').filter(function(index, item) {
-        var $item = $(item);
-        return (
-          !$item.hasClass('placeholder') &&
-          !$item.hasClass('dragging') &&
-          $item.css('display') !== 'none'
-        );
-      });
-      var $intersectedItem = null;
-      var action = 'append';
-
-      $items.each(function() {
-        var min = $(this).offset().top - draggable.$win.scrollTop();
-        var max = min + $(this).outerHeight();
-        var currentY = originalEvent.pageY - draggable.$win.scrollTop();
-        var middle = parseInt((min + max) / 2);
-        if (currentY <= middle) {
-          $intersectedItem = $(this);
-          action = 'before';
-          return false;
-        }
-        if (currentY > middle) {
-          $intersectedItem = $(this);
-          action = 'after';
-          return false;
-        }
-      });
-
-      if ($intersectedItem === null && $items.length > 0) {
-        return;
-      }
-
-      if (action === 'append' && $items.length === 0) {
-        this.$contentContainer.append(draggable.$placeholder);
-      } else if (action === 'before') {
-        $intersectedItem.before(draggable.$placeholder);
-      } else {
-        $intersectedItem.after(draggable.$placeholder);
-      }
+      return (draggable.viewType === 'Row' || draggable.viewType === 'Module');
     }
+
   });
+
+  Cocktail.mixin(ContentAreaView, DroppableMixin);
 
   return ContentAreaView;
 });

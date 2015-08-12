@@ -4,11 +4,17 @@ define(function(require) {
   var ContentCollection = require('wasabi.cms.package/collections/Content');
 
   var ContentAreaModel = ContentModel.extend({
+
+    /**
+     * The name of this model.
+     */
     modelName: 'ContentArea',
 
     /**
      * Initialize the ContentArea model.
      *
+     * @param {Object} attributes
+     * @param {Object} options
      * @returns {ContentAreaModel}
      */
     initialize: function(attributes, options) {

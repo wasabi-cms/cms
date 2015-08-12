@@ -4,8 +4,19 @@ define(function(require) {
   var CellsCollection = require('wasabi.cms.package/collections/Cells');
 
   var RowModel = ContentModel.extend({
+
+    /**
+     * The name of this model.
+     */
     modelName: 'Row',
 
+    /**
+     * Initialize the Row model.
+     *
+     * @param {Object} attributes
+     * @param {Object} options
+     * @returns {RowModel}
+     */
     initialize: function(attributes, options) {
       // The content collection of this model.
       this.cells = new CellsCollection();

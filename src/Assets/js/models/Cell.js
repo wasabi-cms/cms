@@ -4,11 +4,17 @@ define(function(require) {
   var ModulesCollection = require('wasabi.cms.package/collections/Modules');
 
   var CellModel = ContentModel.extend({
+
+    /**
+     * The name of this model.
+     */
     modelName: 'Cell',
 
     /**
      * Initialize the Cell model.
      *
+     * @param {Object} attributes
+     * @param {Object} options
      * @returns {CellModel}
      */
     initialize: function(attributes, options) {
