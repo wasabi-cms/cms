@@ -70,6 +70,11 @@ define(function(require) {
       return this.$placeholder.outerWidth() + 20;
     },
 
+    /**
+     * Synchronize the height of all cells of this row.
+     *
+     * @param {Event} event
+     */
     syncCellHeight: function(event) {
       var maxHeight = 0;
       this.$contentContainer.find('.cell-wrapper').css('minHeight', '').each(function(i, c) {
