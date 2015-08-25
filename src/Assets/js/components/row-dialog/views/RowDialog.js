@@ -1,13 +1,22 @@
 define(function(require) {
 
+  var $ = require('jquery');
   var WS = require('wasabi');
   var DialogView = require('common/DialogView');
-  var RowEditorView = require('wasabi.cms.package/views/RowEditor');
-  var RowEditorModel = require('wasabi.cms.package/models/RowEditor');
+  var RowEditorView = require('wasabi.cms.package/components/row-dialog/views/RowEditor');
+  var RowEditorModel = require('wasabi.cms.package/components/row-dialog/models/RowEditor');
 
-  var AddRowDialog = DialogView.extend({
+  var RowDialog = DialogView.extend({
+
+    events: function() {
+      return _.extend(DialogView.prototype.events, {
+        'click button[type="submit"]': 'onSubmit'
+      });
+    },
 
     type: 'add',
+
+    rowEditorView: null,
 
     initialize: function(options) {
       this.pageBuilder = options.pageBuilder;
@@ -32,21 +41,33 @@ define(function(require) {
           {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []}
         ]
       });
-      var rowEditorView = WS.createView(RowEditorView, {
+      this.rowEditorView = WS.createView(RowEditorView, {
         pageBuilder: this.pageBuilder,
         dialog: this,
         model: rowEditorModel
       });
-      rowEditorView.render();
+      this.rowEditorView.render();
+      this.$content.html(this.rowEditorView.el);
     },
 
     setType: function(type) {
       this.type = type;
       return this;
+    },
+
+    onSubmit: function(event) {
+      var $btn = $(event.currentTarget);
+      if ($btn.attr('disabled') === 'disabled') {
+        return;
+      }
+      $btn.attr('disabled', 'disabled');
+      this.rowEditorView.model.set('data', this.rowEditorView.model.cells.toJSON());
+      console.log(this.rowEditorView.model.toJSON());
+      this.closeDialog();
     }
 
   });
 
-  return AddRowDialog;
+  return RowDialog;
 
 });

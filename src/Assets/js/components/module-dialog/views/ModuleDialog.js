@@ -3,7 +3,7 @@ define(function(require) {
   var WS = require('wasabi');
   var DialogView = require('common/DialogView');
 
-  var AddModuleDialogView = DialogView.extend({
+  var ModuleDialogView = DialogView.extend({
 
     initialize: function(options) {
       DialogView.prototype.initialize.call(this, options);
@@ -21,6 +21,6 @@ define(function(require) {
 
   });
 
-  return AddModuleDialogView;
+  return ModuleDialogView;
 
 });

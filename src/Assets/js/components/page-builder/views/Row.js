@@ -1,11 +1,11 @@
 define(function(require) {
 
   var $ = require('jquery');
-  var BaseContentView = require('wasabi.cms.package/views/BaseContent');
-  var Cocktail = require('cocktail');
+  var Marionette = require('marionette');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
+  var CellView = require('wasabi.cms.package/components/page-builder/views/Cell');
 
-  var RowView = BaseContentView.extend({
+  var RowView = Marionette.CompositeView.extend({
 
     /**
      * The view type of this view.
@@ -15,13 +15,14 @@ define(function(require) {
     /**
      * The template used to render the Row view.
      */
-    templateSelector: '#pb-row',
+    template: '#pb-row',
+    childViewContainer: '.cells',
+    childView: CellView,
 
-    /**
-     * Global events (WS.eventBus) handled by this view.
-     */
-    globalEvents: {
-      'placeholder-moved': 'syncCellHeight'
+    collectionEvents: {
+      'add': 'syncCellHeight',
+      'remove': 'syncCellHeight',
+      'change': 'syncCellHeight'
     },
 
     /**
@@ -30,21 +31,13 @@ define(function(require) {
      * @param {Object} options
      */
     initialize: function(options) {
-      this.iterateOver = this.model.cells;
-      this.contentContainer = '.cells';
-      BaseContentView.prototype.initialize.call(this, options);
+      this.collection = this.model.cells;
     },
 
-    /**
-     * afterRender callback
-     *
-     * Set the $dragHandle and make this view draggable.
-     */
-    afterRender: function() {
-      this.$dragHandle = this.$('.row-actions').find('.row-sort');
-      this.initializeDraggable({
-        dropTargetViews: this.pageBuilder.droppableViews
-      });
+    onRender: function() {
+      this.$el.attr('data-type', 'row');
+      this.$dragHandle = this.$('.row-sort');
+      this.initializeDraggable();
     },
 
     /**
@@ -77,14 +70,14 @@ define(function(require) {
      */
     syncCellHeight: function(event) {
       var maxHeight = 0;
-      this.$contentContainer.find('.cell-wrapper').css('minHeight', '').each(function(i, c) {
+      this.$childViewContainer.find('.cell-wrapper').css('minHeight', '').each(function(i, c) {
         maxHeight = Math.max(maxHeight, $(c).outerHeight());
       }).css('minHeight', maxHeight);
     }
 
   });
 
-  Cocktail.mixin(RowView, DraggableMixin);
+  RowView.prototype = $.extend(RowView.prototype, DraggableMixin);
 
   return RowView;
 });

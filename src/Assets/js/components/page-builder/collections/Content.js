@@ -1,0 +1,32 @@
+define(function(require) {
+
+  var Backbone = require('backbone');
+  var RowModel = require('wasabi.cms.package/components/page-builder/models/Row');
+  var ModuleModel = require('wasabi.cms.package/components/page-builder/models/Module');
+
+  /**
+   * The Content collection can hold the content models
+   * ContentArea, Row and Module.
+   *
+   * Each of these models extend the base model Content.
+   */
+  var ContentCollection = Backbone.Collection.extend({
+    collectionType: 'ContentCollection',
+
+    model: function(attributes, options) {
+      switch (attributes.meta.type) {
+        case 'Row':
+          return new RowModel(attributes, options);
+          break;
+        case 'Module':
+          return new ModuleModel(attributes, options);
+          break;
+        default:
+          return new Backbone.Model(attributes, options);
+      }
+    }
+  });
+
+  return ContentCollection;
+
+});

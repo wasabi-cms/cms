@@ -18,8 +18,12 @@ define(function(require) {
         return;
       }
 
+      if (!this.$childViewContainer) {
+        this.$childViewContainer = this.$(this.childViewContainer);
+      }
+
       // get all items of this view
-      var $items = this.$contentContainer.find('> div').filter(function(index, item) {
+      var $items = this.$childViewContainer.find('> div').filter(function(index, item) {
         var $item = $(item);
         return (
           !$item.hasClass('placeholder') &&
@@ -52,9 +56,11 @@ define(function(require) {
         action = 'append';
       }
 
+      var $placeholderParent = draggable.$placeholder.parent();
+
       switch (action) {
         case 'append':
-          this.$contentContainer.append(draggable.$placeholder);
+          this.$childViewContainer.append(draggable.$placeholder);
           break;
         case 'before':
           $intersectedItem.before(draggable.$placeholder);
@@ -64,9 +70,8 @@ define(function(require) {
           break;
       }
 
-      if (draggable.viewType === 'Module') {
-        WS.eventBus.trigger('placeholder-moved');
-      }
+      $placeholderParent.trigger('placeholder-moved');
+      draggable.$placeholder.parent().trigger('placeholder-moved');
     },
 
     /**
@@ -77,7 +82,7 @@ define(function(require) {
      */
     drop: function(draggable) {
       var at = draggable.$placeholder.index() - 1;
-      var targetCollection = this.model.getCollection();
+      var targetCollection = this.collection;
 
       // Check if the draggable position has really changed
       if (
@@ -89,14 +94,11 @@ define(function(require) {
 
       // If it has changed, then remove the model from its old collection and add it
       // to the new collection at the specified position.
-      draggable.model.parent.getCollection().remove(draggable.model);
-      targetCollection.add(draggable.model, {at: at});
-
-      // Update the paren to the new parent model.
-      draggable.model.parent = this.model;
+      draggable._parent.collection.remove(draggable.model, { silent: true });
+      targetCollection.add(draggable.model, {at: at, silent: true});
 
       // Force the pageBuilder to rebuild the value of the $contentField
-      draggable.model.pageBuilder.rebuildContentField();
+      WS.Cms.views.pageBuilder.model.rebuildContentData();
     }
 
   };

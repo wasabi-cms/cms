@@ -1,6 +1,7 @@
 define(function(require) {
 
   var $ = require('jquery');
+  var WS = require('wasabi');
   require('jquery.scrollParent');
   require('jquery.position');
 
@@ -15,8 +16,7 @@ define(function(require) {
     scrollSensitivity: 20,
     scrollSpeed: 20,
     animateTarget: true,
-    animationLength: 300,
-    dropTargetViews: null
+    animationLength: 300
   };
 
   var DraggableMixin = {
@@ -121,14 +121,16 @@ define(function(require) {
         this._scroll(event);
       }
 
-      if (this.options.dropTargetViews !== null) {
+      var dropTargetViews = WS.Cms.views.pageBuilder.droppableViews;
+
+      if (dropTargetViews !== null) {
         this.activeDropTargetView = null;
 
         // cells should have a bigger weight than content areas
-        var cells = _.filter(this.options.dropTargetViews, function(v) {
+        var cells = _.filter(dropTargetViews, function(v) {
           return v.viewType === 'Cell';
         });
-        var contentAreas = _.filter(this.options.dropTargetViews, function(v) {
+        var contentAreas = _.filter(dropTargetViews, function(v) {
           return v.viewType === 'ContentArea';
         });
 
@@ -351,15 +353,6 @@ define(function(require) {
           $doc.scrollLeft($doc.scrollLeft() + this.options.scrollSpeed);
         }
       }
-    },
-
-    /**
-     * afterInitPlaceholder callback
-     *
-     * @param $placeholder
-     */
-    afterInitPlaceholder: function($placeholder){
-      // Implement this in your child view to modify the placeholder.
     }
 
   };

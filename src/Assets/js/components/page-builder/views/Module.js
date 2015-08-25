@@ -1,11 +1,10 @@
 define(function(require) {
 
   var _ = require('underscore');
-  var Cocktail = require('cocktail');
-  var BaseContentView = require('wasabi.cms.package/views/BaseContent');
+  var Marionette = require('marionette');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
 
-  var ModuleView = BaseContentView.extend({
+  var ModuleView = Marionette.ItemView.extend({
 
     /**
      * The view type of this view.
@@ -15,22 +14,19 @@ define(function(require) {
     /**
      * The template used to render the Cell view.
      */
-    templateSelector: '#pb-module',
+    template: '#pb-module',
 
     /**
      * DOM events handled by this view.
      */
     events: {
-
+      'changedPosition': 'onChangedPosition'
     },
 
-    /**
-     * Initialize the Module view.
-     *
-     * @param {Object} options
-     */
-    initialize: function(options) {
-      BaseContentView.prototype.initialize.call(this, options);
+    onRender: function() {
+      this.$el.addClass('module');
+      this.$dragHandle = this.$el;
+      this.initializeDraggable();
     },
 
     /**
@@ -39,21 +35,11 @@ define(function(require) {
      *
      * @returns {{contentAreaId: *, name: *, grid: *}}
      */
-    getTemplateData: function() {
+    templateHelpers: function() {
       return {
         title: this.model.get('meta').get('title'),
         description: this.model.get('meta').get('description')
-      };
-    },
-
-    /**
-     * afterRender callback
-     *
-     * Set the $dragHandle and make this view draggable.
-     */
-    afterRender: function() {
-      this.$dragHandle = this.$el;
-      this.initializeDraggable({});
+      }
     },
 
     /**
@@ -76,11 +62,15 @@ define(function(require) {
      */
     getPlaceholderWidth: function() {
       return this.$placeholder.outerWidth();
+    },
+
+    onChangedPosition: function() {
+      console.log('changedPosition', this);
     }
 
   });
 
-  Cocktail.mixin(ModuleView, DraggableMixin);
+  ModuleView.prototype = $.extend(ModuleView.prototype, DraggableMixin);
 
   return ModuleView;
 });
