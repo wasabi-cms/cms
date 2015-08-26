@@ -24,6 +24,10 @@ define(function(require) {
         default:
           return new Backbone.Model(attributes, options);
       }
+    },
+
+    addRow: function(data) {
+      this.add(new RowModel(data));
     }
   });
 

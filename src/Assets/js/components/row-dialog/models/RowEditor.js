@@ -31,6 +31,18 @@ define(function(require) {
      */
     addCell: function(attributes) {
       this.cells.add(new CellEditorModel(attributes));
+    },
+
+    getData: function() {
+      var data = {
+        meta: this.get('meta').getData(),
+        data: []
+      };
+      this.cells.each(function(cellModel) {
+        data.data.push(cellModel.getData());
+      });
+      console.log(data.data);
+      return data;
     }
 
   });

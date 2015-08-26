@@ -50,6 +50,13 @@ define(function(require) {
      */
     setBaseWidth: function(baseWidth) {
       this.get('meta').get('grid').set('baseWidth', baseWidth);
+    },
+
+    getData: function() {
+      return {
+        meta: this.get('meta').getData(),
+        data: []
+      };
     }
 
   });

@@ -173,16 +173,16 @@ define(function(require) {
      *
      * @param contentElement
      */
-    //selectElement: function(contentElement) {
-    //  var previousSelection = this.model.get('selected');
-    //  if (previousSelection !== contentElement) {
-    //    if (typeof previousSelection !== 'undefined') {
-    //      previousSelection.model.set('selected', false);
-    //    }
-    //    contentElement.model.set('selected', true);
-    //    this.model.set('selected', contentElement);
-    //  }
-    //},
+    selectElement: function(contentElement) {
+      var previousSelection = this.model.get('selected');
+      if (previousSelection !== contentElement) {
+        if (typeof previousSelection !== 'undefined') {
+          previousSelection.model.set('selected', false);
+        }
+        contentElement.model.set('selected', true);
+        this.model.set('selected', contentElement);
+      }
+    },
 
     /**
      * Called whenever a new content model is added to the content collection.
@@ -240,6 +240,16 @@ define(function(require) {
      */
     updateHiddenDataField: function(model, data) {
       this.$hiddenDataField.val(JSON.stringify(data));
+    },
+
+    addRow: function(data) {
+      var selectedElement = this.model.get('selected');
+      if (!selectedElement) {
+        selectedElement = this.children.last();
+      }
+      if (selectedElement.viewType === 'ContentArea') {
+        selectedElement.collection.addRow(data);
+      }
     }
 
   });

@@ -4,9 +4,7 @@ define(function(require) {
   var WS = require('wasabi');
   var Marionette = require('marionette');
   var DroppableMixin = require('wasabi.cms.package/views/DroppableMixin');
-  var RowModel = require('wasabi.cms.package/components/page-builder/models/Row');
   var RowView = require('wasabi.cms.package/components/page-builder/views/Row');
-  var ModuleModel = require('wasabi.cms.package/components/page-builder/models/Module');
   var ModuleView = require('wasabi.cms.package/components/page-builder/views/Module');
 
   var ContentAreaView = Marionette.CompositeView.extend({
@@ -23,12 +21,18 @@ define(function(require) {
 
     childViewContainer: '.ca-content',
 
-    /**
-     * DOM events handled by this view.
-     */
-    //events: {
-    //  'click .ca-content': 'selectContentArea'
-    //},
+    ui: {
+      header: '.ca-header',
+      contentArea: '.content-area'
+    },
+
+    events: {
+      'click @ui.header': 'selectContentArea'
+    },
+
+    modelEvents: {
+      'change:selected': 'onChangeSelectedState'
+    },
 
     /**
      * Initialize the ContentArea view.
@@ -81,15 +85,11 @@ define(function(require) {
      * Mark this ContentArea view as selected.
      * Triggered via DOM click.
      *
-     * @param {Event} event
      * @returns {boolean}
      */
-    //selectContentArea: function(event) {
-    //  if (!$(event.target).is('.ca-content')) {
-    //    return false;
-    //  }
-    //  this.pageBuilder.selectElement(this);
-    //},
+    selectContentArea: function() {
+      WS.Cms.views.pageBuilder.selectElement(this);
+    },
 
     /**
      * Update the visual selection state of this ContentArea view.
@@ -98,9 +98,9 @@ define(function(require) {
      * @param model
      * @param {boolean} value
      */
-    //onChangeSelectedState: function(model, value) {
-    //  this.$contentArea.toggleClass('content-area--selected', value);
-    //},
+    onChangeSelectedState: function(model, value) {
+      this.ui.contentArea.toggleClass('content-area--selected', value);
+    },
 
     /**
      * canDrop callback

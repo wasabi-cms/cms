@@ -35,6 +35,15 @@ define(function(require) {
       }
 
       return this;
+    },
+
+    getData: function() {
+      var grid = this.get('grid');
+      var meta = this.toJSON();
+      if (grid) {
+        meta.grid = grid.toJSON();
+      }
+      return meta;
     }
 
   });

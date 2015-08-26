@@ -62,7 +62,9 @@ define(function(require) {
       }
       $btn.attr('disabled', 'disabled');
       this.rowEditorView.model.set('data', this.rowEditorView.model.cells.toJSON());
-      console.log(this.rowEditorView.model.toJSON());
+      if (this.type === 'add') {
+        this.pageBuilder.addRow(this.rowEditorView.model.getData());
+      }
       this.closeDialog();
     }
 
