@@ -7,10 +7,7 @@
 
   .page-builder-controls {
     cursor: default;
-    //padding: 3px;
     margin-bottom: 10px;
-    //background-color: @aside-bg-color;
-    //border: 1px solid @border-dark;
 
     li {
       display: inline-block;
@@ -44,7 +41,7 @@
 
 .ca-header {
   padding: 0 0 1px 5px;
-  background-color: @aside-bg-color;
+  background-color: @sidebar-bg-color;
   border-bottom: 1px solid @border-dark;
 
   h5 {
@@ -102,29 +99,52 @@
     height: 100%;
     padding-top: 6px;
 
-    li {
+    & > ul > li {
       margin-bottom: 5px;
+    }
 
-      .row-sort, .row-settings {
-        display: inline-block;
-        padding: 4px 2px 2px 4px;
-        color: @gray-dark;
-        background-color: @border-light;
-        .border-radius(3px 0 0 3px);
+    .row-sort, .row-settings {
+      display: inline-block;
+      padding: 4px 2px 2px 4px;
+      color: @gray-dark;
+      background-color: @border-light;
+      .border-radius(3px 0 0 3px);
 
-        &:hover {
-          background-color: @border-dark;
-        }
-
-        i {
-          min-width: 14px;
-          display: inline-block;
-          text-align: center;
-        }
+      &:hover {
+        background-color: @border-dark;
       }
 
-      .row-sort {
-        cursor: move;
+      i {
+        min-width: 14px;
+        display: inline-block;
+        text-align: center;
+      }
+    }
+
+    .row-sort {
+      cursor: move;
+    }
+
+    .dropdown.open .row-settings {
+      background-color: #1c1f22;
+      color: #fff;
+
+      &:hover {
+        background-color: #5d6367;
+      }
+    }
+
+    .dropdown-menu {
+      top: 0;
+      left: 100%;
+
+      a {
+        color: #fff;
+        background-color: #1c1f22;
+
+        &:hover {
+          background-color: #5d6367;
+        }
       }
     }
   }
@@ -139,10 +159,23 @@
     margin: 0 -5px;
     padding: 0;
 
+    .layout-select-row {
+      padding-left: 10px;
+      margin-bottom: 20px;
+
+      label {
+        padding-right: 5px;
+      }
+    }
+
     .cell-wrapper {
       position: relative;
       padding: 0;
       text-align: center;
+
+      & > span {
+        cursor: default;
+      }
 
       .cell-width {
         display: inline-block;
@@ -161,7 +194,6 @@
       position: absolute;
       top: 0;
       right: 5px;
-      cursor: default;
 
       li {
         display: inline-block;

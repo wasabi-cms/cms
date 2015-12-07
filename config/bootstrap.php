@@ -17,6 +17,8 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Wasabi\Cms\Event\MenuListener;
+use Wasabi\Cms\Event\RouteListener;
+use Wasabi\Cms\Event\ThemeListener;
 
 try {
     // Load and apply the Wasabi Core cache config.
@@ -28,4 +30,6 @@ try {
     die($e->getMessage() . "\n");
 }
 
+EventManager::instance()->on(new RouteListener());
+EventManager::instance()->on(new ThemeListener());
 EventManager::instance()->on(new MenuListener());

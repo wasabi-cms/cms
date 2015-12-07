@@ -1,7 +1,5 @@
 <?php
 /**
- * Wasabi Cms PagesController
- *
  * Wasabi CMS
  * Copyright (c) Frank Förster (http://frankfoerster.com)
  *
@@ -14,16 +12,18 @@
  */
 namespace Wasabi\Cms\Controller;
 use Cake\Core\Configure;
+use Cake\I18n\I18n;
 use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Exception\MethodNotAllowedException;
-use Cake\Network\Exception\NotFoundException;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
+use Wasabi\Cms\Model\Entity\Content;
+use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Cms\Model\Table\PagesTable;
-use Wasabi\Cms\View\Layout\LayoutManager;
+use Wasabi\Cms\View\Theme\ThemeManager;
 use Wasabi\Core\Model\Table\RoutesTable;
 use Wasabi\Core\Routing\RouteTypes;
+use Wasabi\Core\Wasabi;
 
 /**
  * Class PagesController
@@ -40,7 +40,7 @@ class PagesController extends BackendAppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->loadModel('Routes');
+        $this->loadModel('Wasabi/Core.Routes');
     }
 
     /**
@@ -69,9 +69,13 @@ class PagesController extends BackendAppController
      */
     public function add($parentId = null)
     {
+        /** @var Page $page */
         $page = $this->Pages->newEntity();
+
+        ThemeManager::theme(Wasabi::setting('Cms.Theme.id'));
+
         if ($this->request->is('post') && !empty($this->request->data)) {
-            $this->Pages->patchEntity($page, $this->request->data);
+            $page = $this->Pages->patchEntity($page, $this->request->data);
             if ($this->Pages->save($page)) {
                 $this->Flash->success(__d('wasabi_cms', 'The page <strong>{0}</strong> has been created.', $page->name));
                 $this->redirect(['action' => 'index']);
@@ -80,147 +84,153 @@ class PagesController extends BackendAppController
                 $this->Flash->error($this->formErrorMessage);
             }
         } else {
-            $page->set(
-                'content',
-                json_encode([
-                    'content' => [
-                        [
-                            'meta' => [
-                                'type' => 'ContentArea',
-                                'contentAreaId' => 'after_head',
-                                'name' => 'After Head',
-                                'grid' => [
-                                    'colWidth' => 16,
-                                    'baseWidth' => 16
-                                ]
-                            ],
-                            'data' => []
-                        ],
-                        [
-                            'meta' => [
-                                'type' => 'ContentArea',
-                                'contentAreaId' => 'main',
-                                'name' => 'Main',
-                                'grid' => [
-                                    'colWidth' => 12,
-                                    'baseWidth' => 16
-                                ]
-                            ],
-                            'data' => [
-                                [
-                                    'meta' => [
-                                        'type' => 'Row',
-                                    ],
-                                    'data' => [
-                                        [
-                                            'meta' => [
-                                                'type' => 'Cell',
-                                                'grid' => [
-                                                    'colWidth' => 16,
-                                                    'baseWidth' => 16
-                                                ]
-                                            ],
-                                            'data' => []
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    'meta' => [
-                                        'type' => 'Row'
-                                    ],
-                                    'data' => [
-                                        [
-                                            'meta' => [
-                                                'type' => 'Cell',
-                                                'grid' => [
-                                                    'colWidth' => 4,
-                                                    'baseWidth' => 16
-                                                ]
-                                            ],
-                                            'data' => [
-                                                [
-                                                    'meta' => [
-                                                        'type' => 'Module',
-                                                        'moduleId' => 'flicker-slider',
-                                                        'title' => 'Flicker Slider',
-                                                        'description' => 'bla blub'
-                                                    ],
-                                                    'data' => [
-                                                        'foo' => 'bar'
-                                                    ]
-                                                ],
-                                                [
-                                                    'meta' => [
-                                                        'type' => 'Module',
-                                                        'moduleId' => 'flicker-slider',
-                                                        'title' => 'Flicker Slider',
-                                                        'description' => 'bla blub2'
-                                                    ],
-                                                    'data' => [
-                                                        'foo' => 'bar'
-                                                    ]
-                                                ]
-                                            ]
-                                        ],
-                                        [
-                                            'meta' => [
-                                                'type' => 'Cell',
-                                                'grid' => [
-                                                    'colWidth' => 4,
-                                                    'baseWidth' => 16
-                                                ]
-                                            ],
-                                            'data' => []
-                                        ],
-                                        [
-                                            'meta' => [
-                                                'type' => 'Cell',
-                                                'grid' => [
-                                                    'colWidth' => 4,
-                                                    'baseWidth' => 16
-                                                ]
-                                            ],
-                                            'data' => []
-                                        ],
-                                        [
-                                            'meta' => [
-                                                'type' => 'Cell',
-                                                'grid' => [
-                                                    'colWidth' => 4,
-                                                    'baseWidth' => 16
-                                                ]
-                                            ],
-                                            'data' => []
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ],
-                        [
-                            'meta' => [
-                                'type' => 'ContentArea',
-                                'contentAreaId' => 'sidebar',
-                                'name' => 'Sidebar',
-                                'grid' => [
-                                    'colWidth' => 4,
-                                    'baseWidth' => 16
-                                ]
-                            ],
-                            'data' => []
-                        ],
-                    ]
-                ])
-            );
+            $defaultLayout = ThemeManager::theme()->getLayout('Default');
+            $page->current = [
+                (new Content())->set('content', json_encode($defaultLayout->content()))
+            ];
+
+//            $page->set(
+//                'content',
+//                json_encode([
+//                    'content' => [
+//                        [
+//                            'meta' => [
+//                                'type' => 'ContentArea',
+//                                'contentAreaId' => 'after_head',
+//                                'name' => 'After Head',
+//                                'grid' => [
+//                                    'colWidth' => 16,
+//                                    'baseWidth' => 16
+//                                ]
+//                            ],
+//                            'data' => []
+//                        ],
+//                        [
+//                            'meta' => [
+//                                'type' => 'ContentArea',
+//                                'contentAreaId' => 'main',
+//                                'name' => 'Main',
+//                                'grid' => [
+//                                    'colWidth' => 12,
+//                                    'baseWidth' => 16
+//                                ]
+//                            ],
+//                            'data' => [
+//                                [
+//                                    'meta' => [
+//                                        'type' => 'Row',
+//                                    ],
+//                                    'data' => [
+//                                        [
+//                                            'meta' => [
+//                                                'type' => 'Cell',
+//                                                'grid' => [
+//                                                    'colWidth' => 16,
+//                                                    'baseWidth' => 16
+//                                                ]
+//                                            ],
+//                                            'data' => []
+//                                        ]
+//                                    ]
+//                                ],
+//                                [
+//                                    'meta' => [
+//                                        'type' => 'Row'
+//                                    ],
+//                                    'data' => [
+//                                        [
+//                                            'meta' => [
+//                                                'type' => 'Cell',
+//                                                'grid' => [
+//                                                    'colWidth' => 4,
+//                                                    'baseWidth' => 16
+//                                                ]
+//                                            ],
+//                                            'data' => [
+//                                                [
+//                                                    'meta' => [
+//                                                        'type' => 'Module',
+//                                                        'moduleId' => 'flicker-slider',
+//                                                        'title' => 'Flicker Slider',
+//                                                        'description' => 'bla blub'
+//                                                    ],
+//                                                    'data' => [
+//                                                        'foo' => 'bar'
+//                                                    ]
+//                                                ],
+//                                                [
+//                                                    'meta' => [
+//                                                        'type' => 'Module',
+//                                                        'moduleId' => 'flicker-slider',
+//                                                        'title' => 'Flicker Slider',
+//                                                        'description' => 'bla blub2'
+//                                                    ],
+//                                                    'data' => [
+//                                                        'foo' => 'bar'
+//                                                    ]
+//                                                ]
+//                                            ]
+//                                        ],
+//                                        [
+//                                            'meta' => [
+//                                                'type' => 'Cell',
+//                                                'grid' => [
+//                                                    'colWidth' => 4,
+//                                                    'baseWidth' => 16
+//                                                ]
+//                                            ],
+//                                            'data' => []
+//                                        ],
+//                                        [
+//                                            'meta' => [
+//                                                'type' => 'Cell',
+//                                                'grid' => [
+//                                                    'colWidth' => 4,
+//                                                    'baseWidth' => 16
+//                                                ]
+//                                            ],
+//                                            'data' => []
+//                                        ],
+//                                        [
+//                                            'meta' => [
+//                                                'type' => 'Cell',
+//                                                'grid' => [
+//                                                    'colWidth' => 4,
+//                                                    'baseWidth' => 16
+//                                                ]
+//                                            ],
+//                                            'data' => []
+//                                        ]
+//                                    ]
+//                                ]
+//                            ]
+//                        ],
+//                        [
+//                            'meta' => [
+//                                'type' => 'ContentArea',
+//                                'contentAreaId' => 'sidebar',
+//                                'name' => 'Sidebar',
+//                                'grid' => [
+//                                    'colWidth' => 4,
+//                                    'baseWidth' => 16
+//                                ]
+//                            ],
+//                            'data' => []
+//                        ],
+//                    ]
+//                ])
+//            );
         }
+
         $this->set([
             'page' => $page,
-            'layouts' => LayoutManager::getLayoutsForSelect(),
+            'themes' => ThemeManager::getThemesForSelect(),
+            'layouts' => ThemeManager::theme()->getLayoutsForSelect(),
             'changeAttributesUrl' => Router::url([
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',
                 'action' => 'attributes'
             ]),
-            'routeTypes' => RouteTypes::getForSelect()
         ]);
     }
 
@@ -232,43 +242,49 @@ class PagesController extends BackendAppController
      */
     public function edit($id)
     {
-        if (!$id || !$this->Pages->exists(['id' => $id])) {
-            throw new NotFoundException();
-        }
-        if (!$this->request->is(['get', 'put'])) {
-            throw new MethodNotAllowedException();
-        }
+        $this->request->allowMethod(['get', 'put']);
 
-        $page = $this->Pages->get($id);
+        $page = $this->Pages->get($id, ['contain' => 'Current']);
+
+        ThemeManager::theme(Wasabi::setting('Cms.Theme.id'));
 
         if ($this->request->is('put')) {
-            $this->Pages->patchEntity($page, $this->request->data);
-            if ($this->Menus->save($page)) {
+            $page = $this->Pages->patchEntity($page, $this->request->data);
+            if ($this->Pages->save($page)) {
                 $this->Flash->success(__d('wasabi_cms', 'The page <strong>{0}</strong> has been saved.', $page->name));
                 $this->redirect(['action' => 'index']);
                 return;
             } else {
                 $this->Flash->error($this->formErrorMessage);
             }
+        } else {
+            /** @var Content $current */
+            $current = $page->current;
+            if (!is_array($current) &&
+                get_class($current) === 'Wasabi\Cms\Model\Entity\Content' &&
+                $current->isNew()
+            ) {
+                $defaultLayout = ThemeManager::theme()->getLayout('Default');
+                $page->current = [
+                    (new Content())->set('content', json_encode($defaultLayout->content()))
+                ];
+            }
         }
+
         $this->set([
             'page' => $page,
-            'layouts' => LayoutManager::getLayoutsForSelect(),
+            'layouts' => ThemeManager::theme()->getLayoutsForSelect(),
             'changeAttributesUrl' => Router::url([
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',
                 'action' => 'attributes'
             ]),
-            'routeTypes' => RouteTypes::getForSelect(),
-            'routes' => $this->Routes->find('all', array(
-                'conditions' => array(
-                    'model' => 'Wasabi\Cms.Page',
-                    'foreign_key' => $id,
-                    'language_id' => Configure::read('contentLanguage')->id
-                ),
-                'order' => 'url ASC'
-            ))
+            'routes' => $this->Routes
+                ->findAllFor('Wasabi/Cms.Pages', $id, Wasabi::contentLanguage()->id)
+                ->order([$this->Routes->aliasField('url') => 'asc']),
+            'routeTypes' => RouteTypes::getForSelect()
         ]);
+
         $this->render('add');
     }
 
@@ -280,19 +296,17 @@ class PagesController extends BackendAppController
      */
     public function delete($id)
     {
-        if (!$id || !$this->Pages->exists(['id' => $id])) {
-            throw new NotFoundException();
-        }
-        if (!$this->request->is(['post'])) {
-            throw new MethodNotAllowedException();
-        }
+        $this->request->allowMethod('post');
 
+        /** @var Page $page */
         $page = $this->Pages->get($id);
+
         if ($this->Pages->delete($page)) {
             $this->Flash->success(__d('wasabi_cms', 'The page <strong>{0}</strong> has been deleted.', $page->name));
         } else {
             $this->Flash->error($this->dbErrorMessage);
         }
+
         $this->redirect(['action' => 'index']);
         return;
     }
@@ -305,12 +319,9 @@ class PagesController extends BackendAppController
      */
     public function copy($id)
     {
-        if (!$id || !$this->Pages->exists(['id' => $id])) {
-            throw new NotFoundException();
-        }
-        if (!$this->request->is(['post'])) {
-            throw new MethodNotAllowedException();
-        }
+        $this->request->allowMethod('post');
+
+        $page = $this->Pages->get('id');
     }
 
     /**

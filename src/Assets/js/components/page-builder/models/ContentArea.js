@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var ContentCollection = require('wasabi.cms.package/components/page-builder/collections/Content');
@@ -17,7 +17,7 @@ define(function(require) {
      *
      * @returns {ContentAreaModel}
      */
-    initialize: function() {
+    initialize: function () {
       var content = this.get('data');
       if (content) {
         this.content = new ContentCollection(content);
@@ -27,12 +27,12 @@ define(function(require) {
       return this;
     },
 
-    getData: function() {
+    getData: function () {
       var data = {
         meta: this.get('meta').toJSON(),
         data: []
       };
-      this.content.each(function(contentModel) {
+      this.content.each(function (contentModel) {
         data.data.push(contentModel.getData());
       });
       return data;

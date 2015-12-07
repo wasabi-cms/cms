@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var WS = require('wasabi');
   var Marionette = require('marionette');
@@ -28,21 +28,27 @@ define(function(require) {
     },
 
     /**
+     * Model events handles by this view.
+     */
+    modelEvents: {
+      'change:selected': 'onChangeSelectedState'
+    },
+
+    /**
      * Initialize the Cell view.
      *
      * @param {Object} options
      */
-    initialize: function(options) {
+    initialize: function (options) {
       this.collection = this.model.modules;
 
       WS.Cms.views.pageBuilder.droppableViews.push(this);
 
-      //this.model.on('change:selected', this.onChangeSelectedState, this);
       //this.model.modules.on('add', this.parent.syncCellHeight, this.parent);
       //this.model.modules.on('remove', this.parent.syncCellHeight, this.parent);
     },
 
-    onRender: function() {
+    onRender: function () {
       var grid = this.model.get('meta').get('grid');
       if (this.gridClass) {
         this.$el.removeClass(this.gridClass);
@@ -56,27 +62,15 @@ define(function(require) {
     },
 
     /**
-     * Construct and return a json object that is passed to the template
-     * for rendering.
-     *
-     * @returns {{contentAreaId: *, name: *, grid: *}}
-     */
-    //getTemplateData: function() {
-    //  return {
-    //    grid: this.model.get('meta').get('grid').toJSON()
-    //  };
-    //},
-
-    /**
      * Mark this Cell view as selected.
      * Triggered via DOM click.
      *
      * @param {Event} event
      * @returns {boolean}
      */
-    //selectCell: function(event) {
-    //  this.pageBuilder.selectElement(this);
-    //},
+    selectCell: function (event) {
+      WS.Cms.views.pageBuilder.selectElement(this);
+    },
 
     /**
      * Update the visual selection state of this ContentArea view.
@@ -85,11 +79,16 @@ define(function(require) {
      * @param model
      * @param {boolean} value
      */
-    //onChangeSelectedState: function(model, value) {
-    //  this.$el.toggleClass('cell--selected', value);
-    //},
+    onChangeSelectedState: function(model, value) {
+      this.$el.toggleClass('cell--selected', value);
+    },
 
-    onPlaceholderMoved: function(event) {
+    /**
+     * Synchronize the cell height of all neighbor cells whenever the placeholder changes position.
+     *
+     * @param {Event} event
+     */
+    onPlaceholderMoved: function (event) {
       this._parent.syncCellHeight(event);
     },
 
@@ -101,7 +100,7 @@ define(function(require) {
      * @param draggable
      * @returns {boolean}
      */
-    canDrop: function(draggable) {
+    canDrop: function (draggable) {
       if (typeof draggable.viewType === 'undefined') {
         return false;
       }

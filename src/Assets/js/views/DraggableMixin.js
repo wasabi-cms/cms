@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var $ = require('jquery');
   var WS = require('wasabi');
@@ -80,7 +80,7 @@ define(function(require) {
      *
      * @param options
      */
-    initializeDraggable: function(options) {
+    initializeDraggable: function (options) {
       this.options = $.extend(defaults, {}, options);
       this.model.view = this;
       this.$dragHandle.on('mousedown', _.bind(this.onMouseDown, this));
@@ -93,7 +93,7 @@ define(function(require) {
      *
      * @param {Event} event
      */
-    onMouseDown: function(event) {
+    onMouseDown: function (event) {
       if (event.currentTarget !== this.$dragHandle[0]) {
         return;
       }
@@ -108,7 +108,7 @@ define(function(require) {
      *
      * @param {Event} event
      */
-    onMouseMove: function(event) {
+    onMouseMove: function (event) {
       if (!this.isDragging) {
         this._initClone();
         this._initPlaceholder();
@@ -127,10 +127,10 @@ define(function(require) {
         this.activeDropTargetView = null;
 
         // cells should have a bigger weight than content areas
-        var cells = _.filter(dropTargetViews, function(v) {
+        var cells = _.filter(dropTargetViews, function (v) {
           return v.viewType === 'Cell';
         });
-        var contentAreas = _.filter(dropTargetViews, function(v) {
+        var contentAreas = _.filter(dropTargetViews, function (v) {
           return v.viewType === 'ContentArea';
         });
 
@@ -167,7 +167,7 @@ define(function(require) {
      *
      * @param {Event} event
      */
-    onMouseUp: function(event) {
+    onMouseUp: function (event) {
       event.preventDefault();
       var that = this;
       this.$doc.off('mousemove');
@@ -211,7 +211,7 @@ define(function(require) {
      * @param {object} elem Either an actual element or a jQuery collection.
      * @return boolean
      */
-    hitTest: function(x, y, elem) {
+    hitTest: function (x, y, elem) {
       var $el = $(elem);
       var offset = $el.offset();
       var x1 = offset.left;
@@ -227,7 +227,7 @@ define(function(require) {
      * @param {Event} event
      * @private
      */
-    _initStart: function(event) {
+    _initStart: function (event) {
       this.position = this.$el.position();
       this.startMouse = {
         x: event.pageX,
@@ -249,7 +249,7 @@ define(function(require) {
      *
      * @private
      */
-    _initClone: function() {
+    _initClone: function () {
       this.$clone = this.$el.clone();
       this.$clone.addClass('dragging');
       this.$clone.css({
@@ -270,7 +270,7 @@ define(function(require) {
      * @param {Event} event
      * @private
      */
-    _updateClonePosition: function(event) {
+    _updateClonePosition: function (event) {
       this.$clone.position({
         my: 'left-' + this.mouseStartRelativeToElement.x + ' top-' + this.mouseStartRelativeToElement.y,
         of: event
@@ -282,7 +282,7 @@ define(function(require) {
      *
      * @private
      */
-    _initPlaceholder: function() {
+    _initPlaceholder: function () {
       this.$placeholder = this.$el.clone()
         .html('')
         .addClass('placeholder')
@@ -300,7 +300,7 @@ define(function(require) {
      * @returns {{x: *, y: *}}
      * @private
      */
-    _getStartPosition: function() {
+    _getStartPosition: function () {
       return {
         x: this.offset.x,
         y: this.offset.y
@@ -313,7 +313,7 @@ define(function(require) {
      * @returns {{top: number, left: number, width: (*|Number)}}
      * @private
      */
-    _getStopPosition: function() {
+    _getStopPosition: function () {
       return {
         top: this.$placeholder.offset().top - this.$win.scrollTop(),
         left: this.$placeholder.offset().left - this.$placeholder.css('marginLeft').split('px')[0],
@@ -327,7 +327,7 @@ define(function(require) {
      * @param {Event} event
      * @private
      */
-    _scroll: function(event) {
+    _scroll: function (event) {
       var sParent = this.$scrollParent[0], overflowOffset = this.$scrollParent.offset();
       if (sParent != this.$doc[0] && sParent.tagName != 'HTML') {
         if ((overflowOffset.top + sParent.offsetHeight - event.pageY) < this.options.scrollSensitivity) {
@@ -337,7 +337,7 @@ define(function(require) {
         }
         if ((overflowOffset.left + sParent.offsetWidth - event.pageX) < this.options.scrollSensitivity) {
           sParent.scrollLeft = sParent.scrollLeft + this.options.scrollSpeed;
-        } else if(event.pageX - overflowOffset.left < this.options.scrollSensitivity) {
+        } else if (event.pageX - overflowOffset.left < this.options.scrollSensitivity) {
           sParent.scrollLeft = sParent.scrollLeft - this.options.scrollSpeed;
         }
       } else {

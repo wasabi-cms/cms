@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var $ = require('jquery');
   var BaseView = require('common/BaseView');
@@ -18,7 +18,7 @@ define(function(require) {
       'change:selected': 'selectedChanged'
     },
 
-    onRender: function() {
+    onRender: function () {
       var grid = this.model.get('meta').get('grid');
       if (this.gridClass) {
         this.$el.removeClass(this.gridClass);
@@ -29,30 +29,30 @@ define(function(require) {
       this.$dragHandle = this.$('.resize-handle');
     },
 
-    templateHelpers: function() {
+    templateHelpers: function () {
       return {
-        colWidth: _.bind(function() {
+        colWidth: _.bind(function () {
           var grid = this.model.get('meta').get('grid');
           return grid.get('colWidth');
         }, this),
-        baseWidth: _.bind(function() {
+        baseWidth: _.bind(function () {
           var grid = this.model.get('meta').get('grid');
           return grid.get('baseWidth');
         }, this)
       }
     },
 
-    selectedChanged: function(cell, selected) {
+    selectedChanged: function (cell, selected) {
       this.$el.toggleClass('cell--selected', selected);
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
       this.$doc = $(document);
       this.listenTo(this.model.get('meta').get('grid'), 'change:colWidth', this.render, this);
       this.listenTo(this.model.get('meta').get('grid'), 'change:baseWidth', this.render, this);
     },
 
-    onMouseDown: function(event) {
+    onMouseDown: function (event) {
       if (event.currentTarget !== this.$dragHandle[0]) {
         return;
       }
@@ -69,7 +69,7 @@ define(function(require) {
       this.$dragHandle.addClass('hover');
     },
 
-    onMouseMove: function(event) {
+    onMouseMove: function (event) {
       if (!this.isDragging) {
         this.isDragging = true;
       }
@@ -99,7 +99,7 @@ define(function(require) {
       }
     },
 
-    onMouseUp: function(event) {
+    onMouseUp: function (event) {
       this.$dragHandle.removeClass('hover');
       $('body').removeClass('cursor-force--col-resize');
 
@@ -112,13 +112,13 @@ define(function(require) {
       }
     },
 
-    removeCell: function(event) {
+    removeCell: function (event) {
       event.preventDefault();
       event.stopPropagation();
       this.triggerMethod('delete:cell', this.model);
     },
 
-    selectCell: function() {
+    selectCell: function () {
       this.triggerMethod('select:cell', this.model.cid);
     }
 

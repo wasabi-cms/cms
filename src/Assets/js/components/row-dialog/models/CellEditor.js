@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var MetaModel = require('wasabi.cms.package/models/Meta');
@@ -11,7 +11,7 @@ define(function(require) {
      *
      * @returns {CellEditorModel}
      */
-    initialize: function() {
+    initialize: function () {
       this.set('meta', new MetaModel(this.get('meta')), {silent: true});
       return this;
     },
@@ -21,7 +21,7 @@ define(function(require) {
      *
      * @returns {number}
      */
-    getColWidth: function() {
+    getColWidth: function () {
       return this.get('meta').get('grid').get('colWidth');
     },
 
@@ -30,7 +30,7 @@ define(function(require) {
      *
      * @param {number} colWidth
      */
-    setColWidth: function(colWidth) {
+    setColWidth: function (colWidth) {
       this.get('meta').get('grid').set('colWidth', colWidth);
     },
 
@@ -39,7 +39,7 @@ define(function(require) {
      *
      * @returns {number}
      */
-    getBaseWidth: function() {
+    getBaseWidth: function () {
       return this.get('meta').get('grid').get('baseWidth');
     },
 
@@ -48,11 +48,11 @@ define(function(require) {
      *
      * @param {number} baseWidth
      */
-    setBaseWidth: function(baseWidth) {
+    setBaseWidth: function (baseWidth) {
       this.get('meta').get('grid').set('baseWidth', baseWidth);
     },
 
-    getData: function() {
+    getData: function () {
       return {
         meta: this.get('meta').getData(),
         data: []

@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var $ = require('jquery');
   var WS = require('wasabi');
@@ -8,7 +8,7 @@ define(function(require) {
 
   var RowDialog = DialogView.extend({
 
-    events: function() {
+    events: function () {
       return _.extend(DialogView.prototype.events, {
         'click button[type="submit"]': 'onSubmit'
       });
@@ -18,12 +18,12 @@ define(function(require) {
 
     rowEditorView: null,
 
-    initialize: function(options) {
+    initialize: function (options) {
       this.pageBuilder = options.pageBuilder;
       DialogView.prototype.initialize.call(this, options);
     },
 
-    beforeRender: function() {
+    beforeRender: function () {
       var translations = WS.get('wasabi.cms').translations.dialog[this.type + 'Row'];
       this.templateData = {
         title: translations.title,
@@ -31,7 +31,7 @@ define(function(require) {
       };
     },
 
-    initDialogContent: function() {
+    initDialogContent: function () {
       var rowEditorModel = new RowEditorModel({
         meta: {type: 'Row'},
         data: [
@@ -50,12 +50,12 @@ define(function(require) {
       this.$content.html(this.rowEditorView.el);
     },
 
-    setType: function(type) {
+    setType: function (type) {
       this.type = type;
       return this;
     },
 
-    onSubmit: function(event) {
+    onSubmit: function (event) {
       var $btn = $(event.currentTarget);
       if ($btn.attr('disabled') === 'disabled') {
         return;

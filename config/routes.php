@@ -30,6 +30,10 @@ Router::scope('/backend/cms', ['plugin' => 'Wasabi/Cms'], function (RouteBuilder
         $routes->connect('/unpublish/:id', ['action' => 'unpublish'], ['pass' => ['id'], 'id' => '[0-9]+']);
     });
 
+    $routes->scope('/settings', ['controller' => 'Settings'], function(RouteBuilder $routes) {
+       $routes->connect('/theme', ['action' => 'theme']);
+    });
+
     /**
      * Connect a route for the index action of any controller.
      * And a more general catch all route for any action.

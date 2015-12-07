@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var $ = require('jquery');
   var _ = require('underscore');
@@ -19,7 +19,7 @@ define(function(require) {
    */
   function _pageBuilder() {
     // Create the page builder model.
-    var $hiddenDataField = $('input[name="content"]');
+    var $hiddenDataField = $('input.page-content');
     var val = $hiddenDataField.val();
     var pageBuilderModel = new PageBuilder((val !== '') ? JSON.parse($hiddenDataField.val()) : {});
 
@@ -29,8 +29,8 @@ define(function(require) {
       $hiddenDataField: $hiddenDataField
     });
 
-    WS.eventBus.on('pb-page-builder-rendered', function() {
-      $('.page-builder-loader').fadeOut(200, function() {
+    WS.eventBus.on('pb-page-builder-rendered', function () {
+      $('.page-builder-loader').fadeOut(200, function () {
         $('.page-builder-wrapper').html(WS.Cms.views.pageBuilder.el);
       });
     });
@@ -42,7 +42,7 @@ define(function(require) {
     /**
      * Initialize the wasabi.cms module.
      */
-    initialize: function(options) {
+    initialize: function (options) {
       _.extend(this, options);
 
       WS.Cms = {

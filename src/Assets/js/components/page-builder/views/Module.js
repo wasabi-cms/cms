@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var _ = require('underscore');
   var Marionette = require('marionette');
@@ -23,7 +23,7 @@ define(function(require) {
       'changedPosition': 'onChangedPosition'
     },
 
-    onRender: function() {
+    onRender: function () {
       this.$el.addClass('module');
       this.$dragHandle = this.$el;
       this.initializeDraggable();
@@ -35,7 +35,7 @@ define(function(require) {
      *
      * @returns {{contentAreaId: *, name: *, grid: *}}
      */
-    templateHelpers: function() {
+    templateHelpers: function () {
       return {
         title: this.model.get('meta').get('title'),
         description: this.model.get('meta').get('description')
@@ -48,9 +48,9 @@ define(function(require) {
      * Called whenever a placeholder for this view is created.
      * Adjust the placholder height to include the 2px border.
      *
-     * @param {jquery} $placeholder
+     * @param {jQuery} $placeholder
      */
-    afterInitPlaceholder: function($placeholder) {
+    afterInitPlaceholder: function ($placeholder) {
       $placeholder.css('height', parseInt($placeholder.css('height').split('px')[0]) + 2);
     },
 
@@ -60,11 +60,11 @@ define(function(require) {
      *
      * @returns {Number}
      */
-    getPlaceholderWidth: function() {
+    getPlaceholderWidth: function () {
       return this.$placeholder.outerWidth();
     },
 
-    onChangedPosition: function() {
+    onChangedPosition: function () {
       console.log('changedPosition', this);
     }
 

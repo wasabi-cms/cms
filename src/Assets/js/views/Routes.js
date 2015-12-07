@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var BaseView = require('common/BaseView');
 
@@ -8,7 +8,7 @@ define(function(require) {
      *
      * @type {string} CSS selector
      */
-    el: '[class*="cms-cms_pages-"] .field.routes',
+    el: '[class*="wasabi-cms--pages-"] .field.routes',
 
     /**
      * Registered events of this view.
@@ -17,59 +17,67 @@ define(function(require) {
      */
     events: {
       'click .new-route button[type="submit"]': 'onNewRouteSubmit',
-      'beforeAjax.modal': 'block',
       'deleteRoute': 'unblockUpdate',
       'makeDefaultRoute': 'unblockUpdate'
     },
 
-    cmsPageId: null,
+    dataModel: null,
+    pageId: null,
+    elem: null,
     routeEndpoint: null,
 
     /**
      * Initialization of the view.
      */
-    initialize: function() {
-      this.cmsPageId = $('#CmsPageId').val();
-      this.routeEndpoint = this.$el.find('table.routes').attr('data-add-route-url');
+    initialize: function () {
+      this.pageId = $('#page-id').val();
 
-      $('#CmsPageEditForm').on('submit', _.bind(function(event) {
+      var $table = this.$el.find('table.routes');
+      this.routeEndpoint = $table.attr('data-add-route-url');
+      this.dataModel = $table.attr('data-model');
+      this.elem = $table.attr('data-element');
+
+      $('#CmsPageEditForm').on('submit', _.bind(function (event) {
         var id = $(event.originalEvent.explicitOriginalTarget).attr('id');
-        if (id === 'RouteUrl' || id === 'RouteType') {
+        if (id === 'routes-url' || id === 'routes-type') {
           event.preventDefault();
           this.submitRoute();
         }
       }, this));
     },
 
-    onNewRouteSubmit: function(event) {
+    onNewRouteSubmit: function (event) {
       event.preventDefault();
       this.submitRoute();
     },
 
-    block: function(event) {
+    block: function (event) {
       this.blockThis({
-        backgroundColor: '#fff',
-        spinner: SpinPresets.large
+        backgroundColor: '#fff'
       });
     },
 
-    unblockUpdate: function(event, data) {
+    unblockUpdate: function (event, data) {
       this.unblockThis();
-      this.$el.html(data);
+      if (data.content) {
+        this.$el.html(data.content);
+      }
     },
 
-    submitRoute: function() {
+    submitRoute: function () {
       this.block(null);
       $.ajax({
         type: 'post',
         url: this.routeEndpoint,
         data: {
-          "Route[url]": this.$el.find('#RouteUrl').val(),
-          "Route[type]": this.$el.find('#RouteType').val(),
-          pageId: this.cmsPageId
+          url: this.$el.find('#routes-url').val(),
+          route_type: this.$el.find('#routes-type').val(),
+          model: this.dataModel,
+          foreign_key: this.pageId,
+          element: this.elem
         },
         dataType: 'json',
-        success: _.bind(function(data) {
+        success: _.bind(function (data) {
           this.unblockUpdate(null, data);
         }, this)
       });

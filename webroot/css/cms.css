@@ -254,11 +254,11 @@
   height: 100%;
   padding-top: 6px;
 }
-[data-type="row"] .row-actions li {
+[data-type="row"] .row-actions > ul > li {
   margin-bottom: 5px;
 }
-[data-type="row"] .row-actions li .row-sort,
-[data-type="row"] .row-actions li .row-settings {
+[data-type="row"] .row-actions .row-sort,
+[data-type="row"] .row-actions .row-settings {
   display: inline-block;
   padding: 4px 2px 2px 4px;
   color: #424242;
@@ -271,18 +271,36 @@
   -moz-background-clip: padding;
   background-clip: padding-box;
 }
-[data-type="row"] .row-actions li .row-sort:hover,
-[data-type="row"] .row-actions li .row-settings:hover {
+[data-type="row"] .row-actions .row-sort:hover,
+[data-type="row"] .row-actions .row-settings:hover {
   background-color: #d5d7d7;
 }
-[data-type="row"] .row-actions li .row-sort i,
-[data-type="row"] .row-actions li .row-settings i {
+[data-type="row"] .row-actions .row-sort i,
+[data-type="row"] .row-actions .row-settings i {
   min-width: 14px;
   display: inline-block;
   text-align: center;
 }
-[data-type="row"] .row-actions li .row-sort {
+[data-type="row"] .row-actions .row-sort {
   cursor: move;
+}
+[data-type="row"] .row-actions .dropdown.open .row-settings {
+  background-color: #1c1f22;
+  color: #fff;
+}
+[data-type="row"] .row-actions .dropdown.open .row-settings:hover {
+  background-color: #5d6367;
+}
+[data-type="row"] .row-actions .dropdown-menu {
+  top: 0;
+  left: 100%;
+}
+[data-type="row"] .row-actions .dropdown-menu a {
+  color: #fff;
+  background-color: #1c1f22;
+}
+[data-type="row"] .row-actions .dropdown-menu a:hover {
+  background-color: #5d6367;
 }
 [data-type="row"].placeholder {
   padding: 0;
@@ -293,10 +311,20 @@
   margin: 0 -5px;
   padding: 0;
 }
+[data-type="row"].row-editor .layout-select-row {
+  padding-left: 10px;
+  margin-bottom: 20px;
+}
+[data-type="row"].row-editor .layout-select-row label {
+  padding-right: 5px;
+}
 [data-type="row"].row-editor .cell-wrapper {
   position: relative;
   padding: 0;
   text-align: center;
+}
+[data-type="row"].row-editor .cell-wrapper > span {
+  cursor: default;
 }
 [data-type="row"].row-editor .cell-wrapper .cell-width {
   display: inline-block;
@@ -312,7 +340,6 @@
   position: absolute;
   top: 0;
   right: 5px;
-  cursor: default;
 }
 [data-type="row"].row-editor .cell-actions li {
   display: inline-block;

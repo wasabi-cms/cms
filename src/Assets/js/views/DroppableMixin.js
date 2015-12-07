@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var WS = require('wasabi');
 
@@ -12,7 +12,7 @@ define(function(require) {
      * @param {Event} event
      * @param draggable
      */
-    dragOver: function(event, draggable) {
+    dragOver: function (event, draggable) {
       // when the draggable intersects the placeholder to nothing
       if (draggable.hitTest(event.pageX, event.pageY, draggable.$placeholder)) {
         return;
@@ -23,11 +23,10 @@ define(function(require) {
       }
 
       // get all items of this view
-      var $items = this.$childViewContainer.find('> div').filter(function(index, item) {
+      var $items = this.$childViewContainer.find('> div').filter(function (index, item) {
         var $item = $(item);
         return (
-          !$item.hasClass('placeholder') &&
-          !$item.hasClass('dragging') &&
+          !$item.hasClass('placeholder') && !$item.hasClass('dragging') &&
           $item.css('display') !== 'none'
         );
       });
@@ -35,7 +34,7 @@ define(function(require) {
       var action = null;
 
       // Iterate over each item and determine the proper dom manipulation action.
-      $items.each(function() {
+      $items.each(function () {
         var min = $(this).offset().top - draggable.$win.scrollTop();
         var max = min + $(this).outerHeight();
         var currentY = event.pageY - draggable.$win.scrollTop();
@@ -80,22 +79,22 @@ define(function(require) {
      *
      * @param draggable
      */
-    drop: function(draggable) {
+    drop: function (draggable) {
       var at = draggable.$placeholder.index() - 1;
       var targetCollection = this.collection;
 
       // Check if the draggable position has really changed
-      if (
-        typeof targetCollection.at(at) !== 'undefined' &&
-        targetCollection.at(at).cid === draggable.model.cid
-      ) {
-        return;
-      }
+      //if (typeof targetCollection.at(at) !== 'undefined') {
+      //    if (targetCollection.at(at).cid === draggable.model.cid) {
+      //        return;
+      //    }
+      //}
 
       // If it has changed, then remove the model from its old collection and add it
       // to the new collection at the specified position.
-      draggable._parent.collection.remove(draggable.model, { silent: true });
+      draggable._parent.collection.remove(draggable.model, {silent: true});
       targetCollection.add(draggable.model, {at: at, silent: true});
+      draggable._parent = this;
 
       // Force the pageBuilder to rebuild the value of the $contentField
       WS.Cms.views.pageBuilder.model.rebuildContentData();

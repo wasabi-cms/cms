@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var GridModel = require('wasabi.cms.package/models/Grid');
@@ -24,7 +24,7 @@ define(function(require) {
      * @param {Object} options
      * @returns {MetaModel}
      */
-    initialize: function(attributes, options) {
+    initialize: function (attributes, options) {
       this.set('type', attributes.type);
 
       if (typeof attributes.grid !== 'undefined') {
@@ -37,7 +37,7 @@ define(function(require) {
       return this;
     },
 
-    getData: function() {
+    getData: function () {
       var grid = this.get('grid');
       var meta = this.toJSON();
       if (grid) {

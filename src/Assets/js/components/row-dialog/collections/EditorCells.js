@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var CellEditorModel = require('wasabi.cms.package/components/row-dialog/models/CellEditor');

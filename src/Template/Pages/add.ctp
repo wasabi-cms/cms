@@ -5,8 +5,10 @@
  * @var array $pageTypes
  * @var array $collections
  * @var array $collectionItems
+ * @var array $themes
  * @var array $layouts
  * @var string $changeAttributesUrl
+ * @var array $routeTypes
  */
 
 use Cake\Core\Configure;
@@ -43,10 +45,10 @@ echo $this->Form->create($page, [
 //    'templates' => 'Wasabi/Cms.form_templates'
 ]);
 
-echo $this->Form->hidden('content');
+echo $this->Form->hidden('current.0.content', ['class' => 'page-content']);
 
 if ($this->request->params['action'] == 'edit') {
-    echo $this->Form->input('id', ['type' => 'hidden']);
+    echo $this->Form->input('id', ['type' => 'hidden', 'id' => 'page-id']);
 }
 ?>
     <ul class="tabs row" data-tabify-id="page">
@@ -63,7 +65,7 @@ if ($this->request->params['action'] == 'edit') {
         ?>
     </div>
     <div class="tab-content" data-tabify-tab="layout" data-tabify-id="page" style="display: none;">
-        <?php echo $this->Form->input('layout_id', array('options' => $layouts, 'label' => __d('wasabi_cms', 'Layout'), 'info' => __d('wasabi_cms', 'Choose a layout for this page.'))); ?>
+        <?php echo $this->Form->input('layout', array('options' => $layouts, 'label' => __d('wasabi_cms', 'Layout'), 'info' => __d('wasabi_cms', 'Choose a layout for this page.'))); ?>
         <div class="form-row row">
             <label><?php echo __d('wasabi_cms', 'Layout Fields') ?>:</label>
             <div class="field layout-attributes" data-change-url="<?php echo $this->Url->build('/cms/pages/attributes', true) ?>">
@@ -88,7 +90,12 @@ if ($this->request->params['action'] == 'edit') {
         <div class="form-row row">
             <label><?php echo __d('wasabi_cms', 'URLs') ?>:</label>
             <div class="field routes">
-                <?php echo $this->element('Wasabi/Cms.Pages/routes'); ?>
+                <?php echo $this->element('Wasabi/Cms.Pages/routes', [
+                    'routes' => $routes,
+                    'routeTypes' => $routeTypes,
+                    'model' => 'Wasabi/Cms.Pages',
+                    'element' => 'Wasabi/Cms.Pages/routes'
+                ]); ?>
             </div>
         </div>
     </div>
@@ -123,12 +130,12 @@ if ($this->request->params['action'] == 'edit') {
 echo $this->Form->end();
 echo $this->element('Wasabi/Cms.Pages/page-builder-templates.hbs');
 
-$layout = false;
-$contentAreas = array();
-if ($this->request->params['action'] === 'edit' && !empty($page->layout)) {
-    $layout = $page->getLayout();
-    $contentAreas = $layout->getContentAreas();
-}
+//$layout = false;
+//$contentAreas = array();
+//if ($this->request->params['action'] === 'edit' && !empty($page->layout)) {
+//    $layout = $page->getLayout();
+//    $contentAreas = $layout->getContentAreas();
+//}
 
 /*if ($layout !== false && !empty($contentAreas)): */?><!--
     <ul class="tabs row mtop" data-tabify-id="content-areas">

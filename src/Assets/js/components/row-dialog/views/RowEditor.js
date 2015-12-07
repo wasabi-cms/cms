@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Marionette = require('marionette');
   var CellEditorView = require('wasabi.cms.package/components/row-dialog/views/CellEditor');
@@ -23,17 +23,17 @@ define(function(require) {
       'change @ui.rowLayoutSelect': 'updateLayout'
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
       this.dialog = options.dialog;
       this.collection = this.model.cells;
     },
 
-    onRender: function() {
+    onRender: function () {
       this.$el.attr('data-type', 'row');
     },
 
-    selectCell: function(cellView, cid) {
-      this.collection.each(function(model) {
+    selectCell: function (cellView, cid) {
+      this.collection.each(function (model) {
         if (model.cid === cid) {
           model.set('selected', true);
         } else {
@@ -42,7 +42,7 @@ define(function(require) {
       });
     },
 
-    deleteCell: function(cellView, cell) {
+    deleteCell: function (cellView, cell) {
       var cellIndex = this.collection.indexOf(cell);
       var leftCell = (cellIndex - 1) < 0 ? undefined : this.collection.at(cellIndex - 1);
       var rightCell = (cellIndex + 1) > this.collection.models.length ? undefined : this.collection.at(cellIndex + 1);
@@ -63,7 +63,7 @@ define(function(require) {
       this.render();
     },
 
-    updateLayout: function(event) {
+    updateLayout: function (event) {
       var $select = $(event.currentTarget);
       var value = $select.val();
       if (value === '') {
@@ -99,7 +99,7 @@ define(function(require) {
       }
 
       // update the colWidth and baseWidth of all cells
-      this.collection.each(function(cell) {
+      this.collection.each(function (cell) {
         cell.setColWidth(colWidth);
         cell.setBaseWidth(baseWidth);
       });

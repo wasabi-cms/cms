@@ -41,7 +41,7 @@ abstract class Layout
 	/**
 	 * Content areas of the layout.
 	 *
-	 * @var array
+	 * @var ContentArea[]
 	 */
 	protected $_contentAreas = [];
 
@@ -65,7 +65,7 @@ abstract class Layout
 	 *
 	 * @return array
 	 */
-	public function getAttributes()
+	public function attributes()
     {
 		return $this->_attributes;
 	}
@@ -75,18 +75,22 @@ abstract class Layout
 	 *
 	 * @return array
 	 */
-	public function getContentAreas()
+	public function contentAreas()
     {
 		return $this->_contentAreas;
 	}
 
 	/**
-	 * Get the name of the layout.
+	 * Get or set the name of the layout.
 	 *
+     * @param string $name
 	 * @return string
 	 */
-	public function getName()
+	public function name($name = null)
     {
+        if ($name !== null) {
+            $this->_name = $name;
+        }
 		return $this->_name;
 	}
 
@@ -95,20 +99,29 @@ abstract class Layout
 	 *
 	 * @return string
 	 */
-	public function getId()
+	public function id()
     {
 		return $this->_id;
 	}
 
-	/**
-	 * Get the full path containing the layout.ctp template.
-	 *
-	 * @return string
-	 */
-	public function getLayoutPath()
+    /**
+     * Construct the default content for this layout consisting of the defined content areas.
+     * By default these content areas hold no other content and are used by the page builder.
+     *
+     * @return array
+     */
+    public function content()
     {
-		return $this->_layoutPath;
-	}
+        $out = [
+            'content' => []
+        ];
+
+        foreach ($this->_contentAreas as $contentArea) {
+            $out['content'][] = $contentArea->toArray();
+        }
+
+        return $out;
+    }
 
 	/**
 	 * Extract the lower cased id from the layout class name.

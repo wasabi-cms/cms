@@ -27,7 +27,14 @@
     <nav class="row-actions">
         <ul>
             <li><a href="javascript:void(0)" class="row-sort" title="<?= __d('wasabi_cms', 'Move') ?>"><i class="icon-grab"></i></a></li>
-            <li><a href="javascript:void(0)" class="row-settings" title="<?= __d('wasabi_cms', 'Settings') ?>"><i class="icon-settings"></i></a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="row-settings" title="<?= __d('wasabi_cms', 'Settings') ?>" data-toggle="dropdown"><i class="icon-settings"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0)" class="edit-row"><?= __d('wasabi_cms', 'Edit Row') ?></a></li>
+                    <li><a href="javascript:void(0)" class="clear-row"><?= __d('wasabi_cms', 'Clear Row') ?></a></li>
+                    <li><a href="javascript:void(0)" class="delete-row"><?= __d('wasabi_cms', 'Delete Row') ?></a></li>
+                </ul>
+            </li>
         </ul>
     </nav>
 </script>
@@ -52,27 +59,29 @@
 </script>
 
 <script id="pb-row-editor" type="text/template">
-    <label for="rowLayoutSelect">Row Layout</label>
-    <select id="rowLayoutSelect">
-        <option>Choose...</option>
-        <optgroup label="16 Grid">
-            <option value="16:8">2 columns</option>
-            <option value="16:4">4 columns</option>
-            <option value="16:2">8 columns</option>
-            <option value="16:1">16 columns</option>
-        </optgroup>
-        <optgroup label="12 Grid">
-            <option value="12:6">2 columns</option>
-            <option value="12:4">3 columns</option>
-            <option value="12:3">4 columns</option>
-            <option value="12:2">6 columns</option>
-            <option value="12:1">12 columns</option>
-        </optgroup>
-        <optgroup label="10 Grid">
-            <option value="10:5">2 columns</option>
-            <option value="10:2">5 columns</option>
-        </optgroup>
-    </select>
+    <div class="row layout-select-row">
+        <label for="rowLayoutSelect">Row Layout:</label>
+        <select id="rowLayoutSelect">
+            <option>Choose...</option>
+            <optgroup label="16 Grid">
+                <option value="16:8">2 columns</option>
+                <option value="16:4">4 columns</option>
+                <option value="16:2">8 columns</option>
+                <option value="16:1">16 columns</option>
+            </optgroup>
+            <optgroup label="12 Grid">
+                <option value="12:6">2 columns</option>
+                <option value="12:4">3 columns</option>
+                <option value="12:3">4 columns</option>
+                <option value="12:2">6 columns</option>
+                <option value="12:1">12 columns</option>
+            </optgroup>
+            <optgroup label="10 Grid">
+                <option value="10:5">2 columns</option>
+                <option value="10:2">5 columns</option>
+            </optgroup>
+        </select>
+    </div>
     <div class="cells row"></div>
 </script>
 

@@ -47,16 +47,29 @@ class MenuListener implements EventListenerInterface
         /** @var Menu $menu the "backend.main" Nav instance */
         $menu = $event->subject();
 
-        $menu->addMenuItem([
-            'alias' => 'cms-pages',
-            'name' => __d('wasabi_cms', 'Pages'),
-            'parent' => 'content',
-            'priority' => 1,
-            'url' => [
-                'plugin' => 'Wasabi/Cms',
-                'controller' => 'Pages',
-                'action' => 'index'
-            ]
-        ]);
+        $menu
+            ->addMenuItem([
+                'alias' => 'cms-pages',
+                'name' => __d('wasabi_cms', 'Pages'),
+                'parent' => 'content',
+                'priority' => 1,
+                'url' => [
+                    'plugin' => 'Wasabi/Cms',
+                    'controller' => 'Pages',
+                    'action' => 'index'
+                ]
+            ])
+            ->addMenuItem([
+                'alias' => 'settings_theme',
+                'name' => __d('wasabi_core', 'Theme'),
+                'priority' => 50,
+                'parent' => 'settings',
+                'url' => [
+                    'plugin' => 'Wasabi/Cms',
+                    'controller' => 'Settings',
+                    'action' => 'theme'
+                ],
+                'matchAction' => true
+            ]);
     }
 }

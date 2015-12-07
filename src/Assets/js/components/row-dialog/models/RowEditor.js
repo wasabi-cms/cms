@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var MetaModel = require('wasabi.cms.package/models/Meta');
@@ -14,7 +14,7 @@ define(function(require) {
      *
      * @returns {RowEditorModel}
      */
-    initialize: function() {
+    initialize: function () {
       var cells = this.get('data');
       if (cells) {
         this.cells = new EditorCellsCollection(cells);
@@ -29,19 +29,18 @@ define(function(require) {
      *
      * @param {Object} attributes
      */
-    addCell: function(attributes) {
+    addCell: function (attributes) {
       this.cells.add(new CellEditorModel(attributes));
     },
 
-    getData: function() {
+    getData: function () {
       var data = {
         meta: this.get('meta').getData(),
         data: []
       };
-      this.cells.each(function(cellModel) {
+      this.cells.each(function (cellModel) {
         data.data.push(cellModel.getData());
       });
-      console.log(data.data);
       return data;
     }
 

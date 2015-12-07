@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var MetaModel = require('wasabi.cms.package/models/Meta');
@@ -15,12 +15,12 @@ define(function(require) {
      *
      * @returns {ModuleModel}
      */
-    initialize: function(attributes, options) {
+    initialize: function (attributes, options) {
       this.set('meta', new MetaModel(this.get('meta')), {silent: true});
       return this;
     },
 
-    getData: function() {
+    getData: function () {
       return {
         meta: this.get('meta').toJSON()
       };

@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var $ = require('jquery');
   var WS = require('wasabi');
@@ -39,13 +39,13 @@ define(function(require) {
      *
      * @param {Object} options
      */
-    initialize: function(options) {
+    initialize: function (options) {
       this.collection = this.model.content;
       WS.Cms.views.pageBuilder.droppableViews.push(this);
       //this.model.on('change:selected', this.onChangeSelectedState, this);
     },
 
-    onRender: function() {
+    onRender: function () {
       var grid = this.model.get('meta').get('grid');
       if (this.gridClass) {
         this.$el.removeClass(this.gridClass);
@@ -54,18 +54,18 @@ define(function(require) {
       this.$el.addClass(this.gridClass);
     },
 
-    templateHelpers: function() {
+    templateHelpers: function () {
       return {
         contentAreaId: this.model.get('meta').get('contentAreaId'),
         name: this.model.get('meta').get('name')
       }
     },
 
-    buildChildView: function(child, ChildViewClass, childViewOptions) {
+    buildChildView: function (child, ChildViewClass, childViewOptions) {
       var view = null;
       var type = child.get('meta').get('type');
 
-      switch(type) {
+      switch (type) {
         case 'Row':
           view = new RowView({
             model: child
@@ -87,7 +87,7 @@ define(function(require) {
      *
      * @returns {boolean}
      */
-    selectContentArea: function() {
+    selectContentArea: function () {
       WS.Cms.views.pageBuilder.selectElement(this);
     },
 
@@ -98,7 +98,7 @@ define(function(require) {
      * @param model
      * @param {boolean} value
      */
-    onChangeSelectedState: function(model, value) {
+    onChangeSelectedState: function (model, value) {
       this.ui.contentArea.toggleClass('content-area--selected', value);
     },
 
@@ -110,7 +110,7 @@ define(function(require) {
      * @param draggable
      * @returns {boolean}
      */
-    canDrop: function(draggable) {
+    canDrop: function (draggable) {
       if (typeof draggable.viewType === 'undefined') {
         return false;
       }

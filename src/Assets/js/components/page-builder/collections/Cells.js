@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var Cell = require('wasabi.cms.package/components/page-builder/models/Cell');

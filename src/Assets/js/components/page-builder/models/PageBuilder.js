@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var _ = require('underscore');
   var Backbone = require('backbone');
@@ -16,7 +16,7 @@ define(function(require) {
      *
      * @returns {PageBuilderModel}
      */
-    initialize: function() {
+    initialize: function () {
       var contentAreas = this.get('content');
       if (contentAreas) {
         this.contentAreas = new ContentAreaCollection(contentAreas);
@@ -30,7 +30,7 @@ define(function(require) {
      *
      * @param {Object} data
      */
-    loadFormData: function(data) {
+    loadFormData: function (data) {
       // Initially destroy all content that currently exists.
       // This will also destroy all associated views.
       //this.emptyOut();
@@ -84,9 +84,9 @@ define(function(require) {
     /**
      * Rebuild the data for all content within the page builder instance.
      */
-    rebuildContentData: function() {
+    rebuildContentData: function () {
       var data = [];
-      this.contentAreas.each(function(contentAreaModel) {
+      this.contentAreas.each(function (contentAreaModel) {
         data.push(contentAreaModel.getData());
       });
       this.set('data', data);

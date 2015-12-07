@@ -1,6 +1,7 @@
-define(function(require) {
+define(function (require) {
 
   var $ = require('jquery');
+  var WS = require('wasabi');
   var Marionette = require('marionette');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
   var CellView = require('wasabi.cms.package/components/page-builder/views/Cell');
@@ -19,6 +20,16 @@ define(function(require) {
     childViewContainer: '.cells',
     childView: CellView,
 
+    /**
+     * DOM events handled by this view.
+     */
+    events: {
+      'click .delete-row': 'onDeleteRow'
+    },
+
+    /**
+     * Collection events handles by this view.
+     */
     collectionEvents: {
       'add': 'syncCellHeight',
       'remove': 'syncCellHeight',
@@ -30,11 +41,15 @@ define(function(require) {
      *
      * @param {Object} options
      */
-    initialize: function(options) {
+    initialize: function (options) {
       this.collection = this.model.cells;
     },
 
-    onRender: function() {
+    /**
+     * onRender callback
+     * Called after the view has been rendered.
+     */
+    onRender: function () {
       this.$el.attr('data-type', 'row');
       this.$dragHandle = this.$('.row-sort');
       this.initializeDraggable();
@@ -47,9 +62,9 @@ define(function(require) {
      * Adjust the placholder minHeight to not contain the bottom margin
      * and add 1px (needed to avoid height flicker).
      *
-     * @param {jquery} $placeholder
+     * @param {jQuery} $placeholder
      */
-    afterInitPlaceholder: function($placeholder) {
+    afterInitPlaceholder: function ($placeholder) {
       $placeholder.css('minHeight', $placeholder.css('height').split('px')[0] - this.$el.css('marginBottom').split('px')[0] + 1);
     },
 
@@ -59,7 +74,7 @@ define(function(require) {
      *
      * @returns {Number}
      */
-    getPlaceholderWidth: function() {
+    getPlaceholderWidth: function () {
       return this.$placeholder.outerWidth() + 20;
     },
 
@@ -68,11 +83,22 @@ define(function(require) {
      *
      * @param {Event} event
      */
-    syncCellHeight: function(event) {
+    syncCellHeight: function (event) {
       var maxHeight = 0;
-      this.$childViewContainer.find('.cell-wrapper').css('minHeight', '').each(function(i, c) {
+      this.$childViewContainer.find('.cell-wrapper').css('minHeight', '').each(function (i, c) {
         maxHeight = Math.max(maxHeight, $(c).outerHeight());
       }).css('minHeight', maxHeight);
+    },
+
+    /**
+     * Event handler
+     * Handle deletion of a row.
+     *
+     * @param {Event} event
+     */
+    onDeleteRow: function (event) {
+      this._parent.collection.remove(this.model);
+      WS.Cms.views.pageBuilder.model.rebuildContentData();
     }
 
   });

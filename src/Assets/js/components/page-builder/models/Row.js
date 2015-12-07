@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var CellsCollection = require('wasabi.cms.package/components/page-builder/collections/Cells');
@@ -16,7 +16,7 @@ define(function(require) {
      *
      * @returns {RowModel}
      */
-    initialize: function() {
+    initialize: function () {
       var data = this.get('data');
       if (data) {
         this.cells = new CellsCollection(data);
@@ -26,12 +26,12 @@ define(function(require) {
       return this;
     },
 
-    getData: function() {
+    getData: function () {
       var data = {
         meta: this.get('meta').toJSON(),
         data: []
       };
-      this.cells.each(function(cellModel) {
+      this.cells.each(function (cellModel) {
         data.data.push(cellModel.getData());
       });
       return data;

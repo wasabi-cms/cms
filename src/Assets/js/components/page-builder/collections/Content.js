@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Backbone = require('backbone');
   var RowModel = require('wasabi.cms.package/components/page-builder/models/Row');
@@ -13,7 +13,7 @@ define(function(require) {
   var ContentCollection = Backbone.Collection.extend({
     collectionType: 'ContentCollection',
 
-    model: function(attributes, options) {
+    model: function (attributes, options) {
       switch (attributes.meta.type) {
         case 'Row':
           return new RowModel(attributes, options);
@@ -26,7 +26,7 @@ define(function(require) {
       }
     },
 
-    addRow: function(data) {
+    addRow: function (data) {
       this.add(new RowModel(data));
     }
   });

@@ -26,7 +26,7 @@
                 ]
             ) ?>
             <div class="page-meta">
-                <small class="layout"><?= $page->getLayout()->getName() ?></small>
+                <small class="layout"><?= $page->getLayout()->name() ?></small>
     <!--//                ($collection ? ' <small class="collection">' . $collection . '</small>' : '') .
     //                ($collectionItem ? ' <small class="collection-item">' . $collectionItem . '</small>' : '') .-->
             </div>

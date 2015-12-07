@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var $ = require('jquery');
   var _ = require('underscore');
@@ -39,16 +39,6 @@ define(function(require) {
     droppableViews: [],
 
     /**
-     * The content element view classes used to render all content elements.
-     */
-    //contentViewClasses: {
-    //  ContentArea: require('wasabi.cms.package/views/ContentArea'),
-    //  Row: require('wasabi.cms.package/views/Row'),
-    //  Cell: require('wasabi.cms.package/views/Cell'),
-    //  Module: require('wasabi.cms.package/views/Module')
-    //},
-
-    /**
      * DOM events handled by this view..
      */
     events: {
@@ -56,6 +46,9 @@ define(function(require) {
       'click [data-add="row"]': 'showAddRowDialog'
     },
 
+    /**
+     * Model events handles by this view.
+     */
     modelEvents: {
       'change:data': 'updateHiddenDataField'
     },
@@ -63,7 +56,7 @@ define(function(require) {
     /**
      * Initialize the Page Builder
      */
-    initialize: function(options) {
+    initialize: function (options) {
       // create all dialog boxes that the page builder uses
       this.dialogs = {
         module: WS.createView(ModuleDialogView, {
@@ -77,15 +70,9 @@ define(function(require) {
       this.$hiddenDataField = options.$hiddenDataField;
 
       this.collection = this.model.contentAreas;
-
-      // Handle a new content element being added to the collection to display it in the interface.
-      //this.model.content.on('add', this.onAddContent, this);
-
-      // Store the model data in the hidden field whenever it changes.
-      //this.model.on('change:data', this.updateHiddenDataField, this);
     },
 
-    onRender: function() {
+    onRender: function () {
       this.$el.addClass('page-builder');
       this.eventBus.trigger('pb-page-builder-rendered', this);
     },
@@ -135,7 +122,7 @@ define(function(require) {
      * @param {String} field
      * @returns {PageBuilderView}
      */
-    setDataField: function(field) {
+    setDataField: function (field) {
       this.$hiddenDataField = $(field);
 
       var fieldData = this.$hiddenDataField.val();
@@ -155,11 +142,11 @@ define(function(require) {
       return this;
     },
 
-    showAddModuleDialog: function() {
+    showAddModuleDialog: function () {
       this.dialogs.module.render();
     },
 
-    showAddRowDialog: function() {
+    showAddRowDialog: function () {
       this.dialogs.row
         .setType('add')
         .render();
@@ -173,7 +160,7 @@ define(function(require) {
      *
      * @param contentElement
      */
-    selectElement: function(contentElement) {
+    selectElement: function (contentElement) {
       var previousSelection = this.model.get('selected');
       if (previousSelection !== contentElement) {
         if (typeof previousSelection !== 'undefined') {
@@ -238,18 +225,28 @@ define(function(require) {
      * @param model
      * @param {Object} data
      */
-    updateHiddenDataField: function(model, data) {
-      this.$hiddenDataField.val(JSON.stringify(data));
+    updateHiddenDataField: function (model, data) {
+      this.$hiddenDataField.val(JSON.stringify({
+        content: data
+      }));
     },
 
-    addRow: function(data) {
+    /**
+     * Add a row to the selected or the last content area if none is selected.
+     *
+     * @param data
+     */
+    addRow: function (data) {
       var selectedElement = this.model.get('selected');
       if (!selectedElement) {
         selectedElement = this.children.last();
       }
       if (selectedElement.viewType === 'ContentArea') {
         selectedElement.collection.addRow(data);
+      } else if (selectedElement.viewType === 'Cell') {
+        selectedElement._parent._parent.collection.addRow(data);
       }
+      this.model.rebuildContentData();
     }
 
   });
