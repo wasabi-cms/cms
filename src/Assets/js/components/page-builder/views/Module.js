@@ -39,7 +39,7 @@ define(function (require) {
       return {
         title: this.model.get('meta').get('title'),
         description: this.model.get('meta').get('description')
-      }
+      };
     },
 
     /**

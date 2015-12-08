@@ -58,7 +58,7 @@ define(function (require) {
       return {
         contentAreaId: this.model.get('meta').get('contentAreaId'),
         name: this.model.get('meta').get('name')
-      }
+      };
     },
 
     buildChildView: function (child, ChildViewClass, childViewOptions) {

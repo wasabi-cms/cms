@@ -61,5 +61,5 @@ define(function (require) {
         console.info('Wasabi/Cms initialized.');
       }
     }
-  }
+  };
 });

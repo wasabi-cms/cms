@@ -17,10 +17,8 @@ define(function (require) {
       switch (attributes.meta.type) {
         case 'Row':
           return new RowModel(attributes, options);
-          break;
         case 'Module':
           return new ModuleModel(attributes, options);
-          break;
         default:
           return new Backbone.Model(attributes, options);
       }

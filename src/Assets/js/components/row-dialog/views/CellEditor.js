@@ -39,7 +39,7 @@ define(function (require) {
           var grid = this.model.get('meta').get('grid');
           return grid.get('baseWidth');
         }, this)
-      }
+      };
     },
 
     selectedChanged: function (cell, selected) {
