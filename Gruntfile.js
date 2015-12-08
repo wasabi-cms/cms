@@ -12,12 +12,14 @@ module.exports = function(grunt) {
     'purl',
     'bootstrap.dropdown',
     'common/BaseView',
+    'common/BaseViewFactory',
     'jquery.eventMagic',
     'jquery.scrollParent',
     'jquery.livequery',
     'jquery.nSortable',
     'jquery.tSortable',
-    'bootstrap.dropdown'
+    'bootstrap.dropdown',
+    'wasabi'
   ];
 
   grunt.initConfig({
@@ -38,7 +40,7 @@ module.exports = function(grunt) {
         shorthandCompacting: false,
         roundingPrecision: -1
       },
-      core: {
+      cms: {
         files: {
           'webroot/css/cms.min.css': 'webroot/css/cms.css'
         }
@@ -47,7 +49,7 @@ module.exports = function(grunt) {
 
     //--------------------------------------------- JS PROCESSING -----------------------------------------------------//
     jshint: {
-      core: [
+      cms: [
         'package.json',
         'Gruntfile.js',
         'src/Assets/js/**/*.js'
@@ -88,12 +90,11 @@ module.exports = function(grunt) {
             },
             // Main cms module.
             // All basic resources, vendor files will be included here automatically.
-            // We also merge all other modules that are used in different frontend parts
-            // of the app e.g. for the Catalog and Accident plugins.
             {
-              name: 'cms',
+              name: 'wasabi.cms',
               include: [
-                'common'
+                'common',
+                'wasabi.cms'
               ],
               exclude: excludeModules
             }
@@ -138,8 +139,8 @@ module.exports = function(grunt) {
   //--------------------------------------------- REGISTERED TASKS ---------------------------------------------------//
   grunt.registerTask('default', [
     'less:compile',
-    'cssmin:core',
-    'jshint:core',
+    'cssmin:cms',
+    'jshint:cms',
     'requirejs:compile',
     'copy:js'
   ]);
