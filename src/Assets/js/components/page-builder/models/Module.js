@@ -1,5 +1,6 @@
 define(function (require) {
 
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var MetaModel = require('wasabi.cms.package/models/Meta');
 
@@ -21,8 +22,12 @@ define(function (require) {
     },
 
     getData: function () {
+      var meta = this.get('meta');
+      var data = this.get('data');
+
       return {
-        meta: this.get('meta').toJSON()
+        meta: !_.isEmpty(meta) ? meta.toJSON() : {},
+        data: !_.isEmpty(data) ? data.toJSON() : {}
       };
     }
 

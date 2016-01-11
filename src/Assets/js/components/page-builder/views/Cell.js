@@ -41,11 +41,9 @@ define(function (require) {
      */
     initialize: function (options) {
       this.collection = this.model.modules;
+      this.parent = options.parent;
 
       WS.Cms.views.pageBuilder.droppableViews.push(this);
-
-      //this.model.modules.on('add', this.parent.syncCellHeight, this.parent);
-      //this.model.modules.on('remove', this.parent.syncCellHeight, this.parent);
     },
 
     onRender: function () {

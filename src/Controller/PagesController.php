@@ -20,6 +20,7 @@ use Cake\Utility\Hash;
 use Wasabi\Cms\Model\Entity\Content;
 use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Cms\Model\Table\PagesTable;
+use Wasabi\Cms\View\Module\ModuleManager;
 use Wasabi\Cms\View\Theme\ThemeManager;
 use Wasabi\Core\Model\Table\RoutesTable;
 use Wasabi\Core\Routing\RouteTypes;
@@ -224,8 +225,8 @@ class PagesController extends BackendAppController
 
         $this->set([
             'page' => $page,
-            'themes' => ThemeManager::getThemesForSelect(),
             'layouts' => ThemeManager::theme()->getLayoutsForSelect(),
+            'availableModules' => ModuleManager::getAvailableModules(),
             'changeAttributesUrl' => Router::url([
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',
@@ -274,6 +275,7 @@ class PagesController extends BackendAppController
         $this->set([
             'page' => $page,
             'layouts' => ThemeManager::theme()->getLayoutsForSelect(),
+            'availableModules' => ModuleManager::getAvailableModules(),
             'changeAttributesUrl' => Router::url([
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',

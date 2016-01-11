@@ -84,20 +84,22 @@ define(function (require) {
       var targetCollection = this.collection;
 
       // Check if the draggable position has really changed
-      //if (typeof targetCollection.at(at) !== 'undefined') {
-      //    if (targetCollection.at(at).cid === draggable.model.cid) {
-      //        return;
-      //    }
-      //}
+      if (typeof targetCollection.at(at) !== 'undefined') {
+          if (targetCollection.at(at).cid === draggable.model.cid) {
+              return;
+          }
+      }
 
       // If it has changed, then remove the model from its old collection and add it
       // to the new collection at the specified position.
-      draggable._parent.collection.remove(draggable.model, {silent: true});
-      targetCollection.add(draggable.model, {at: at, silent: true});
-      draggable._parent = this;
+      setTimeout(_.bind(function() {
+        draggable._parent.collection.remove(draggable.model, {silent: false});
+        targetCollection.add(draggable.model, {at: at, silent: false});
+        draggable._parent = this;
 
-      // Force the pageBuilder to rebuild the value of the $contentField
-      WS.Cms.views.pageBuilder.model.rebuildContentData();
+        // Force the pageBuilder to rebuild the value of the $contentField
+        WS.Cms.views.pageBuilder.model.rebuildContentData();
+      }, this), 300);
     }
 
   };

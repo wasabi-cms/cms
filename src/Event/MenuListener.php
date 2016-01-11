@@ -16,6 +16,7 @@ namespace Wasabi\Cms\Event;
 
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\TableRegistry;
 use Wasabi\Cms\Config;
 use Wasabi\Core\Menu;
 
@@ -32,6 +33,10 @@ class MenuListener implements EventListenerInterface
         return [
             'Wasabi.Backend.Menu.initMain' => [
                 'callable' => 'initBackendMenuMainItems',
+                'priority' => Config::$priority
+            ],
+            'Wasabi.Backend.MenuItems.getLinkTypes' => [
+                'callable' => 'getLinkTypesForMenuItem',
                 'priority' => Config::$priority
             ]
         ];
@@ -71,5 +76,41 @@ class MenuListener implements EventListenerInterface
                 ],
                 'matchAction' => true
             ]);
+    }
+
+    /**
+     * Get available link types for menu items (wasabi backend).
+     *
+     * @param Event $event
+     */
+    public function getLinkTypesForMenuItem(Event $event)
+    {
+        $Pages = TableRegistry::get('Wasabi/Cms.Pages');
+        $pages = $Pages->find('treeList')
+            ->select([
+                $Pages->aliasField('id'),
+                $Pages->aliasField('name')
+            ])
+            ->toArray();
+
+        if (!$pages) {
+            return;
+        }
+
+        /** @var string $group */
+        $group = __d('wasabi_core', 'Cms Pages');
+
+        $results = [];
+
+        foreach ($pages as $id => $name) {
+            $key = json_encode([
+                'type' => 'object',
+                'object' => 'Wasabi/Cms.Page',
+                'id' => $id
+            ]);
+            $results[$key] = $name;
+        }
+
+        $event->result[$group] = $results;
     }
 }

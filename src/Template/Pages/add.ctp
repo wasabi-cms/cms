@@ -9,6 +9,7 @@
  * @var array $layouts
  * @var string $changeAttributesUrl
  * @var array $routeTypes
+ * @var array $availableModules
  */
 
 use Cake\Core\Configure;
@@ -26,10 +27,17 @@ $this->set('jsCmsOptions', [
             ],
             'addModule' => [
                 'title' => __d('wasabi_cms', 'Add Module'),
-                'primaryAction' => __d('wasabi_cms', 'Add Module')
+                'primaryAction' => __d('wasabi_cms', 'Close')
+            ],
+            'editModule' => [
+                'title' => __d('wasabi_cms', 'Edit Module'),
+                'primaryAction' => __d('wasabi_cms', 'Save'),
+                'secondaryAction' => __d('wasabi_cms', 'Cancel')
             ]
         ]
-    ]
+    ],
+    'modules' => $availableModules,
+    'moduleAction' => $this->Url->build(['plugin' => 'Wasabi/Cms', 'controller' => 'Modules', 'action' => 'edit'], true)
 ]);
 
 if ($this->request->params['action'] == 'add') {
@@ -129,23 +137,3 @@ if ($this->request->params['action'] == 'edit') {
 <?php
 echo $this->Form->end();
 echo $this->element('Wasabi/Cms.Pages/page-builder-templates.hbs');
-
-//$layout = false;
-//$contentAreas = array();
-//if ($this->request->params['action'] === 'edit' && !empty($page->layout)) {
-//    $layout = $page->getLayout();
-//    $contentAreas = $layout->getContentAreas();
-//}
-
-/*if ($layout !== false && !empty($contentAreas)): */?><!--
-    <ul class="tabs row mtop" data-tabify-id="content-areas">
-        <?php /*$i = 0; foreach ($contentAreas as $contentAreaId => $contentAreaName): */?>
-            <li<?/*= ($i === 0) ? ' class="active"' : '' */?> data-tabify-target="<?/*= $contentAreaId */?>"><a href="javascript:void(0)"><?/*= $contentAreaName */?></a></li>
-            <?php /*$i++; endforeach; */?>
-    </ul>
-    <?php /*$i = 0; foreach ($contentAreas as $contentAreaId => $contentAreaName): */?>
-        <div class="tab-content" data-tabify-tab="<?/*= $contentAreaId */?>" data-tabify-id="content-areas"<?/*= ($i > 0) ? ' style="display: none;"' : '' */?>>
-            blub <?/*= $i */?>
-        </div>
-        <?php /*$i++; endforeach; */?>
---><?php /*endif; */?>

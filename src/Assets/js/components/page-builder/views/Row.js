@@ -20,6 +20,12 @@ define(function (require) {
     childViewContainer: '.cells',
     childView: CellView,
 
+    childViewOptions: function() {
+      return {
+        parent: this
+      }
+    },
+
     /**
      * DOM events handled by this view.
      */
@@ -43,6 +49,8 @@ define(function (require) {
      */
     initialize: function (options) {
       this.collection = this.model.cells;
+
+      WS.eventBus.on('syncAllCellHeights', _.bind(this.syncCellHeight, this));
     },
 
     /**
@@ -97,8 +105,12 @@ define(function (require) {
      * @param {Event} event
      */
     onDeleteRow: function (event) {
-      this._parent.collection.remove(this.model);
-      WS.Cms.views.pageBuilder.model.rebuildContentData();
+      this.$el.fadeOut(_.bind(function() {
+        setTimeout(_.bind(function() {
+          this._parent.collection.remove(this.model);
+          WS.Cms.views.pageBuilder.model.rebuildContentData();
+        }, this), 200);
+      }, this));
     }
 
   });

@@ -15,10 +15,12 @@
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Event\EventManager;
 use Wasabi\Cms\Event\MenuListener;
 use Wasabi\Cms\Event\RouteListener;
 use Wasabi\Cms\Event\ThemeListener;
+use Wasabi\Cms\View\Module\ModuleManager;
 
 try {
     // Load and apply the Wasabi Core cache config.
@@ -29,6 +31,12 @@ try {
 } catch (\Exception $e) {
     die($e->getMessage() . "\n");
 }
+
+// Configure plugin translation paths.
+Configure::write('App.paths.locales', array_merge(Configure::read('App.paths.locales'), [Plugin::path('Wasabi/Cms') . 'src' . DS . 'Locale' . DS]));
+
+// Register module path.
+ModuleManager::registerModulePath(Plugin::path('Wasabi/Cms') . 'src' . DS . 'View' . DS . 'Module' . DS);
 
 EventManager::instance()->on(new RouteListener());
 EventManager::instance()->on(new ThemeListener());

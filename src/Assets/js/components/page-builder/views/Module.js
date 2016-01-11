@@ -1,6 +1,7 @@
 define(function (require) {
 
   var _ = require('underscore');
+  var WS = require('wasabi');
   var Marionette = require('marionette');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
 
@@ -20,7 +21,9 @@ define(function (require) {
      * DOM events handled by this view.
      */
     events: {
-      'changedPosition': 'onChangedPosition'
+      'click': 'onClick',
+      'click .module-edit': 'onEdit',
+      'click .module-remove': 'onRemove'
     },
 
     onRender: function () {
@@ -64,8 +67,27 @@ define(function (require) {
       return this.$placeholder.outerWidth();
     },
 
-    onChangedPosition: function () {
-      console.log('changedPosition', this);
+    onClick: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+
+    onEdit: function(event) {
+      WS.Cms.views.pageBuilder.dialogs.editModule
+        .setModel(this.model)
+        .render();
+    },
+
+    onRemove: function(event) {
+      event.preventDefault();
+
+      this.$el.fadeOut(_.bind(function() {
+        setTimeout(_.bind(function() {
+          this._parent.collection.remove(this.model);
+          WS.Cms.views.pageBuilder.model.rebuildContentData();
+          WS.eventBus.trigger('syncAllCellHeights');
+        }, this), 200);
+      }, this));
     }
 
   });

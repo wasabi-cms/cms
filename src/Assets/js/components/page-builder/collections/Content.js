@@ -26,6 +26,10 @@ define(function (require) {
 
     addRow: function (data) {
       this.add(new RowModel(data));
+    },
+
+    addModule: function (data) {
+      this.add(new ModuleModel(data));
     }
   });
 

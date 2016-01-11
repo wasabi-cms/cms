@@ -5,7 +5,11 @@ define(function (require) {
 
   var ModulesCollection = Backbone.Collection.extend({
     collectionType: 'ModulesCollection',
-    model: Module
+    model: Module,
+
+    addModule: function (data) {
+      this.add(new Module(data));
+    }
   });
 
   return ModulesCollection;

@@ -133,6 +133,12 @@ abstract class Theme
         return $plugin . '.' . $theme;
     }
 
+    public function getClassNameForInitialization()
+    {
+        list($plugin, ) = namespaceSplit(get_class($this));
+        return $plugin . '\\View\\Theme' . $this->name() . 'View';
+    }
+
     /**
      * Initialize all layouts for the current theme.
      */

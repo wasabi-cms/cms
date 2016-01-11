@@ -6,6 +6,7 @@ define(function (require) {
   var Marionette = require('marionette');
   var RowDialogView = require('wasabi.cms.package/components/row-dialog/views/RowDialog');
   var ModuleDialogView = require('wasabi.cms.package/components/module-dialog/views/ModuleDialog');
+  var EditModuleDialog = require('wasabi.cms.package/components/edit-module-dialog/views/EditModuleDialog');
   var ContentAreaView = require('wasabi.cms.package/components/page-builder/views/ContentArea');
 
   /**
@@ -38,12 +39,17 @@ define(function (require) {
      */
     droppableViews: [],
 
+    ui: {
+      'moduleDialogBtn': '[data-add="module"]',
+      'rowDialogBtn': '[data-add="row"]'
+    },
+
     /**
      * DOM events handled by this view..
      */
     events: {
-      'click [data-add="module"]': 'showAddModuleDialog',
-      'click [data-add="row"]': 'showAddRowDialog'
+      'click @ui.moduleDialogBtn': 'showAddModuleDialog',
+      'click @ui.rowDialogBtn': 'showAddRowDialog'
     },
 
     /**
@@ -64,12 +70,17 @@ define(function (require) {
         }),
         row: WS.createView(RowDialogView, {
           pageBuilder: this
+        }),
+        editModule: WS.createView(EditModuleDialog, {
+          pageBuilder: this
         })
       };
 
       this.$hiddenDataField = options.$hiddenDataField;
 
       this.collection = this.model.contentAreas;
+
+      WS.eventBus.on('add-module', _.bind(this.addModule, this));
     },
 
     onRender: function () {
@@ -247,6 +258,18 @@ define(function (require) {
         selectedElement._parent._parent.collection.addRow(data);
       }
       this.model.rebuildContentData();
+    },
+
+    addModule: function(data) {
+      var selectedElement = this.model.get('selected');
+      if (!selectedElement) {
+        selectedElement = this.children.first();
+      }
+      if (selectedElement.viewType === 'ContentArea' || selectedElement.viewType === 'Cell') {
+        selectedElement.collection.addModule(data);
+        this.model.rebuildContentData();
+        WS.eventBus.trigger('syncAllCellHeights');
+      }
     }
 
   });
