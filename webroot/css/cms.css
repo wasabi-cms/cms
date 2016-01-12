@@ -691,4 +691,7 @@ table.layout-attributes tr > td div.input.radio,
 table.layout-attributes tr > td div.input.checkbox {
   padding-top: 5px;
 }
+.wasabi-cms--pages-index .sortable-placeholder {
+  background: #fff6bf;
+}
 /*# sourceMappingURL=webroot/css/cms.css.map */

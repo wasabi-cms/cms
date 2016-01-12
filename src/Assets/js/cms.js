@@ -6,12 +6,17 @@ define(function (require) {
   var Routes = require('wasabi.cms.package/views/Routes');
   var PageBuilder = require('wasabi.cms.package/components/page-builder/models/PageBuilder');
   var PageBuilderView = require('wasabi.cms.package/components/page-builder/views/PageBuilder');
+  var PagesIndexView = require('wasabi.cms.package/views/PagesIndexView');
 
   /**
    * Initialize the Routes view for page add/edit.
    */
   function _routes() {
     WS.Cms.views.routes = WS.createView(Routes);
+  }
+
+  function _pagesIndex() {
+    WS.Cms.views.pagesIndex = WS.createView(PagesIndexView);
   }
 
   /**
@@ -55,6 +60,10 @@ define(function (require) {
       if ($body.hasClass('wasabi-cms--pages-add') || $body.hasClass('wasabi-cms--pages-edit')) {
         _routes();
         _pageBuilder();
+      }
+
+      if ($body.hasClass('wasabi-cms--pages-index')) {
+        _pagesIndex();
       }
 
       if (DEBUG) {
