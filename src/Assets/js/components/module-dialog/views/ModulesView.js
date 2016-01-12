@@ -22,7 +22,7 @@ define(function (require) {
       if (search === '' && group === null) {
         return true;
       } else if (search !== '' && group === null) {
-        if (child.get('name').toLowerCase().indexOf(search.toLowerCase()) > 0) {
+        if (child.get('name').toLowerCase().indexOf(search.toLowerCase()) !== -1) {
           return true;
         }
       } else if (search === '' && group !== null) {
@@ -30,7 +30,7 @@ define(function (require) {
           return true;
         }
       } else if (search !== '' && group !== null) {
-        if (child.get('name').toLowerCase().indexOf(search.toLowerCase()) > 0 && child.get('group') === group) {
+        if (child.get('name').toLowerCase().indexOf(search.toLowerCase()) !== -1 && child.get('group') === group) {
           return true;
         }
       }
