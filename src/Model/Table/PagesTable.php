@@ -114,6 +114,10 @@ class PagesTable extends Table
             return true;
         }
 
+        if (empty($page->current[0])) {
+            return false;
+        }
+
         return (md5($latestContent['content']) !== md5($page->current[0]->content));
     }
 }

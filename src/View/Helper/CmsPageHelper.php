@@ -53,12 +53,10 @@ class CmsPageHelper extends Helper
         foreach ($pages as $page) {
             $closed = false;
             $classes =  ['page'];
-            if (in_array($page['CmsPage']['id'], $closedPages)) {
+            if (in_array($page->id, $closedPages)) {
                 $closed = true;
                 $classes[] = 'closed';
             }
-//            $collection = CmsPage::getCollection($page);
-//            $collectionItem = !$collection ? CmsPage::getCollectionItem($page) : false;
 
             $pageRow = $this->_View->element('Wasabi/Cms.Pages/__page-row', [
                 'page' => $page,

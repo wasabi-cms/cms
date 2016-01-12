@@ -3,7 +3,7 @@
  * @var \Wasabi\Cms\View\AppView $this
  * @var array $pages
  * @var array $closedPages
- * @var string reorderUrl
+ * @var string $reorderUrl
  */
 
 $this->Html->setTitle(__d('wasabi_cms', 'Pages'));

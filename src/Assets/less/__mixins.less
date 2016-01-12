@@ -1,10 +1,10 @@
 .nestPage(@tabWidth, @level) {
 
   .sortable-placeholder {
-    border-left-width: (@tabWidth * (2 + @level));
+    border-left: (60px + @tabWidth * (2 + @level)) solid #ccc;
   }
 
   .page-info {
-    margin-left: (@tabWidth * (1 + @level));
+    margin-left: ((@tabWidth) * (1 + @level));
   }
 }

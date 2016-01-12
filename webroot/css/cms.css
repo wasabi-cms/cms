@@ -80,73 +80,76 @@
   position: relative;
   top: 1px;
 }
+#pages .sortable-placeholder {
+  background: #fff6bf;
+}
 #pages ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
+#pages ul .sortable-placeholder {
+  border-left: 108px solid #ccc;
+}
 #pages ul .page-info {
   margin-left: 24px;
 }
-#pages ul .sortable-placeholder {
-  border-left-width: 48px;
-}
 #pages ul ul .sortable-placeholder {
-  border-left-width: 72px;
+  border-left: 132px solid #ccc;
 }
 #pages ul ul .page-info {
   margin-left: 48px;
 }
 #pages ul ul ul .sortable-placeholder {
-  border-left-width: 96px;
+  border-left: 156px solid #ccc;
 }
 #pages ul ul ul .page-info {
   margin-left: 72px;
 }
 #pages ul ul ul ul .sortable-placeholder {
-  border-left-width: 120px;
+  border-left: 180px solid #ccc;
 }
 #pages ul ul ul ul .page-info {
   margin-left: 96px;
 }
 #pages ul ul ul ul ul .sortable-placeholder {
-  border-left-width: 144px;
+  border-left: 204px solid #ccc;
 }
 #pages ul ul ul ul ul .page-info {
   margin-left: 120px;
 }
 #pages ul ul ul ul ul ul .sortable-placeholder {
-  border-left-width: 168px;
+  border-left: 228px solid #ccc;
 }
 #pages ul ul ul ul ul ul .page-info {
   margin-left: 144px;
 }
 #pages ul ul ul ul ul ul ul .sortable-placeholder {
-  border-left-width: 192px;
+  border-left: 252px solid #ccc;
 }
 #pages ul ul ul ul ul ul ul .page-info {
   margin-left: 168px;
 }
 #pages ul ul ul ul ul ul ul ul .sortable-placeholder {
-  border-left-width: 216px;
+  border-left: 276px solid #ccc;
 }
 #pages ul ul ul ul ul ul ul ul .page-info {
   margin-left: 192px;
 }
 #pages ul ul ul ul ul ul ul ul ul .sortable-placeholder {
-  border-left-width: 240px;
+  border-left: 300px solid #ccc;
 }
 #pages ul ul ul ul ul ul ul ul ul .page-info {
   margin-left: 216px;
 }
 #pages ul ul ul ul ul ul ul ul ul ul .sortable-placeholder {
-  border-left-width: 264px;
+  border-left: 324px solid #ccc;
 }
 #pages ul ul ul ul ul ul ul ul ul ul .page-info {
   margin-left: 240px;
 }
 #pages ul ul ul ul ul ul ul ul ul ul ul .sortable-placeholder {
-  border-left-width: 288px;
+  border-left: 348px solid #ccc;
 }
 #pages ul ul ul ul ul ul ul ul ul ul ul .page-info {
   margin-left: 264px;
@@ -690,8 +693,5 @@ table.layout-attributes tr > td > label {
 table.layout-attributes tr > td div.input.radio,
 table.layout-attributes tr > td div.input.checkbox {
   padding-top: 5px;
-}
-.wasabi-cms--pages-index .sortable-placeholder {
-  background: #fff6bf;
 }
 /*# sourceMappingURL=webroot/css/cms.css.map */

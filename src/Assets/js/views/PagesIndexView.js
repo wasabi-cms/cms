@@ -3,6 +3,8 @@ define(function(require) {
   var _ = require('underscore');
   var $ = require('jquery');
   var BaseView = require('common/BaseView');
+  var Cookies = require('wasabi.cms.package/vendor/js-cookie/src/js.cookie');
+
   require('jquery.nSortable');
 
   return BaseView.extend({
@@ -15,7 +17,8 @@ define(function(require) {
      * @type {Object}
      */
     events: {
-      'nSortable-change': 'onSort'
+      'nSortable-change': 'onSort',
+      'click .expander': 'toggleSubTree'
     },
 
     pagesReorderUrl: false,
@@ -50,6 +53,34 @@ define(function(require) {
         cache: false,
         success: _.bind(this.unblockThis, this)
       });
+    },
+
+    toggleSubTree: function(event) {
+      event.preventDefault();
+      var $currentTarget = $(event.currentTarget);
+      var $li = $currentTarget.closest('li.page');
+      var $ul = $li.find('ul').first();
+      if (!$li.hasClass('closed')) {
+        $ul.slideUp(300, _.bind(function() {
+          $li.addClass('closed');
+          $currentTarget.removeClass('wicon-collapse').addClass('wicon-expand');
+          this.setClosedPagesCookie();
+        }, this));
+      } else {
+        $ul.slideDown(300, _.bind(function() {
+          $li.removeClass('closed');
+          $currentTarget.removeClass('wicon-expand').addClass('wicon-collapse');
+          this.setClosedPagesCookie();
+        }, this));
+      }
+    },
+
+    setClosedPagesCookie: function() {
+      var closedPages = [];
+      this.$('.page.closed').each(function() {
+        closedPages.push(parseInt($(this).attr('data-cms-page-id')));
+      });
+      Cookies.set('closed_pages', closedPages, {expires: 365, path: ''});
     }
   });
 });

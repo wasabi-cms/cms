@@ -53,11 +53,11 @@ class PagesController extends BackendAppController
         $pages = $this->Pages->find('threaded')->order(['lft' => 'ASC']);
         $this->set([
             'pages' => $pages,
-            'closedPages' => isset($_COOKIE['closed_pages']) ? explode(',', $_COOKIE['closed_pages']) : [],
+            'closedPages' => isset($_COOKIE['closed_pages']) ? json_decode($_COOKIE['closed_pages'], true) : [],
             'reorderUrl' => Router::url([
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',
-                'action' => 'reorder'
+                'action' => 'reorderPages'
             ])
         ]);
     }
