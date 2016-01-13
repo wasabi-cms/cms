@@ -12,7 +12,7 @@
  */
 namespace Wasabi\Cms\Controller;
 use Cake\Core\Configure;
-use Cake\I18n\I18n;
+use Cake\Database\Connection;
 use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Routing\Router;
@@ -76,12 +76,32 @@ class PagesController extends BackendAppController
         ThemeManager::theme(Wasabi::setting('Cms.Theme.id'));
 
         if ($this->request->is('post') && !empty($this->request->data)) {
-            $page = $this->Pages->patchEntity($page, $this->request->data);
-            if ($this->Pages->save($page)) {
-                $this->Flash->success(__d('wasabi_cms', 'The page <strong>{0}</strong> has been created.', $page->name));
-                $this->redirect(['action' => 'index']);
-                return;
+            $this->request->data['parent_id'] = $parentId;
+
+            /** @var Connection $conn */
+            $conn = $this->Pages->connection();
+            $conn->begin();
+            $this->Pages->behaviors()->unload('Translate');
+            $page = $this->Pages->newEntity([
+                'name' => $this->request->data('name'),
+                'parent_id' => $this->request->data('parent_id')
+            ]);
+
+            if ($this->Pages->save($page, ['associated' => false])) {
+                $this->Pages->behaviors()->load('Translate', PagesTable::$translateOptions);
+
+                $page = $this->Pages->patchEntity($page, $this->request->data);
+                if ($this->Pages->save($page)) {
+                    $conn->commit();
+                    $this->Flash->success(__d('wasabi_cms', 'The page <strong>{0}</strong> has been created.', $page->name));
+                    $this->redirect(['action' => 'index']);
+                    return;
+                } else {
+                    $conn->rollback();
+                    $this->Flash->error($this->formErrorMessage);
+                }
             } else {
+                $conn->rollback();
                 $this->Flash->error($this->formErrorMessage);
             }
         } else {
