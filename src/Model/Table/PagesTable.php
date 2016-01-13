@@ -30,6 +30,18 @@ use Wasabi\Core\Wasabi;
 class PagesTable extends Table
 {
     /**
+     * Holds the options for the Translate behavior.
+     *
+     * @var array
+     */
+    public static $translateOptions = [
+        'fields' => [
+            'name',
+            'slug'
+        ]
+    ];
+
+    /**
      * Initialize a table instance. Called after the constructor.
      *
      * @param array $config Configuration options passed to the constructor
@@ -49,12 +61,7 @@ class PagesTable extends Table
             'finder' => 'Current'
         ]);
 
-        $this->addBehavior('Translate', [
-            'fields' => [
-                'name',
-                'slug'
-            ]
-        ]);
+        $this->addBehavior('Translate', self::$translateOptions);
 
         $this->addBehavior('Tree');
         $this->addBehavior('Timestamp');
