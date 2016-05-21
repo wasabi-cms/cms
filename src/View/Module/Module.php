@@ -3,8 +3,9 @@
 namespace Wasabi\Cms\View\Module;
 
 use Cake\Form\Form;
+use Cake\Utility\Hash;
+use Cake\View\View;
 use Wasabi\Core\Wasabi;
-use Wasabi\ThemeDefault\View\ThemeDefaultView;
 
 abstract class Module extends Form
 {
@@ -134,6 +135,11 @@ abstract class Module extends Form
         return $this->_path;
     }
 
+    /**
+     * Render the output for this module (out.ctp).
+     *
+     * @return string
+     */
     public function render()
     {
         if (method_exists($this, 'beforeRender')) {
@@ -147,7 +153,7 @@ abstract class Module extends Form
         }
 
         $viewClass = Wasabi::getTheme()->getClassNameForInitialization();
-        /** @var ThemeDefaultView $view */
+        /** @var View $view */
         $view = new $viewClass();
         $output = $view->element('Wasabi/Cms.module', [
             'template' => $template,
@@ -157,6 +163,11 @@ abstract class Module extends Form
         return $output;
     }
 
+    /**
+     * Render the Form for this module (in.ctp).
+     *
+     * @return string
+     */
     public function renderForm()
     {
         $template = $this->path() . DS . 'in.ctp';
@@ -166,7 +177,7 @@ abstract class Module extends Form
         }
 
         $viewClass = Wasabi::getTheme()->getClassNameForInitialization();
-        /** @var ThemeDefaultView $view */
+        /** @var View $view */
         $view = new $viewClass();
         $output = $view->element('Wasabi/Cms.module', [
             'template' => $template,
@@ -174,5 +185,27 @@ abstract class Module extends Form
         ]);
 
         return $output;
+    }
+
+    /**
+     * Called when the form data is valid.
+     * Handle, transform and return the data in an array format so it can
+     * be json encoded and sent back to the client.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function process(array $data)
+    {
+        $processedData = [
+            'meta' => Hash::get($data, 'meta'),
+            'data' => []
+        ];
+        $processedData['meta']['title'] = $this->name();
+        unset($data['meta']);
+        foreach ($data as $attr => $value) {
+            $processedData['data'][$attr] = $value;
+        }
+        return $processedData;
     }
 }
