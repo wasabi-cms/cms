@@ -3,6 +3,7 @@
  * @var \Wasabi\ThemeDefault\View\ThemeDefaultView $this
  * @var \Cake\Form\Form $form
  */
-echo $this->Form->create($form);
-echo $this->Form->input('content', ['type' => 'textarea', 'id' => false]);
+echo $this->Flash->render('module');
+echo $this->Form->create($form, ['templates' => 'Wasabi/Core.form_templates']);
+echo $this->Form->input('content', ['type' => 'textarea', 'id' => 'text-content']);
 echo $this->Form->end();
