@@ -42,6 +42,9 @@
 <script id="pb-cell" type="text/template">
     <div class="resize-handle" title="<?= __d('wasabi_cms', 'Resize') ?>"></div>
     <div class="cell-wrapper"></div>
+    <div class="cell-width-wrapper">
+        <span class="cell-width"><span class="cell-colwidth"><%= colWidth() %></span>/<span class="cell-baseiwdth"><%= baseWidth() %></span></span>
+    </div>
 </script>
 
 <script id="pb-module" type="text/template">

@@ -1,5 +1,6 @@
 define(function (require) {
 
+  var $ = require('jquery');
   var WS = require('wasabi');
   var Marionette = require('marionette');
   var DroppableMixin = require('wasabi.cms.package/views/DroppableMixin');
@@ -24,7 +25,8 @@ define(function (require) {
      */
     events: {
       'click .cell-wrapper': 'selectCell',
-      'placeholder-moved': 'onPlaceholderMoved'
+      'placeholder-moved': 'onPlaceholderMoved',
+      'mousedown .resize-handle': 'onMouseDown'
     },
 
     /**
@@ -42,6 +44,9 @@ define(function (require) {
     initialize: function (options) {
       this.collection = this.model.modules;
       this.parent = options.parent;
+      this.$doc = $(document);
+
+      this.listenTo(this.model.get('meta').get('grid'), 'change:colWidth', this.render, this);
 
       WS.Cms.views.pageBuilder.droppableViews.push(this);
     },
@@ -57,6 +62,82 @@ define(function (require) {
       this.$el.attr('data-type', 'cell');
 
       this.$dragHandle = this.$('.resize-handle');
+    },
+
+    templateHelpers: function () {
+      return {
+        colWidth: _.bind(function () {
+          var grid = this.model.get('meta').get('grid');
+          return grid.get('colWidth');
+        }, this),
+        baseWidth: _.bind(function () {
+          var grid = this.model.get('meta').get('grid');
+          return grid.get('baseWidth');
+        }, this)
+      };
+    },
+
+    onMouseDown: function (event) {
+      if (event.currentTarget !== this.$dragHandle[0]) {
+        return;
+      }
+      event.preventDefault();
+
+      this.baseWidth = this._parent.$childViewContainer.width();
+      this.baseColWidth = this.baseWidth / this.model.get('meta').get('grid').get('baseWidth');
+      this.startX = event.pageX;
+
+      this.$doc.on('mousemove', _.bind(this.onMouseMove, this));
+      this.$doc.on('mouseup', _.bind(this.onMouseUp, this));
+
+      $('body').addClass('cursor-force--col-resize');
+      this.$dragHandle.addClass('hover');
+      this._parent.showCellWidths();
+    },
+
+    onMouseMove: function (event) {
+      if (!this.isDragging) {
+        this.isDragging = true;
+      }
+
+      var diff = -(this.startX - event.pageX);
+      var diffPercent = diff / this.baseColWidth;
+      var leftCell = this.model.collection.at(this.model.collection.indexOf(this.model) - 1);
+
+      if (diffPercent <= -1) {
+        // left cell - 1, this.model + 1
+        var newLeftColWidth = leftCell.getColWidth() - 1;
+        if (newLeftColWidth >= 1) {
+          leftCell.setColWidth(leftCell.getColWidth() - 1);
+          this.model.setColWidth(this.model.getColWidth() + 1);
+          this.startX = event.pageX;
+        }
+      }
+
+      if (diffPercent >= 1) {
+        // left cell + 1, this.model - 1
+        var newColWidth = this.model.getColWidth() - 1;
+        if (newColWidth >= 1) {
+          leftCell.setColWidth(leftCell.getColWidth() + 1);
+          this.model.setColWidth(this.model.getColWidth() - 1);
+          this.startX = event.pageX;
+        }
+      }
+    },
+
+    onMouseUp: function (event) {
+      this.$dragHandle.removeClass('hover');
+      $('body').removeClass('cursor-force--col-resize');
+
+      this.$doc.off('mousemove');
+      this.$doc.off('mouseup');
+
+      if (this.isDragging) {
+        event.preventDefault();
+        this.isDragging = false;
+        this._parent.hideCellWidths();
+        WS.Cms.views.pageBuilder.model.rebuildContentData();
+      }
     },
 
     /**
@@ -87,7 +168,6 @@ define(function (require) {
      * @param {Event} event
      */
     onPlaceholderMoved: function (event) {
-      this._parent.syncCellHeight(event);
     },
 
     /**

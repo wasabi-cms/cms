@@ -246,6 +246,10 @@
   padding: 0 5px 0 25px;
   margin: 0 -10px 10px;
 }
+[data-type="row"] .cells {
+  display: flex;
+  flex-direction: row;
+}
 [data-type="row"] .row-actions {
   position: absolute;
   top: 0;
@@ -351,9 +355,13 @@
 [data-type="row"].row-editor .cell-actions li .cell-remove:hover {
   color: #000;
 }
+[data-type="row"].cells--resizing [data-type="cell"] .cell-width-wrapper {
+  display: block;
+}
 [data-type="cell"] {
   padding: 0 5px;
   position: relative;
+  display: flex;
 }
 [data-type="cell"] .resize-handle {
   position: absolute;
@@ -374,9 +382,30 @@
 [data-type="cell"] .cell-wrapper {
   padding: 10px 10px 0;
   min-height: 72px;
-  height: 100%;
+  width: 100%;
   border: 1px solid #c2cbd0;
   background-color: #e1f0ff;
+}
+[data-type="cell"] .cell-width-wrapper {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 5px;
+  bottom: 0;
+  left: 5px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.45);
+}
+[data-type="cell"] .cell-width-wrapper .cell-width {
+  position: absolute;
+  top: 50%;
+  margin-top: -22px;
+  margin-left: -12px;
+  color: rgba(255, 255, 255, 0.84);
+}
+[data-type="cell"] .cell-width-wrapper .cell-colwidth {
+  font-weight: 600;
+  font-size: 30px;
 }
 [data-type="cell"]:first-child .resize-handle {
   display: none;
@@ -388,16 +417,17 @@
 .module {
   margin-bottom: 10px;
   padding: 5px 10px 4px;
-  background-color: #fbfbfb;
+  background-color: #fff;
   border: 1px solid #aeb0b0;
   cursor: move;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-}
-.module:hover {
-  background-color: #fff;
+  -webkit-box-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+  box-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  /* Opera 10.5, IE9+, Firefox 4+, Chrome 6+, iOS 5 */
 }
 .module:hover .module-actions {
   display: block;
@@ -405,6 +435,10 @@
 .module.placeholder {
   background-color: transparent;
   border-style: dashed;
+  -webkit-box-shadow: none;
+  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+  box-shadow: none;
+  /* Opera 10.5, IE9+, Firefox 4+, Chrome 6+, iOS 5 */
 }
 .module-title {
   position: relative;
@@ -670,6 +704,17 @@
   background-color: #fff;
   font-weight: 700;
   color: #333;
+}
+.edit-module-dialog .dialog-content {
+  padding: 0;
+}
+.edit-module-dialog .dialog-content > .flash-message {
+  margin: 5px;
+}
+.edit-module-dialog form {
+  margin: 5px;
+  border-top: 1px solid #e3e5e6;
+  border-bottom: 1px solid #e3e5e6;
 }
 .list.routes,
 .list.layout-attributes {

@@ -34,23 +34,12 @@ define(function (require) {
     },
 
     /**
-     * Collection events handles by this view.
-     */
-    collectionEvents: {
-      'add': 'syncCellHeight',
-      'remove': 'syncCellHeight',
-      'change': 'syncCellHeight'
-    },
-
-    /**
      * Initialize the Row view.
      *
      * @param {Object} options
      */
     initialize: function (options) {
       this.collection = this.model.cells;
-
-      WS.eventBus.on('syncAllCellHeights', _.bind(this.syncCellHeight, this));
     },
 
     /**
@@ -87,18 +76,6 @@ define(function (require) {
     },
 
     /**
-     * Synchronize the height of all cells of this row.
-     *
-     * @param {Event} event
-     */
-    syncCellHeight: function (event) {
-      var maxHeight = 0;
-      this.$childViewContainer.find('.cell-wrapper').css('minHeight', '').each(function (i, c) {
-        maxHeight = Math.max(maxHeight, $(c).outerHeight());
-      }).css('minHeight', maxHeight);
-    },
-
-    /**
      * Event handler
      * Handle deletion of a row.
      *
@@ -111,6 +88,14 @@ define(function (require) {
           WS.Cms.views.pageBuilder.model.rebuildContentData();
         }, this), 200);
       }, this));
+    },
+
+    showCellWidths: function() {
+      this.$el.addClass('cells--resizing');
+    },
+
+    hideCellWidths: function() {
+      this.$el.removeClass('cells--resizing');
     }
 
   });

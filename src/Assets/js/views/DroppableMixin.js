@@ -1,5 +1,6 @@
 define(function (require) {
 
+  var _ = require('underscore');
   var WS = require('wasabi');
 
   var DroppableMixin = {
@@ -94,7 +95,7 @@ define(function (require) {
       // to the new collection at the specified position.
       setTimeout(_.bind(function() {
         draggable._parent.collection.remove(draggable.model, {silent: false});
-        targetCollection.add(draggable.model, {at: at, silent: false});
+        targetCollection.add(draggable.model, {at: at || 0, silent: false});
         draggable._parent = this;
 
         // Force the pageBuilder to rebuild the value of the $contentField

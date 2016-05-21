@@ -94,7 +94,7 @@ define(function (require) {
      * @param {Event} event
      */
     onMouseDown: function (event) {
-      if (event.currentTarget !== this.$dragHandle[0]) {
+      if (!this._isDragHandle(event) || !this._canDrag(event)) {
         return;
       }
       event.preventDefault();
@@ -183,7 +183,8 @@ define(function (require) {
         }
 
         if (this.options.animateTarget) {
-          this.$clone.animate(this._getStopPosition(), parseInt(this.options.animationLength), _stop);
+          _stop();
+          // this.$clone.animate(this._getStopPosition(), parseInt(this.options.animationLength), _stop);
         } else {
           _stop();
         }
@@ -195,11 +196,12 @@ define(function (require) {
         that.$clone.remove();
         that.$el.show();
         that.$clone = null;
+        that.$el.trigger('dropped');
+        that.$scrollParent = null;
+        that.isDragging = false;
         if (that.options.hideDraggable) {
           this.getDraggableElement().show();
         }
-        that.$scrollParent = null;
-        that.isDragging = false;
       }
     },
 
@@ -353,6 +355,31 @@ define(function (require) {
           $doc.scrollLeft($doc.scrollLeft() + this.options.scrollSpeed);
         }
       }
+    },
+
+      /**
+       * Check if the current event target is the drag handle.
+       *
+       * @param event
+       * @returns {boolean}
+       * @private
+       */
+    _isDragHandle: function(event) {
+      return (event.currentTarget === this.$dragHandle[0]);
+    },
+
+      /**
+       * Check if the current event target should enable dragging.
+       *
+       * @param event
+       * @returns {*}
+       * @private
+       */
+    _canDrag: function(event) {
+      if (typeof this['canDrag'] !== 'function') {
+        return true;
+      }
+      return this['canDrag'](event);
     }
 
   };

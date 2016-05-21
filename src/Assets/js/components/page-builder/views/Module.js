@@ -5,6 +5,8 @@ define(function (require) {
   var Marionette = require('marionette');
   var DraggableMixin = require('wasabi.cms.package/views/DraggableMixin');
 
+  require('jquery.color');
+
   var ModuleView = Marionette.ItemView.extend({
 
     /**
@@ -23,7 +25,12 @@ define(function (require) {
     events: {
       'click': 'onClick',
       'click .module-edit': 'onEdit',
-      'click .module-remove': 'onRemove'
+      'click .module-remove': 'onRemove',
+      'dropped': 'onDropped'
+    },
+
+    modelEvents: {
+      'change': 'onChange'
     },
 
     onRender: function () {
@@ -85,8 +92,27 @@ define(function (require) {
         setTimeout(_.bind(function() {
           this._parent.collection.remove(this.model);
           WS.Cms.views.pageBuilder.model.rebuildContentData();
-          WS.eventBus.trigger('syncAllCellHeights');
         }, this), 200);
+      }, this));
+    },
+
+    onChange: function() {
+      this.render();
+      WS.Cms.views.pageBuilder.model.rebuildContentData();
+    },
+
+    canDrag: function(event) {
+      var isModuleAction = $(event.target).parents('.module-actions').length > 0;
+      return !isModuleAction;
+    },
+
+    onDropped: function() {
+      this.$el.css({
+        backgroundColor: '#fff7d9'
+      }).animate({
+        backgroundColor: '#fff'
+      }, 300, _.bind(function() {
+        this.$el.css({backgroundColor: ''});
       }, this));
     }
 

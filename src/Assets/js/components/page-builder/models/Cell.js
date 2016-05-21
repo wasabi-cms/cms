@@ -26,6 +26,24 @@ define(function (require) {
       return this;
     },
 
+    /**
+     * Get the current colWidth of this cell.
+     *
+     * @returns {number}
+     */
+    getColWidth: function () {
+      return this.get('meta').get('grid').get('colWidth');
+    },
+
+    /**
+     * Set the current colWidth of this cell.
+     *
+     * @param {number} colWidth
+     */
+    setColWidth: function (colWidth) {
+      this.get('meta').get('grid').set('colWidth', colWidth);
+    },
+
     getData: function () {
       var data = {
         meta: this.get('meta').toJSON(),

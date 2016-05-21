@@ -27,7 +27,7 @@ define(function (require) {
 
       return {
         meta: !_.isEmpty(meta) ? meta.toJSON() : {},
-        data: !_.isEmpty(data) ? data.toJSON() : {}
+        data: !_.isEmpty(data) ? data : {}
       };
     }
 
