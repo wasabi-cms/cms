@@ -3,6 +3,7 @@
 namespace Wasabi\Cms\View\Module\Text;
 
 use Cake\Form\Schema;
+use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use Wasabi\Cms\View\Module\Module;
 
@@ -44,7 +45,7 @@ class TextModule extends Module
      */
     protected function _buildValidator(Validator $validator)
     {
-        return $validator->notEmpty('content', __d('module_text', 'Please enter some content.'));
+        return $validator->notEmpty('content', __d('wasabi_cms', 'Please enter some content.'));
     }
 
     /**
@@ -55,8 +56,12 @@ class TextModule extends Module
      * @param array $data
      * @return array
      */
-    protected function _execute(array $data)
+    public function process(array $data)
     {
-        return [];
+        $data = parent::process($data);
+
+        $data['meta']['description'] = Hash::get($data, 'data.content');
+
+        return $data;
     }
 }
