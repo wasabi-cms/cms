@@ -3,6 +3,8 @@
 namespace Wasabi\Cms\View\Theme;
 
 use Cake\Core\Exception\Exception;
+use Cake\Core\Plugin;
+use Cake\Filesystem\Folder;
 
 class ThemeManager
 {
@@ -35,9 +37,31 @@ class ThemeManager
     protected static $_initialized = false;
 
     /**
+     * Register all available themes in the composer classloader and load them as plugin.
+     *
+     * @return void
+     */
+    public static function loadThemes()
+    {
+        $themesFolder = new Folder(ROOT . DS . 'themes');
+        $themes = $themesFolder->read()[0];
+        $loader = require ROOT . DS . 'vendor' . DS . 'autoload.php';
+        foreach ($themes as $theme) {
+            $loader->addPsr4('Wasabi\\Theme\\' . $theme . '\\', [$themesFolder->path . DS . $theme . DS . 'src']);
+            Plugin::load('Wasabi/Theme/' . $theme, [
+                'path' => $themesFolder->path . DS . $theme . DS,
+                'bootstrap' => true,
+                'routes' => false
+            ]);
+        }
+    }
+
+    /**
      * Register the given $theme.
      *
      * @param string $theme
+     * @throws Exception
+     * @return void
      */
     public static function registerTheme($theme)
     {

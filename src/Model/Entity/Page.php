@@ -46,15 +46,6 @@ class Page extends Entity
     const STATUS_UNPUBLISHED = 2;
 
     /**
-     * Accessible fields.
-     *
-     * @var array
-     */
-    protected $_accessible = [
-        '*' => true
-    ];
-
-    /**
      * Holds all available statuses of a page.
      *
      * @var array

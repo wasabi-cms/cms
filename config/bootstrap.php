@@ -17,6 +17,7 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\EventManager;
+use Cake\Routing\DispatcherFactory;
 use Wasabi\Cms\Event\MenuListener;
 use Wasabi\Cms\Event\RouteListener;
 use Wasabi\Cms\Event\ThemeListener;
@@ -41,3 +42,5 @@ ModuleManager::registerModulePath(Plugin::path('Wasabi/Cms') . 'src' . DS . 'Vie
 EventManager::instance()->on(new RouteListener());
 EventManager::instance()->on(new ThemeListener());
 EventManager::instance()->on(new MenuListener());
+
+DispatcherFactory::add('Wasabi/Cms.ThemeAsset');

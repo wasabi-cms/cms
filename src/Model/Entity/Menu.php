@@ -13,20 +13,11 @@
 namespace Wasabi\Cms\Model\Entity;
 
 use Cake\ORM\Entity;
-use DateTime;
 
 /**
- * Class Content
- *
- * @property int id
- * @property int page_id
- * @property int language_id
- * @property string content
- * @property int created_by_user_id
- * @property int modified_by_user_id
- * @property DateTime created
- * @property DateTime modified
+ * Class Menu
+ * @package Wasabi\Core\Model\Entity
  */
-class Content extends Entity
+class Menu extends Entity
 {
 }

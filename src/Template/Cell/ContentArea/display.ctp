@@ -1,11 +1,11 @@
 <?php
 /**
- * @var \Wasabi\ThemeDefault\View\ThemeDefaultView $this
+ * @var \Cake\View\View $this
  * @var \Wasabi\Cms\View\Page\ContentArea $contentArea
  */
 
 if ($contentArea !== false) {
-    foreach ($contentArea->data as $contentElement) {
+    foreach ($contentArea->data ?? [] as $contentElement) {
         echo $this->cell($contentElement->viewCell, [$contentElement]);
     }
 }

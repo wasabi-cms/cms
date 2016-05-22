@@ -136,7 +136,7 @@ abstract class Theme
     public function getClassNameForInitialization()
     {
         list($plugin, ) = namespaceSplit(get_class($this));
-        return $plugin . '\\View\\Theme' . $this->name() . 'View';
+        return $plugin . '\\View\\' . $this->name() . 'ThemeView';
     }
 
     /**
@@ -169,7 +169,7 @@ abstract class Theme
             /** @var Layout $layout */
             $layout = new $layoutClass();
         } catch (Exception $e) {
-            throw new Exception(__d('wasabi_core', 'The theme "{0}" could not be instatiated. Check the namespace and file location.', $themeClass));
+            throw new Exception(__d('wasabi_cms', 'The layout "{0}" could not be instatiated. Check the namespace and file location.', $layoutClass));
         }
 
         $this->_layouts[$layout->id()] = $layout;
@@ -183,10 +183,10 @@ abstract class Theme
     protected function _extractId()
     {
         list(, $className) = namespaceSplit(get_class($this));
-        $id = explode('Theme', $className)[1];
+        $id = explode('Theme', $className)[0];
 
         if (!$className || !$id) {
-            user_error(__d('wasabi_cms', 'The theme class {0} has an invalid name. The name has to start with "Theme".', $className));
+            user_error(__d('wasabi_cms', 'The theme class {0} has an invalid name. The name has to end with "Theme".', $className));
         }
 
         return $id;

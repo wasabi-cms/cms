@@ -65,6 +65,17 @@ class MenuListener implements EventListenerInterface
                 ]
             ])
             ->addMenuItem([
+                'alias' => 'menus',
+                'name' => __d('wasabi_cms', 'Menus'),
+                'priority' => 2000,
+                'url' => [
+                    'plugin' => 'Wasabi/Cms',
+                    'controller' => 'Menus',
+                    'action' => 'index'
+                ],
+                'icon' => 'icon-menu',
+            ])
+            ->addMenuItem([
                 'alias' => 'settings_theme',
                 'name' => __d('wasabi_core', 'Theme'),
                 'priority' => 50,

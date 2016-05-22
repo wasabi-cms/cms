@@ -19,6 +19,8 @@ use Cake\ORM\TableRegistry;
 use Cake\View\Helper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+use Wasabi\Core\Model\Entity\MenuItem;
+use Wasabi\Core\Model\Table\MenuItemsTable;
 
 /**
  * @property HtmlHelper $Html
@@ -47,16 +49,25 @@ class MenuHelper extends Helper {
 			'hasChildrenClass' => 'has-children'
 		);
 		$options = array_merge($defaults, $options);
-        $MenuItem = TableRegistry::get('Wasabi/Core.MenuItems');
-//		$menuItems = $MenuItem->find('publishedThreaded', array('menu' => $menuId));
-		$menuItems = $MenuItem->findPublishedThreaded($menuId);
+        /** @var MenuItemsTable $MenuItemsTable */
+        $MenuItemsTable = TableRegistry::get('Wasabi/Core.MenuItems');
+		$menuItems = $MenuItemsTable->findPublishedThreaded($menuId);
 		return $this->_renderTreeLevel($menuItems, $options);
 	}
 
+    /**
+     * @TODO
+     * @param $menuItems
+     * @param $options
+     * @param int $depth
+     * @param bool $subActiveFound
+     * @return string
+     */
 	protected function _renderTreeLevel($menuItems, $options, $depth = 0, &$subActiveFound = false) {
 		$output = '';
-
+        return $output;
 		foreach ($menuItems as $menuItem) {
+            var_dump($menuItem);die;
 			$classes = [];
 			$content = $this->_renderMenuLink($menuItem['MenuItem']);
 			if ($this->_isActive($menuItem['MenuItem'])) {
@@ -92,7 +103,6 @@ class MenuHelper extends Helper {
 
 	protected function _renderMenuLink($menuItem) {
 		$output = '';
-
 		switch ($menuItem['type']) {
 
 			case MenuItem::TYPE_EXTERNAL_LINK:
