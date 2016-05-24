@@ -66,6 +66,10 @@ define(function (require) {
         _pagesIndex();
       }
 
+      if ($body.hasClass('wasabi-cms--menus-edit')) {
+        WS.createView(require('wasabi.cms.package/sections/MenusEdit'));
+      }
+
       if (DEBUG) {
         console.info('Wasabi/Cms initialized.');
       }
