@@ -15,8 +15,8 @@ class CreateCmsContents extends AbstractMigration
             ->addColumn('content', 'text', ['limit' => 255])
             ->addColumn('created_by_user_id', 'integer', ['limit' => 11, 'signed' => false, 'null' => false])
             ->addColumn('modified_by_user_id', 'integer', ['limit' => 11, 'signed' => false, 'null' => false])
-            ->addColumn('created', 'datetime', ['null' => false, 'default' => '0000-00-00 00:00'])
-            ->addColumn('modified', 'datetime', ['null' => false, 'default' => '0000-00-00 00:00']);
+            ->addColumn('created', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
+            ->addColumn('modified', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP']);
         $table->addIndex('page_id', ['name' => 'BY_PAGE_ID'])
             ->addIndex('language_id', ['name' => 'BY_LANGUAGE_ID'])
             ->addIndex(['page_id', 'language_id'], ['name' => ['BY_PAGE_ID_AND_LANGUAGE_ID']])
