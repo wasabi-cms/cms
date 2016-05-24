@@ -13,6 +13,7 @@ module.exports = function(grunt) {
     'bootstrap.dropdown',
     'common/BaseView',
     'common/BaseViewFactory',
+    'jquery.color',
     'jquery.eventMagic',
     'jquery.scrollParent',
     'jquery.livequery',
@@ -55,14 +56,6 @@ module.exports = function(grunt) {
         'src/Assets/js/**/*.js'
       ]
     },
-    bowerRequirejs: {
-      all: {
-        rjsConfig: './src/Assets/js/common.js',
-        options: {
-          baseUrl: './src/Assets/js/'
-        }
-      }
-    },
     requirejs: {
       compile: {
         options: {
@@ -73,29 +66,22 @@ module.exports = function(grunt) {
           // Define our build directory. All files in the base URL will be
           // COPIED OVER into the build directory as part of the
           // concatentation and optimization process.
-          dir: 'src/Assets/_build/js/',
+          dir: '.build/js/',
 
           // Load the RequireJS config() definition from the config.js file.
           // Otherwise, we'd have to redefine all of our paths again here.
-          mainConfigFile: 'src/Assets/js/common.js',
+          mainConfigFile: 'src/Assets/js/cms_common.js',
           findNestedDependencies: true,
 
           fileExclusionRegExp: /^\.|\.md$|^LICENSE$|\.json$|^src$|\.map$|^demo$|^test$|^tests$|\.TXT$|\.txt$|^fonts$|^css$|\.css$|^less$|\.less$|^grunt$|\.sh$|^r.js$/,
 
           // Define the modules to compile.
           modules: [
-            {
-              name: 'common',
-              exclude: excludeModules
-            },
             // Main cms module.
             // All basic resources, vendor files will be included here automatically.
             {
               name: 'wasabi.cms',
-              include: [
-                'common',
-                'wasabi.cms'
-              ],
+              include: 'cms_common',
               exclude: excludeModules
             }
           ],
@@ -121,7 +107,7 @@ module.exports = function(grunt) {
     copy: {
       js: {
         files: [
-          { src: 'src/Assets/_build/js/cms.js', dest: 'webroot/js/cms.js' }
+          { src: '.build/js/cms.js', dest: 'webroot/js/cms.js' }
         ]
       }
     },

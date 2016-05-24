@@ -18,16 +18,22 @@ if (!Configure::read('debug')) {
 
 $this->start('requirejs'); ?>
 <?php if (Configure::read('debug')): ?>
-            require.config({
-                paths: {
-                    'wasabi.cms': '../../wasabi/cms/js/cms',
-                    'wasabi.cms.package': '../../wasabi_cms/js'
-                }
-            });
+    require.config({
+        paths: {
+            'wasabi.cms': '../../wasabi/cms/js/cms',
+            'wasabi.cms.package': '../../wasabi_cms/js'
+        }
+    });
+<?php else: ?>
+    require.config({
+        paths: {
+            'wasabi.cms': '../js/cms'
+        }
+    });
 <?php endif; ?>
-            WS.registerModule('wasabi.cms', <?= json_encode($this->get('jsCmsOptions', [])) ?>, {
-                debug: <?= Configure::read('debug') ? 'true' : 'false' ?>
-            });
+    WS.registerModule('wasabi.cms', <?= json_encode($this->get('jsCmsOptions', [])) ?>, {
+        debug: <?= Configure::read('debug') ? 'true' : 'false' ?>
+    });
 <?php
 $this->end();
 
