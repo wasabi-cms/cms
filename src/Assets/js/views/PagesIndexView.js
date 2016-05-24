@@ -3,7 +3,7 @@ define(function(require) {
   var _ = require('underscore');
   var $ = require('jquery');
   var BaseView = require('common/BaseView');
-  var Cookies = require('wasabi.cms.package/vendor/js-cookie/src/js.cookie');
+  var Cookies = require('wasabi.cms.package/libs/js.cookie');
 
   require('jquery.nSortable');
 
