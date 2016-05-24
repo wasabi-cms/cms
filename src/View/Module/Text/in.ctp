@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Wasabi\ThemeDefault\View\ThemeDefaultView $this
+ * @var \Wasabi\Cms\View\AppView $this
  * @var \Cake\Form\Form $form
  */
 echo $this->Flash->render('module');

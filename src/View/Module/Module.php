@@ -146,7 +146,7 @@ abstract class Module extends Form
             $this->beforeRender();
         }
 
-        $template = $this->path() . DS . 'out.ctp';
+        $template = $this->path() . DS . 'out.mustache';
 
         if (!file_exists($template)) {
             user_error(__d('wasabi_cms', 'Template "{0}" for module {1} not found.', $template, $this->name()));
