@@ -3,6 +3,7 @@
 namespace Wasabi\Cms\Controller\Frontend;
 
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Cms\Model\Table\PagesTable;
 use Wasabi\Cms\View\Layout\Layout;
@@ -27,14 +28,7 @@ class PagesController extends FrontendAppController
         $this->loadModel('Wasabi/Cms.Pages');
 
         /** @var Page $page */
-        $page = $this->Pages->find()
-            ->where([
-                $this->Pages->aliasField('id') => $pageId
-            ])
-            ->contain([
-                'Current'
-            ])
-            ->first();
+        $page = $this->Pages->get($pageId, ['contain' => ['Current']]);
 
         Wasabi::page($page);
 
@@ -43,5 +37,14 @@ class PagesController extends FrontendAppController
         $this->viewBuilder()->theme($page->getTheme()->getNameForViewBuilder());
         $this->viewBuilder()->layout($page->getLayout()->name());
         $this->viewBuilder()->className($page->getTheme()->getViewClassNameForViewBuilder());
+    }
+
+    public function afterFilter(Event $event)
+    {
+        if (!Configure::read('debug')) {
+            $this->request->params['cache'] = true;
+        }
+
+        return parent::afterFilter($event);
     }
 }

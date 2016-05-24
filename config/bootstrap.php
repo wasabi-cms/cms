@@ -17,7 +17,9 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\EventManager;
+use Cake\Filesystem\Folder;
 use Cake\Routing\DispatcherFactory;
+use Wasabi\Cms\Event\DispatcherListener;
 use Wasabi\Cms\Event\MenuListener;
 use Wasabi\Cms\Event\RouteListener;
 use Wasabi\Cms\Event\ThemeListener;
@@ -27,6 +29,7 @@ try {
     // Load and apply the Wasabi Core cache config.
     Configure::load('Wasabi/Cms.cache', 'default');
     foreach (Configure::consume('Cache') as $key => $config) {
+        new Folder($config['path'], true, 0775);
         Cache::config($key, $config);
     }
 } catch (\Exception $e) {
@@ -41,6 +44,7 @@ ModuleManager::registerModulePath(Plugin::path('Wasabi/Cms') . 'src' . DS . 'Vie
 
 EventManager::instance()->on(new RouteListener());
 EventManager::instance()->on(new ThemeListener());
+EventManager::instance()->on(new DispatcherListener());
 EventManager::instance()->on(new MenuListener());
 
 DispatcherFactory::add('Wasabi/Cms.ThemeAsset');
