@@ -46,7 +46,6 @@ class ThemeAssetFilter extends AssetFilter
                 return $themeWebroot . implode(DS, array_slice($parts, 3));
             }
         }
-        return parent::_getAssetFile($url);
     }
 
 }
