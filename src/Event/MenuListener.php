@@ -16,9 +16,13 @@ namespace Wasabi\Cms\Event;
 
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
-use Wasabi\Cms\Config;
+use Wasabi\Cms\Model\Entity\MenuItem;
+use Wasabi\Cms\Model\Entity\Page;
+use Wasabi\Cms\View\Helper\MenuHelper;
 use Wasabi\Core\Menu;
+use Wasabi\Core\Wasabi;
 
 class MenuListener implements EventListenerInterface
 {
@@ -33,11 +37,18 @@ class MenuListener implements EventListenerInterface
         return [
             'Wasabi.Backend.Menu.initMain' => [
                 'callable' => 'initBackendMenuMainItems',
-                'priority' => Config::$priority
+                'priority' => 2000
             ],
             'Wasabi.Backend.MenuItems.getLinkTypes' => [
                 'callable' => 'getLinkTypesForMenuItem',
-                'priority' => Config::$priority
+                'priority' => 2000
+            ],
+            'Wasabi.Frontend.MenuItems.Entity.render' => [
+                'callable' => 'renderMenuItem',
+                'priority' => 2000
+            ],
+            'Wasabi.Frontend.MenuItems.Entity.isActive' => [
+                'callable' => 'isMenuItemActive'
             ]
         ];
     }
@@ -97,12 +108,11 @@ class MenuListener implements EventListenerInterface
     public function getLinkTypesForMenuItem(Event $event)
     {
         $Pages = TableRegistry::get('Wasabi/Cms.Pages');
-        $pages = $Pages->find('treeList')
-            ->select([
-                $Pages->aliasField('id'),
-                $Pages->aliasField('name')
-            ])
-            ->toArray();
+        $pages = $Pages->find('treeList', [
+            'keyPath' => 'id',
+            'valuePath' => 'name',
+            'spacer' => '. . . '
+        ])->toArray();
 
         if (!$pages) {
             return;
@@ -115,13 +125,55 @@ class MenuListener implements EventListenerInterface
 
         foreach ($pages as $id => $name) {
             $key = json_encode([
-                'type' => 'object',
-                'object' => 'Wasabi/Cms.Page',
+                'type' => 'entity',
+                'model' => 'Wasabi/Cms.Pages',
                 'id' => $id
             ]);
             $results[$key] = $name;
         }
 
         $event->result[$group] = $results;
+    }
+
+    public function renderMenuItem(Event $event, MenuHelper $helper)
+    {
+        /** @var MenuItem $menuItem */
+        $menuItem = $event->subject();
+
+        if (
+            $menuItem->foreign_model !== 'Wasabi/Cms.Pages' ||
+            $menuItem->get('Pages')['id'] === null
+        ) {
+            return;
+        }
+
+        $PagesTable = TableRegistry::get('Wasabi/Cms.Pages');
+
+        try {
+            /** @var Page $page */
+            $page = $PagesTable->get($menuItem->get('Pages')['id']);
+            $event->result = $helper->Html->link($menuItem->name, $menuItem->get('Routes')['url']);
+            $event->stopPropagation();
+        } catch (\Exception $e) {
+        }
+    }
+
+    public function isMenuItemActive(Event $event, Request $request)
+    {
+        /** @var MenuItem $menuItem */
+        $menuItem = $event->subject();
+        $pageId = $menuItem->get('Pages')['id'] ?? null;
+
+        if (
+            $menuItem->foreign_model !== 'Wasabi/Cms.Pages' ||
+            $pageId === null
+        ) {
+            return;
+        }
+
+        if ((int)$pageId === Wasabi::page()->id) {
+            $event->result = true;
+            $event->stopPropagation();
+        }
     }
 }

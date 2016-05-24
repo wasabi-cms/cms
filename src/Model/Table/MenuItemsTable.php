@@ -12,9 +12,12 @@
  */
 namespace Wasabi\Cms\Model\Table;
 
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Wasabi\Cms\Model\Entity\MenuItem;
 
 /**
  * Class MenuItemsTable
@@ -34,7 +37,7 @@ class MenuItemsTable extends Table
     public function initialize(array $config)
     {
         $this->belongsTo('Menus', [
-            'className' => 'Wasabi/Core.Menus'
+            'className' => 'Wasabi/Cms.Menus'
         ]);
 
         $this->addBehavior('CounterCache', ['Menus' => ['menu_item_count']]);
@@ -65,6 +68,36 @@ class MenuItemsTable extends Table
         ]);
     }
 
+    public function beforeSave(Event $event, MenuItem $item)
+    {
+        $linkTo = $item->get('link_to') ?? false;
+
+        if (!$linkTo) {
+            return;
+        }
+
+        $linkTo = json_decode($linkTo, true);
+
+        $linkType = $linkTo['type'] ?? false;
+        if (!$linkType) {
+            return;
+        }
+        switch ($linkType) {
+            case 'entity':
+                if (!isset($linkTo['model']) || !isset($linkTo['id'])) {
+                    return;
+                }
+                $item->type = $linkType;
+                $item->foreign_model = $linkTo['model'];
+                $item->foreign_id = $linkTo['id'];
+                break;
+            case 'external':
+                break;
+            case 'custom':
+                break;
+        }
+    }
+
     /**
      * @TODO
      * @param $menuId
@@ -72,6 +105,12 @@ class MenuItemsTable extends Table
      */
     public function findPublishedThreaded($menuId)
     {
-        return $this->find('threaded')->where(['menu_id' => $menuId]);
+        $query = $this->find('threaded')
+            ->select($this)
+            ->where(['menu_id' => $menuId]);
+
+        EventManager::instance()->dispatch(new Event('Wasabi.Routes.Query.published.decorate', $query));
+
+        return $query;
     }
 }

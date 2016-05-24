@@ -31,7 +31,7 @@ class MenusTable extends Table
     public function initialize(array $config)
     {
         $this->hasMany('MenuItems', [
-            'className' => 'Wasabi/Core.MenuItems',
+            'className' => 'Wasabi/Cms.MenuItems',
             'dependent' => true
         ]);
 
@@ -74,6 +74,14 @@ class MenusTable extends Table
     {
         $event = new Event('Wasabi.Backend.MenuItems.getLinkTypes', $this);
         EventManager::instance()->dispatch($event);
+
+        $typeExternal = ['type' => 'external'];
+        $typeCustom = ['type' => 'custom'];
+
+        $event->result[__d('wasabi_core', 'General')] = [
+            json_encode($typeExternal) => __d('wasabi_core', 'External Link'),
+            json_encode($typeCustom) => __d('wasabi_core', 'Custom Controller Action')
+        ];
 
         return $event->result;
     }

@@ -15,12 +15,15 @@ namespace Wasabi\Cms\View\Helper;
  * @subpackage    Wasabi.Plugin.Core.View.Helper
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+use Cake\Event\Event;
+use Cake\Event\EventManager;
+use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\View\Helper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
-use Wasabi\Core\Model\Entity\MenuItem;
-use Wasabi\Core\Model\Table\MenuItemsTable;
+use Wasabi\Cms\Model\Entity\MenuItem;
+use Wasabi\Cms\Model\Table\MenuItemsTable;
 
 /**
  * @property HtmlHelper $Html
@@ -50,7 +53,7 @@ class MenuHelper extends Helper {
 		);
 		$options = array_merge($defaults, $options);
         /** @var MenuItemsTable $MenuItemsTable */
-        $MenuItemsTable = TableRegistry::get('Wasabi/Core.MenuItems');
+        $MenuItemsTable = TableRegistry::get('Wasabi/Cms.MenuItems');
 		$menuItems = $MenuItemsTable->findPublishedThreaded($menuId);
 		return $this->_renderTreeLevel($menuItems, $options);
 	}
@@ -63,19 +66,18 @@ class MenuHelper extends Helper {
      * @param bool $subActiveFound
      * @return string
      */
-	protected function _renderTreeLevel($menuItems, $options, $depth = 0, &$subActiveFound = false) {
+	protected function _renderTreeLevel(Query $menuItems, $options, $depth = 0, &$subActiveFound = false) {
 		$output = '';
-        return $output;
+
 		foreach ($menuItems as $menuItem) {
-            var_dump($menuItem);die;
-			$classes = [];
-			$content = $this->_renderMenuLink($menuItem['MenuItem']);
-			if ($this->_isActive($menuItem['MenuItem'])) {
+            $classes = [];
+			$content = $this->_renderMenuItem($menuItem);
+			if ($this->_isActive($menuItem)) {
 				$classes[] = 'active';
 				$subActiveFound = true;
 			}
 
-			if (!empty($menuItem['children']) && ($depth + 1 <= $options['maxDepth'])) {
+			if (!empty($menuItem->children) && ($depth + 1 <= $options['maxDepth'])) {
 				$sub = false;
 				$classes[] = $options['hasChildrenClass'];
 
@@ -89,56 +91,57 @@ class MenuHelper extends Helper {
 				}
 			}
 
-			if (!empty($classes)) {
-				$output .= '<li class="' . join(' ', array_unique($classes)) . '">';
-			} else {
-				$output .= '<li>';
-			}
-			$output .= $content;
-			$output .= '</li>';
+            if ($content !== '') {
+                if (!empty($classes)) {
+                    $output .= '<li class="' . join(' ', array_unique($classes)) . '">';
+                } else {
+                    $output .= '<li>';
+                }
+                $output .= $content;
+                $output .= '</li>';
+            }
 		}
 
 		return $output;
 	}
 
-	protected function _renderMenuLink($menuItem) {
+	protected function _renderMenuItem(MenuItem $menuItem) {
 		$output = '';
-		switch ($menuItem['type']) {
 
-			case MenuItem::TYPE_EXTERNAL_LINK:
-				$output .= '<a href="' . $menuItem['external_link'] . '" title="' . $menuItem['name'] . '">' . $menuItem['name'] . '</a>';
-				break;
+        switch ($menuItem->type) {
+            case MenuItem::TYPE_ENTITY:
+                $event = new Event('Wasabi.Frontend.MenuItems.Entity.render', $menuItem, [$this]);
+                EventManager::instance()->dispatch($event);
+                $output .= $event->result;
+                break;
 
-			default:
-				$output .= $this->Html->link($menuItem['name'], array(
-					'page_id' => $menuItem['foreign_id'],
-					'language_id' => Configure::read('Wasabi.content_language.id')
-//					'plugin' => $menuItem['plugin'],
-//					'controller' => $menuItem['controller'],
-//					'action' => $menuItem['action'],
-//					$menuItem['foreign_id'],
-//					Configure::read('Wasabi.content_language.id')
-				), array('title' => $menuItem['name']));
-				break;
-		}
+            case MenuItem::TYPE_CUSTOM:
+                break;
+
+            case MenuItem::TYPE_EXTERNAL:
+                $output .= '<a href="' . $menuItem->external_link . '" title="' . $menuItem->name . '">' . $menuItem->name . '</a>';
+                break;
+        }
 
 		return $output;
 	}
 
-	protected function _isActive($menuItem) {
-		switch ($menuItem['type']) {
+	protected function _isActive(MenuItem $menuItem) {
+        switch ($menuItem->type) {
+            case MenuItem::TYPE_ENTITY:
+                $event = new Event('Wasabi.Frontend.MenuItems.Entity.isActive', $menuItem, [$this->request]);
+                EventManager::instance()->dispatch($event);
+                return $event->result;
 
-			case MenuItem::TYPE_OBJECT:
-				if ($menuItem['foreign_model'] !== '') {
-					list($plugin, $model) = pluginSplit($menuItem['foreign_model']);
-					App::uses($model, $plugin . '.Model');
-					if (method_exists($model, 'isActive')) {
-						return $model::isActive($menuItem, $this->request->params);
-					}
-				}
-				break;
+            case MenuItem::TYPE_CUSTOM:
+                return (
+                    $this->request->params['plugin'] === $menuItem->plugin &&
+                    $this->request->params['controller'] === $menuItem->controller &&
+                    $this->request->params['action'] === $menuItem->action
+                );
 
-		}
-		return false;
+            default:
+                return false;
+        }
 	}
 }
