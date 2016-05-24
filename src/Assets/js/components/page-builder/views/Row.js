@@ -23,7 +23,7 @@ define(function (require) {
     childViewOptions: function() {
       return {
         parent: this
-      }
+      };
     },
 
     /**

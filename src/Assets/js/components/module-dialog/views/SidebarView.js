@@ -34,7 +34,7 @@ define(function (require) {
 
       return {
         groups: groups
-      }
+      };
     },
 
     handleSearch: function() {

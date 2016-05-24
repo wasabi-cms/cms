@@ -39,7 +39,7 @@ define(function (require) {
     },
 
     onRender: function() {
-      this.$contentContainer.append(this.$el)
+      this.$contentContainer.append(this.$el);
     }
 
   });

@@ -376,10 +376,10 @@ define(function (require) {
        * @private
        */
     _canDrag: function(event) {
-      if (typeof this['canDrag'] !== 'function') {
+      if (typeof this.canDrag !== 'function') {
         return true;
       }
-      return this['canDrag'](event);
+      return this.canDrag(event);
     }
 
   };
