@@ -4,7 +4,10 @@ namespace Wasabi\Cms\Event;
 
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\TableRegistry;
+use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Core\Model\Entity\Route;
+use Wasabi\Core\Wasabi;
 
 class RouteListener implements EventListenerInterface
 {
@@ -19,6 +22,9 @@ class RouteListener implements EventListenerInterface
         return [
             'Wasabi.Routes.parse' => [
                 'callable' => 'parseRoute'
+            ],
+            'Wasabi.Routes.Query.published.decorate' => [
+                'callable' => 'decoratePublishedQuery'
             ]
         ];
     }
@@ -51,5 +57,48 @@ class RouteListener implements EventListenerInterface
             $event->result['params'] = $params;
             $event->stopPropagation();
         }
+    }
+
+    /**
+     * Decorate the given query by joining the RoutesTable and PagesTable.
+     *
+     * @param Event $event
+     * @return void
+     */
+    public function decoratePublishedQuery(Event $event)
+    {
+        $query = $event->subject();
+
+        // Join the RoutesTable
+        $RoutesTable = TableRegistry::get('Wasabi/Core.Routes');
+        $query
+            ->select($RoutesTable)
+            ->join([
+                'Routes' => [
+                    'table' => 'routes',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'MenuItems.foreign_model = Routes.model',
+                        'MenuItems.foreign_id = Routes.foreign_key',
+                        'Routes.language_id' => Wasabi::contentLanguage()->id,
+                        'Routes.redirect_to IS' => null
+                    ]
+                ]
+            ]);
+
+        // Join the PagesTable
+        $query
+            ->select(['Pages.id'])
+            ->join([
+                'Pages' => [
+                    'table' => 'cms_pages',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        '`Routes`.`model` = "Wasabi/Cms.Pages"',
+                        'Routes.foreign_key = Pages.id',
+                        'Pages.status' => Page::STATUS_PUBLISHED
+                    ]
+                ]
+            ]);
     }
 }
