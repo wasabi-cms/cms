@@ -1,4 +1,4 @@
 .idea
 node_modules
-src/Assets/_build/*
+.build/*
 src/Assets/js/vendor/*
