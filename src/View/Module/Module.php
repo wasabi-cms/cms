@@ -179,16 +179,6 @@ abstract class Module extends Form
             ]);
         }
 
-        $liveEdit = $view->request->query['liveEdit'] ?? false;
-        if ($liveEdit === '1') {
-            $view->modules[++$view->moduleCount] = $this->data;
-            return $view->Html->tag('div', $output, [
-                'escape' => false,
-                'class' => 'pb-module',
-                'data-pb-id' => $view->moduleCount
-            ]);
-        }
-
         return $output;
     }
 
