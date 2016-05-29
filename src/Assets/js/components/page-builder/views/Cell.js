@@ -25,7 +25,6 @@ define(function (require) {
      */
     events: {
       'click .cell-wrapper': 'selectCell',
-      'placeholder-moved': 'onPlaceholderMoved',
       'mousedown .resize-handle': 'onMouseDown'
     },
 
@@ -160,14 +159,6 @@ define(function (require) {
      */
     onChangeSelectedState: function(model, value) {
       this.$el.toggleClass('cell--selected', value);
-    },
-
-    /**
-     * Synchronize the cell height of all neighbor cells whenever the placeholder changes position.
-     *
-     * @param {Event} event
-     */
-    onPlaceholderMoved: function (event) {
     },
 
     /**

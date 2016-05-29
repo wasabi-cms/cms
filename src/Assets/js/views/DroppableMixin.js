@@ -14,7 +14,7 @@ define(function (require) {
      * @param draggable
      */
     dragOver: function (event, draggable) {
-      // when the draggable intersects the placeholder to nothing
+      // when the draggable intersects the placeholder do nothing
       if (draggable.hitTest(event.pageX, event.pageY, draggable.$placeholder)) {
         return;
       }
@@ -56,7 +56,7 @@ define(function (require) {
         action = 'append';
       }
 
-      var $placeholderParent = draggable.$placeholder.parent();
+      console.log(action);
 
       switch (action) {
         case 'append':
@@ -69,9 +69,6 @@ define(function (require) {
           $intersectedItem.after(draggable.$placeholder);
           break;
       }
-
-      $placeholderParent.trigger('placeholder-moved');
-      draggable.$placeholder.parent().trigger('placeholder-moved');
     },
 
     /**

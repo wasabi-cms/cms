@@ -6,7 +6,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Cms\Model\Table\PagesTable;
-use Wasabi\Cms\View\Layout\Layout;
+use Wasabi\Cms\WasabiCms;
 use Wasabi\Core\Wasabi;
 
 /**
@@ -29,14 +29,20 @@ class PagesController extends FrontendAppController
 
         /** @var Page $page */
         $page = $this->Pages->get($pageId, ['contain' => ['Current']]);
+        WasabiCms::page($page);
 
-        Wasabi::page($page);
+        $startPage = $this->Pages->find()->order(['lft ASC'])->first();
+        WasabiCms::startPage($startPage);
 
         $page->initializeContentAreas();
 
         $this->viewBuilder()->theme($page->getTheme()->getNameForViewBuilder());
         $this->viewBuilder()->layout($page->getLayout()->name());
         $this->viewBuilder()->className($page->getTheme()->getViewClassNameForViewBuilder());
+
+        $this->set([
+            'page' => $page
+        ]);
     }
 
     public function afterFilter(Event $event)

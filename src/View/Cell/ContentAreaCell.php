@@ -3,7 +3,7 @@
 namespace Wasabi\Cms\View\Cell;
 
 use Cake\View\Cell;
-use Wasabi\Core\Wasabi;
+use Wasabi\Cms\WasabiCms;
 
 class ContentAreaCell extends Cell
 {
@@ -14,6 +14,6 @@ class ContentAreaCell extends Cell
      */
     public function display($contentAreaId)
     {
-        $this->set('contentArea', Wasabi::page()->getContentArea($contentAreaId));
+        $this->set('contentArea', WasabiCms::page()->getContentArea($contentAreaId));
     }
 }

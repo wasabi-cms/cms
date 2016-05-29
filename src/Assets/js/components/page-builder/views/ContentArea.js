@@ -6,6 +6,7 @@ define(function (require) {
   var DroppableMixin = require('wasabi.cms.package/views/DroppableMixin');
   var RowView = require('wasabi.cms.package/components/page-builder/views/Row');
   var ModuleView = require('wasabi.cms.package/components/page-builder/views/Module');
+  var ContainerView = require('wasabi.cms.package/components/page-builder/views/Container');
 
   var ContentAreaView = Marionette.CompositeView.extend({
 
@@ -17,13 +18,13 @@ define(function (require) {
     /**
      * The template of this view.
      */
-    template: '#pb-content-area',
+    template: '#pb-ContentArea',
 
-    childViewContainer: '.ca-content',
+    childViewContainer: '.pb-ContentArea-content',
 
     ui: {
-      header: '.ca-header',
-      contentArea: '.content-area'
+      header: '.pb-ContentArea-header',
+      contentArea: '.pb-ContentArea'
     },
 
     events: {
@@ -42,7 +43,6 @@ define(function (require) {
     initialize: function (options) {
       this.collection = this.model.content;
       WS.Cms.views.pageBuilder.droppableViews.push(this);
-      //this.model.on('change:selected', this.onChangeSelectedState, this);
     },
 
     onRender: function () {
@@ -76,6 +76,11 @@ define(function (require) {
             model: child
           });
           break;
+        case 'Container':
+          view = new ContainerView({
+            model: child
+          });
+          break;
       }
 
       return view;
@@ -99,7 +104,7 @@ define(function (require) {
      * @param {boolean} value
      */
     onChangeSelectedState: function (model, value) {
-      this.ui.contentArea.toggleClass('content-area--selected', value);
+      this.ui.contentArea.toggleClass('pb-ContentArea--selected', value);
     },
 
     /**
@@ -114,7 +119,7 @@ define(function (require) {
       if (typeof draggable.viewType === 'undefined') {
         return false;
       }
-      return (draggable.viewType === 'Row' || draggable.viewType === 'Module');
+      return (draggable.viewType === 'Row' || draggable.viewType === 'Module' || draggable.viewType === 'Container');
     }
 
   });

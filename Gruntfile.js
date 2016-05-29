@@ -70,7 +70,7 @@ module.exports = function(grunt) {
 
           // Load the RequireJS config() definition from the config.js file.
           // Otherwise, we'd have to redefine all of our paths again here.
-          mainConfigFile: 'src/Assets/js/cms_common.js',
+          mainConfigFile: 'src/Assets/js/cms_common.build.js',
           findNestedDependencies: true,
 
           fileExclusionRegExp: /^\.|\.md$|^LICENSE$|\.json$|^src$|\.map$|^demo$|^test$|^tests$|\.TXT$|\.txt$|^fonts$|^css$|\.css$|^less$|\.less$|^grunt$|\.sh$|^r.js$/,

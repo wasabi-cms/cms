@@ -64,4 +64,14 @@ class TextModule extends Module
 
         return $data;
     }
+
+    /**
+     * Get the context class.
+     * 
+     * @return mixed
+     */
+    public function getContext()
+    {
+        return Context::class;
+    }
 }

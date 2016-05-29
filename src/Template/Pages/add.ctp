@@ -136,4 +136,4 @@ if ($this->request->params['action'] == 'edit') {
     </div>
 <?php
 echo $this->Form->end();
-echo $this->element('Wasabi/Cms.Pages/page-builder-templates.hbs');
+echo $this->element('Wasabi/Cms.Pages/page-builder-templates');

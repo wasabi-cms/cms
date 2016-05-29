@@ -7,6 +7,9 @@ define(function (require) {
   var PageBuilder = require('wasabi.cms.package/components/page-builder/models/PageBuilder');
   var PageBuilderView = require('wasabi.cms.package/components/page-builder/views/PageBuilder');
   var PagesIndexView = require('wasabi.cms.package/views/PagesIndexView');
+  var ModuleRichText = require('wasabi.cms.package/views/ModuleRichText');
+
+  require('jquery.livequery');
 
   /**
    * Initialize the Routes view for page add/edit.
@@ -43,6 +46,14 @@ define(function (require) {
     WS.Cms.views.pageBuilder.render();
   }
 
+  function _modules() {
+    $('.module--richt-text').livequery(function() {
+      WS.createView(ModuleRichText, {
+        el: this
+      });
+    });
+  }
+
   return {
     /**
      * Initialize the wasabi.cms module.
@@ -60,6 +71,7 @@ define(function (require) {
       if ($body.hasClass('wasabi-cms--pages-add') || $body.hasClass('wasabi-cms--pages-edit')) {
         _routes();
         _pageBuilder();
+        _modules();
       }
 
       if ($body.hasClass('wasabi-cms--pages-index')) {

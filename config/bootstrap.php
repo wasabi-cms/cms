@@ -46,5 +46,3 @@ EventManager::instance()->on(new RouteListener());
 EventManager::instance()->on(new ThemeListener());
 EventManager::instance()->on(new DispatcherListener());
 EventManager::instance()->on(new MenuListener());
-
-DispatcherFactory::add('Wasabi/Cms.ThemeAsset');

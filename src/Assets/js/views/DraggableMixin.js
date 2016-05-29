@@ -134,7 +134,12 @@ define(function (require) {
           return v.viewType === 'ContentArea';
         });
 
-        for (var i = 0, length = cells.length; i < length; i++) {
+        var containers = _.filter(dropTargetViews, function(v) {
+          return v.viewType === 'Container'
+        });
+
+        var length = cells.length;
+        for (var i = 0; i < length; i++) {
           if (this.hitTest(event.pageX, event.pageY, cells[i].$el)) {
             this.activeDropTargetView = cells[i];
             break;
@@ -142,9 +147,18 @@ define(function (require) {
         }
 
         if (this.activeDropTargetView === null) {
-          i = 0;
+          length = containers.length;
+          for (i = 0; i < length; i++) {
+            if (this.hitTest(event.pageX, event.pageY, containers[i].$el)) {
+              this.activeDropTargetView = containers[i];
+              break;
+            }
+          }
+        }
+
+        if (this.activeDropTargetView === null) {
           length = contentAreas.length;
-          for (; i < length; i++) {
+          for (i = 0; i < length; i++) {
             if (this.hitTest(event.pageX, event.pageY, contentAreas[i].$el)) {
               this.activeDropTargetView = contentAreas[i];
               break;
@@ -219,7 +233,7 @@ define(function (require) {
       var x1 = offset.left;
       var y1 = offset.top;
       var x2 = x1 + $el.outerWidth(true);
-      var y2 = y1 + $el.outerHeight(true);
+      var y2 = y1 + $el.outerHeight(false) - 5;
       return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
     },
 

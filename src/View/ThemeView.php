@@ -4,10 +4,10 @@ namespace Wasabi\Cms\View;
 
 use App\View\AppView;
 use Cake\Utility\Inflector;
-use Wasabi\Cms\View\Helper\AssetHelper;
+use FrankFoerster\Asset\View\Helper\AssetHelper;
 use Wasabi\Cms\View\Helper\MenuHelper;
 use Wasabi\Cms\View\Helper\MetaHelper;
-use Wasabi\Core\Wasabi;
+use Wasabi\Cms\WasabiCms;
 
 /**
  * Class ThemeView
@@ -26,7 +26,7 @@ class ThemeView extends AppView
         parent::initialize();
 
         $this->loadHelper('Meta', ['className' => 'Wasabi/Cms.Meta']);
-        $this->loadHelper('Asset', ['className' => 'Wasabi/Cms.Asset']);
+        $this->loadHelper('Asset', ['className' => 'FrankFoerster/Asset.Asset']);
         $this->loadHelper('Menu', ['className' => 'Wasabi/Cms.Menu']);
     }
 
@@ -43,7 +43,7 @@ class ThemeView extends AppView
 
     public function bodyCssClass()
     {
-        $page = Wasabi::page();
+        $page = WasabiCms::page();
         $classes = [];
         $classes[] = 'layout-' . Inflector::dasherize($page->layout);
         $classes[] = 'page-' . Inflector::dasherize($page->slug);

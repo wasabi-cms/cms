@@ -59,6 +59,8 @@ class ContentArea
                 case 'Module':
                     $this->data[] = new Module($contentElement);
                     break;
+                case 'Container':
+                    $this->data[] = new Container($contentElement);
             }
         }
     }

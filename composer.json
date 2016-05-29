@@ -18,7 +18,8 @@
   },
   "require": {
       "cakephp/cakephp": "~3.2",
-      "mustache/mustache": "2.*"
+      "mustache/mustache": "2.*",
+      "wasabi-cms/core": "dev-master"
   },
   "require-dev": {
     "cakephp/cakephp-codesniffer": "dev-master",

@@ -17,11 +17,11 @@ define(function (require) {
     /**
      * The main template of the page builder.
      */
-    template: '#pb-page-builder',
+    template: '#pb-PageBuilder',
 
     childView: ContentAreaView,
 
-    childViewContainer: '.page-builder-content',
+    childViewContainer: '.pb-PageBuilder-content',
 
     /**
      * Holds all dialogs of the page builder.
@@ -41,7 +41,8 @@ define(function (require) {
 
     ui: {
       'moduleDialogBtn': '[data-add="module"]',
-      'rowDialogBtn': '[data-add="row"]'
+      'rowDialogBtn': '[data-add="row"]',
+      'containerBtn': '[data-add="container"]'
     },
 
     /**
@@ -49,7 +50,8 @@ define(function (require) {
      */
     events: {
       'click @ui.moduleDialogBtn': 'showAddModuleDialog',
-      'click @ui.rowDialogBtn': 'showAddRowDialog'
+      'click @ui.rowDialogBtn': 'showAddRowDialog',
+      'click @ui.containerBtn': 'addContainer'
     },
 
     /**
@@ -84,7 +86,7 @@ define(function (require) {
     },
 
     onRender: function () {
-      this.$el.addClass('page-builder');
+      this.$el.addClass('pb-PageBuilder');
       this.eventBus.trigger('pb-page-builder-rendered', this);
     },
 
@@ -242,6 +244,30 @@ define(function (require) {
       }));
     },
 
+    addContainer: function () {
+      var data = {
+        meta: {
+          type: 'Container',
+          title: 'Container',
+          cssClasses: '',
+          containerElement: 'section',
+          useInnerContainer: false,
+          innerCssClasses: ''
+        },
+        data: []
+      };
+      var selectedElement = this.model.get('selected');
+      if (!selectedElement) {
+        selectedElement = this.children.first();
+      }
+      if (selectedElement.viewType === 'ContentArea') {
+        selectedElement.collection.addContainer(data);
+      }// else if (selectedElement.viewType === 'Cell') {
+      //   selectedElement.collection.addContainer(data);
+      // }
+      this.model.rebuildContentData();
+    },
+
     /**
      * Add a row to the selected or the last content area if none is selected.
      *
@@ -250,7 +276,7 @@ define(function (require) {
     addRow: function (data) {
       var selectedElement = this.model.get('selected');
       if (!selectedElement) {
-        selectedElement = this.children.last();
+        selectedElement = this.children.first();
       }
       if (selectedElement.viewType === 'ContentArea') {
         selectedElement.collection.addRow(data);
@@ -265,10 +291,9 @@ define(function (require) {
       if (!selectedElement) {
         selectedElement = this.children.first();
       }
-      if (selectedElement.viewType === 'ContentArea' || selectedElement.viewType === 'Cell') {
+      if (selectedElement.viewType === 'ContentArea' || selectedElement.viewType === 'Cell' || selectedElement.viewType === 'Container') {
         selectedElement.collection.addModule(data);
         this.model.rebuildContentData();
-        WS.eventBus.trigger('syncAllCellHeights');
       }
     }
 

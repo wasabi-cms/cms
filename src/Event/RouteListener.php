@@ -23,6 +23,9 @@ class RouteListener implements EventListenerInterface
             'Wasabi.Routes.parse' => [
                 'callable' => 'parseRoute'
             ],
+            'Wasabi.Routes.match' => [
+                'callable' => 'matchRoute'
+            ],
             'Wasabi.Routes.Query.published.decorate' => [
                 'callable' => 'decoratePublishedQuery'
             ]
@@ -59,8 +62,34 @@ class RouteListener implements EventListenerInterface
         }
     }
 
+    public function matchRoute(Event $event, array $url)
+    {
+        if (!isset($url['model']) || $url['model'] !== 'Wasabi/Cms.Pages') {
+            return;
+        }
+
+        $RoutesTable = TableRegistry::get('Wasabi/Core.Routes');
+        $route = $RoutesTable->find()
+            ->select([
+                'url'
+            ])
+            ->where([
+                'model' => $url['model'],
+                'foreign_key' => $url['foreign_key'] ?? 0,
+                'language_id' => $url['language_id'] ?? 0,
+                'redirect_to IS' => null
+            ])
+            ->hydrate(false)
+            ->first();
+
+        if (!empty($route)) {
+            $event->result = $route['url'];
+            $event->stopPropagation();
+        }
+    }
+
     /**
-     * Decorate the given query by joining the RoutesTable and PagesTable.
+     * Decorate the given query by joining the PagesTable.
      *
      * @param Event $event
      * @return void
@@ -68,24 +97,7 @@ class RouteListener implements EventListenerInterface
     public function decoratePublishedQuery(Event $event)
     {
         $query = $event->subject();
-
-        // Join the RoutesTable
-        $RoutesTable = TableRegistry::get('Wasabi/Core.Routes');
-        $query
-            ->select($RoutesTable)
-            ->join([
-                'Routes' => [
-                    'table' => 'routes',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'MenuItems.foreign_model = Routes.model',
-                        'MenuItems.foreign_id = Routes.foreign_key',
-                        'Routes.language_id' => Wasabi::contentLanguage()->id,
-                        'Routes.redirect_to IS' => null
-                    ]
-                ]
-            ]);
-
+        
         // Join the PagesTable
         $query
             ->select(['Pages.id'])
@@ -94,8 +106,8 @@ class RouteListener implements EventListenerInterface
                     'table' => 'cms_pages',
                     'type' => 'LEFT',
                     'conditions' => [
-                        '`Routes`.`model` = "Wasabi/Cms.Pages"',
-                        'Routes.foreign_key = Pages.id',
+                        'MenuItems.foreign_model = "Wasabi/Cms.Pages"',
+                        'MenuItems.foreign_id = Pages.id',
                         'Pages.status' => Page::STATUS_PUBLISHED
                     ]
                 ]

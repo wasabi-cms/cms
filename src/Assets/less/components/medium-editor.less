@@ -1,0 +1,31 @@
+@import (reference) "../__config";
+@import (reference) "../__mixins";
+@import (less) "../../js/vendor/medium-editor/dist/css/medium-editor.css";
+@import (less) "../../js/vendor/medium-editor/dist/css/themes/default.css";
+
+.medium-editor-toolbar {
+  z-index: 10000;
+}
+
+.medium-editor {
+  padding: 6px 6px 5px;
+  color: @form-input-color;
+  border: 1px solid @form-input-border-color;
+
+  &:focus {
+    border-color: @form-input-border-color--focus;
+    outline: none;
+  }
+
+  p {
+    margin: 0 0 10px;
+  }
+}
+
+.medium-editor-content {
+  .visuallyhidden();
+}
+
+.medium-editor-code {
+  display: none;
+}

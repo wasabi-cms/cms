@@ -70,7 +70,7 @@ class DispatcherListener implements EventListenerInterface
                 $pageId = $request->params['pass'][0];
                 $languageId = $request->params['pass'][1];
                 $pageNr = $request->params['pass'][2];
-                $cacheKey = 'page_' . $pageId . '_' . $languageId . '_' . $pageNr;
+                $cacheKey = 'page_' . $pageId . '_' . $languageId . '_' . (int)$pageNr;
                 break;
             default:
                 $cacheKey = false;

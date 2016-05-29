@@ -47,8 +47,8 @@ class ThemeManager
         $themes = $themesFolder->read()[0];
         $loader = require ROOT . DS . 'vendor' . DS . 'autoload.php';
         foreach ($themes as $theme) {
-            $loader->addPsr4('Wasabi\\Theme\\' . $theme . '\\', [$themesFolder->path . DS . $theme . DS . 'src']);
-            Plugin::load('Wasabi/Theme/' . $theme, [
+            $loader->addPsr4('WasabiTheme\\' . $theme . '\\', [$themesFolder->path . DS . $theme . DS . 'src']);
+            Plugin::load('WasabiTheme/' . $theme, [
                 'path' => $themesFolder->path . DS . $theme . DS,
                 'bootstrap' => true,
                 'routes' => false
@@ -139,7 +139,7 @@ class ThemeManager
         list($theme, $themeName) = pluginSplit($registeredTheme);
         $themeNamespace = preg_replace('/\\//', '\\', $theme);
         $themeClass = $themeNamespace . '\\' . $themeName;
-
+        
         try {
             $theme = new $themeClass();
         } catch (Exception $e) {

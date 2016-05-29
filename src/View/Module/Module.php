@@ -6,6 +6,7 @@ use Cake\Form\Form;
 use Cake\Utility\Hash;
 use Cake\View\View;
 use Wasabi\Core\Wasabi;
+use WasabiTheme\Basic\View\BasicThemeView;
 
 abstract class Module extends Form
 {
@@ -43,6 +44,13 @@ abstract class Module extends Form
      * @var string
      */
     protected $_icon = 'icon-cogs';
+
+    /**
+     * Holds the mustache engine instance.
+     *
+     * @var \Mustache_Engine
+     */
+    protected $_mustache;
 
     /**
      * Holds the data for this module instance used to render the module in the frontend.
@@ -138,27 +146,48 @@ abstract class Module extends Form
     /**
      * Render the output for this module (out.ctp).
      *
+     * @param BasicThemeView $view
      * @return string
      */
-    public function render()
+    public function render($view)
     {
         if (method_exists($this, 'beforeRender')) {
             $this->beforeRender();
         }
 
-        $template = $this->path() . DS . 'out.mustache';
+        if (method_exists($this, 'getContext')) {
+            $contextClass = $this->getContext();
+            $context = new $contextClass($view, $this->data);
+            $template = $this->path() . DS . 'out.mustache';
+        } else {
+            $template = $this->path() . DS . 'out.ctp';
+        }
 
         if (!file_exists($template)) {
             user_error(__d('wasabi_cms', 'Template "{0}" for module {1} not found.', $template, $this->name()));
         }
 
-        $viewClass = Wasabi::getTheme()->getClassNameForInitialization();
-        /** @var View $view */
-        $view = new $viewClass();
-        $output = $view->element('Wasabi/Cms.module', [
-            'template' => $template,
-            'data' => $this->data
-        ]);
+        if (isset($context)) {
+            if (!$this->_mustache) {
+                $this->_mustache = new \Mustache_Engine();
+            }
+            $output = $this->_mustache->render(file_get_contents($template), $context);
+        } else {
+            $output = $view->element('Wasabi/Cms.module', [
+                'template' => $template,
+                'data' => $this->data
+            ]);
+        }
+
+        $liveEdit = $view->request->query['liveEdit'] ?? false;
+        if ($liveEdit === '1') {
+            $view->modules[++$view->moduleCount] = $this->data;
+            return $view->Html->tag('div', $output, [
+                'escape' => false,
+                'class' => 'pb-module',
+                'data-pb-id' => $view->moduleCount
+            ]);
+        }
 
         return $output;
     }
@@ -201,6 +230,7 @@ abstract class Module extends Form
             'meta' => Hash::get($data, 'meta'),
             'data' => []
         ];
+        $processedData['meta']['type'] = 'Module';
         $processedData['meta']['title'] = $this->name();
         unset($data['meta']);
         foreach ($data as $attr => $value) {

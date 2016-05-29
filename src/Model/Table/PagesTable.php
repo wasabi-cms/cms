@@ -13,6 +13,7 @@
 namespace Wasabi\Cms\Model\Table;
 
 use ArrayObject;
+use Cake\Cache\Cache;
 use Cake\Event\Event;
 use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Table;
@@ -102,6 +103,11 @@ class PagesTable extends Table
             // same content entry in the contents table.
             $entity->unsetProperty('current');
         }
+    }
+
+    public function afterSave(Event $event, Page $entity, ArrayObject $options)
+    {
+        Cache::clearGroup('wasabi/cms/pages');
     }
 
     public function contentHasChanged(Page $page)

@@ -19,8 +19,8 @@ use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Wasabi\Cms\Model\Entity\MenuItem;
-use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Cms\View\Helper\MenuHelper;
+use Wasabi\Cms\WasabiCms;
 use Wasabi\Core\Menu;
 use Wasabi\Core\Wasabi;
 
@@ -147,15 +147,13 @@ class MenuListener implements EventListenerInterface
             return;
         }
 
-        $PagesTable = TableRegistry::get('Wasabi/Cms.Pages');
-
-        try {
-            /** @var Page $page */
-            $page = $PagesTable->get($menuItem->get('Pages')['id']);
-            $event->result = $helper->Html->link($menuItem->name, $menuItem->get('Routes')['url']);
-            $event->stopPropagation();
-        } catch (\Exception $e) {
-        }
+        $event->result = $helper->Html->link($menuItem->name, [
+            'model' => $menuItem->foreign_model,
+            'foreign_key' => $menuItem->get('Pages')['id'],
+            'language_id' => Wasabi::contentLanguage()->id,
+            '_name' => 'wasabi'
+        ]);
+        $event->stopPropagation();
     }
 
     public function isMenuItemActive(Event $event, Request $request)
@@ -171,7 +169,7 @@ class MenuListener implements EventListenerInterface
             return;
         }
 
-        if ((int)$pageId === Wasabi::page()->id) {
+        if ((int)$pageId === WasabiCms::page()->id) {
             $event->result = true;
             $event->stopPropagation();
         }

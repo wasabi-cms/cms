@@ -16,8 +16,8 @@ define(function (require) {
     /**
      * The template used to render the Row view.
      */
-    template: '#pb-row',
-    childViewContainer: '.cells',
+    template: '#pb-Row',
+    childViewContainer: '.pb-Row-cells',
     childView: CellView,
 
     childViewOptions: function() {
@@ -30,7 +30,7 @@ define(function (require) {
      * DOM events handled by this view.
      */
     events: {
-      'click .delete-row': 'onDeleteRow'
+      'click .pb-Row-delete': 'onDeleteRow'
     },
 
     /**
@@ -48,7 +48,7 @@ define(function (require) {
      */
     onRender: function () {
       this.$el.attr('data-type', 'row');
-      this.$dragHandle = this.$('.row-sort');
+      this.$dragHandle = this.$('.pb-Row-move');
       this.initializeDraggable();
     },
 
@@ -91,11 +91,11 @@ define(function (require) {
     },
 
     showCellWidths: function() {
-      this.$el.addClass('cells--resizing');
+      this.$el.addClass('pb-Row-cells--resizing');
     },
 
     hideCellWidths: function() {
-      this.$el.removeClass('cells--resizing');
+      this.$el.removeClass('pb-Row-cells--resizing');
     }
 
   });
