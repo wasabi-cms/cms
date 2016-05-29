@@ -5,7 +5,7 @@ namespace Wasabi\Cms\View\Module;
 use Cake\Form\Form;
 use Cake\Utility\Hash;
 use Cake\View\View;
-use Wasabi\Core\Wasabi;
+use Wasabi\Cms\WasabiCms;
 use WasabiTheme\Basic\View\BasicThemeView;
 
 abstract class Module extends Form
@@ -195,7 +195,7 @@ abstract class Module extends Form
             user_error(__d('wasabi_cms', 'Template "{0}" for module {1} not found.', $template, $this->name()));
         }
 
-        $viewClass = Wasabi::getTheme()->getClassNameForInitialization();
+        $viewClass = WasabiCms::getTheme()->getClassNameForInitialization();
         /** @var View $view */
         $view = new $viewClass();
         $output = $view->element('Wasabi/Cms.module', [
