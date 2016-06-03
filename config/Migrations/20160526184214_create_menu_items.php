@@ -9,7 +9,7 @@ class CreateMenuItems extends AbstractMigration
      */
     public function up()
     {
-        $table = $this->table('menu_items');
+        $table = $this->table('cms_menu_items');
         $table
             ->addColumn('menu_id', 'integer', ['limit' => 11, 'signed' => false, 'null' => false])
             ->addColumn('parent_id', 'integer', ['limit' => 11, 'signed' => false, 'null' => true, 'default' => null])
@@ -44,6 +44,6 @@ class CreateMenuItems extends AbstractMigration
      */
     public function down()
     {
-        $this->table('menu_items')->drop();
+        $this->table('cms_menu_items')->drop();
     }
 }

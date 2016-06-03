@@ -34,6 +34,12 @@ class PagesController extends FrontendAppController
         $startPage = $this->Pages->find()->order(['lft ASC'])->first();
         WasabiCms::startPage($startPage);
 
+        $titleSuffix = Configure::read('Settings.Core.html_title_suffix');
+        WasabiCms::titleSuffix($titleSuffix);
+
+        $instanceName = Configure::read('Settings.Core.instance_name');
+        WasabiCms::instanceName($instanceName);
+
         $page->initializeContentAreas();
 
         $this->viewBuilder()->theme($page->getTheme()->getNameForViewBuilder());

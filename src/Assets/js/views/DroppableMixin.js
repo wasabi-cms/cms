@@ -56,8 +56,6 @@ define(function (require) {
         action = 'append';
       }
 
-      console.log(action);
-
       switch (action) {
         case 'append':
           this.$childViewContainer.append(draggable.$placeholder);

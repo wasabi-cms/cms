@@ -62,6 +62,15 @@ class PagesTable extends Table
             'finder' => 'Current'
         ]);
 
+        $this->hasMany('Attributes', [
+            'className' => 'Wasabi/Cms.Attributes',
+            'foreignKey' => 'foreign_key',
+            'conditions' => [
+                'model' => 'Wasabi/Cms.Pages',
+                'language_id' => Wasabi::contentLanguage()->id
+            ]
+        ]);
+
         $this->addBehavior('Translate', self::$translateOptions);
 
         $this->addBehavior('Tree');

@@ -36,6 +36,8 @@ class MenuItemsTable extends Table
      */
     public function initialize(array $config)
     {
+        $this->table('cms_menu_items');
+
         $this->belongsTo('Menus', [
             'className' => 'Wasabi/Cms.Menus'
         ]);

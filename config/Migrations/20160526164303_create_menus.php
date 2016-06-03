@@ -11,7 +11,7 @@ class CreateMenus extends AbstractMigration
      */
     public function up()
     {
-        $table = $this->table('menus');
+        $table = $this->table('cms_menus');
         $table->addColumn('name', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('menu_item_count', 'integer', ['default' => 0, 'null' => false])
             ->addColumn('created', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
@@ -47,6 +47,6 @@ class CreateMenus extends AbstractMigration
      */
     public function down()
     {
-        $this->table('menus')->drop();
+        $this->table('cms_menus')->drop();
     }
 }

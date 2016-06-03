@@ -67,15 +67,21 @@ if ($this->request->params['action'] == 'edit') {
     <div class="tab-content" data-tabify-tab="general" data-tabify-id="page">
         <?php
         echo $this->Form->input('name', array('label' => __d('wasabi_cms', 'Page Name')));
-        echo $this->Form->input('title', array('label' => __d('wasabi_cms', 'Page Title')));
+        echo $this->Form->input('page_title', array('label' => __d('wasabi_cms', 'Title')));
+        echo $this->Form->input('display_page_title_suffix', array('type' => 'checkbox', 'label' => __d('wasabi_cms', 'display title suffix'), 'formRowInfo' => __d('wasabi_cms', 'Check this checkbox to display the page title suffix configured under Settings > General.')));
         echo $this->Form->input('meta_description', array('label' => __d('wasabi_cms', 'Meta Description'), 'type' => 'textarea', 'rows' => 2, 'info' => __d('wasabi_cms', 'Describe in short what this page is about.')));
         echo $this->Form->input('cached', array('options' => array('1' => __d('wasabi_cms', 'Yes'), '0' => __d('wasabi_cms', 'No')), 'label' => __d('wasabi_cms', 'Enable Caching?')));
         ?>
     </div>
-    <div class="tab-content" data-tabify-tab="layout" data-tabify-id="page" style="display: none;">
+    <div class="tab-content" data-tabify-tab="layout" data-tabify-id="page" style="display: none;" data-attributes-url="<?= $this->Url->build([
+        'plugin' => 'Wasabi/Cms',
+        'controller' => 'Pages',
+        'action' => 'attributes',
+        'id' => $page->id
+    ]) ?>">
         <?php echo $this->Form->input('layout', array('options' => $layouts, 'label' => __d('wasabi_cms', 'Layout'), 'info' => __d('wasabi_cms', 'Choose a layout for this page.'))); ?>
         <div class="form-row row">
-            <label><?php echo __d('wasabi_cms', 'Layout Fields') ?>:</label>
+            <label><?php echo __d('wasabi_cms', 'Layout Attributes') ?></label>
             <div class="field layout-attributes" data-change-url="<?php echo $this->Url->build('/cms/pages/attributes', true) ?>">
                 <?php echo $this->element('Wasabi/Cms.Pages/layout-attributes'); ?>
             </div>

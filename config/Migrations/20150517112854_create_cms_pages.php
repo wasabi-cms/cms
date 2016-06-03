@@ -19,6 +19,7 @@ class CreateCmsPages extends AbstractMigration
             ->addColumn('slug', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('layout', 'string', ['limit' => 255, 'null' => false, 'default' => 'Default'])
             ->addColumn('page_title', 'string', ['limit' => 255, 'null' => true, 'default' => null])
+            ->addColumn('display_page_title_suffix', 'boolean', ['signed' => false, 'null' => false, 'default' => 0])
             ->addColumn('meta_description', 'string', ['limit' => 255, 'null' => true, 'default' => null])
             ->addColumn('status', 'integer', ['limit' => 11, 'signed' => false, 'null' => false, 'default' => 0])
             ->addColumn('created', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])

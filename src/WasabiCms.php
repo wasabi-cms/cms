@@ -25,6 +25,20 @@ class WasabiCms
     protected static $_startPage;
 
     /**
+     * Holds the page title suffix.
+     *
+     * @var string
+     */
+    protected static $_titleSuffix;
+
+    /**
+     * Holds the CMS instance name / app name.
+     *
+     * @var string
+     */
+    public static $instanceName;
+
+    /**
      * Get or set the current page.
      *
      * @param null|Page $page
@@ -60,5 +74,21 @@ class WasabiCms
     public static function getTheme()
     {
         return ThemeManager::theme(Wasabi::setting('Cms.Theme.id'));
+    }
+
+    public static function titleSuffix($suffix = null)
+    {
+        if ($suffix !== null) {
+            self::$_titleSuffix = $suffix;
+        }
+        return self::$_titleSuffix;
+    }
+
+    public static function instanceName($instanceName = null)
+    {
+        if ($instanceName !== null) {
+            self::$instanceName = $instanceName;
+        }
+        return self::$instanceName;
     }
 }

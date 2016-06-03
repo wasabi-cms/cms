@@ -33,6 +33,7 @@ use Wasabi\Core\Wasabi;
  * @property string theme
  * @property string layout
  * @property string page_title
+ * @property bool display_page_title_suffix
  * @property string meta_description
  * @property int status
  * @property DateTime created
@@ -82,7 +83,7 @@ class Page extends Entity
             self::STATUS_UNPUBLISHED => __d('wasabi_cms', 'unpublished')
         ];
 
-        if (!$this->current) {
+        if ((!isset($options['markClean']) || !$options['markClean']) && !$this->current) {
             $this->current = new Content();
         }
     }
