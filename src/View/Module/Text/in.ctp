@@ -5,7 +5,7 @@
  */
 ?>
 <?= $this->Flash->render('module') ?>
-<?= $this->Form->create($form, ['class' => 'module--richt-text', 'templates' => 'Wasabi/Cms.form_templates']) ?>
+<?= $this->Form->create($form, ['class' => 'module--richt-text']) ?>
 <div class="form-row">
     <label><?= __d('module_text', 'Content') ?></label>
     <div class="field">
