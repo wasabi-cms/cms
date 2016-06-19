@@ -29,7 +29,7 @@ define(function (require) {
 
     getData: function () {
       var data = {
-        meta: this.get('meta').toJSON(),
+        meta: this.get('meta').getData(),
         data: []
       };
       this.content.each(function (contentModel) {

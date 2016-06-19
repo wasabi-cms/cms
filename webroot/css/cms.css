@@ -177,6 +177,12 @@
   background-color: transparent;
   border: 0 none;
 }
+.page-form .routes .form-error {
+  border-color: #d49494;
+}
+.page-form .tab-content[data-tabify-tab="seo"] .toggle-switch {
+  max-width: 200px;
+}
 .pb-PageBuilder {
   margin-right: 0;
 }
@@ -274,18 +280,32 @@
 .pb-Container-actions {
   float: right;
 }
-.pb-Container-actions li {
-  display: inline-block;
+.pb-Container-actions > ul > li {
+  float: left;
 }
-.pb-Container-actions li a {
+.pb-Container-actions > ul > li > a {
   display: inline-block;
   color: #424242;
   border-left: 1px solid #d5d7d7;
-  line-height: 21px;
+  line-height: 22px;
   padding: 2px 4px 0;
 }
-.pb-Container-actions li a:hover {
+.pb-Container-actions > ul > li > a:hover {
   background-color: #d5d7d7;
+}
+.pb-Container-actions .dropdown.open .pb-Container-settings {
+  background-color: #1c1f22;
+  color: #fff;
+}
+.pb-Container-actions .dropdown.open .pb-Container-settings:hover {
+  background-color: #5d6367;
+}
+.pb-Container-actions .dropdown-menu a {
+  color: #fff;
+  background-color: #1c1f22;
+}
+.pb-Container-actions .dropdown-menu a:hover {
+  background-color: #5d6367;
 }
 .pb-Container--selected .pb-Container-content {
   background-color: #ffeca0;
@@ -293,36 +313,49 @@
 .pb-Container-move {
   cursor: move;
 }
-.pb-Container-settings-panel {
+.pb-Container-options-panel {
   display: none;
-  border-top: 1px solid #d5d7d7;
+  border-bottom: 1px solid #d5d7d7;
 }
-.pb-Container-settings-panel .form-row {
+.pb-Container-options-panel .form-row {
   border-width: 0;
 }
-.pb-Container-settings-panel .form-row label {
+.pb-Container-options-panel .form-row label {
   padding: 10px 20px 9px;
+  font-size: 12px;
 }
-.pb-Container-settings-panel .form-row .field {
+.pb-Container-options-panel .form-row .field {
   padding: 4px 10px;
 }
-.pb-Container-settings-panel .form-row .field label {
+.pb-Container-options-panel .form-row .field label {
   display: inline-block;
   padding: 7px 0 5px;
 }
-.pb-Container-settings-panel .form-row .field label input[type="checkbox"] {
+.pb-Container-options-panel .form-row .field label input[type="checkbox"] {
   position: relative;
-  top: 1px;
+  top: 2px;
+  margin-right: 3px;
 }
-.pb-Container-settings-panel .form-section {
+.pb-Container-options-panel .form-section {
   border-width: 1px 0;
-  padding: 5px 20px;
+  padding: 8px 20px 7px;
 }
-.pb-Container-settings-panel .form-section .form-section-title {
-  font-size: 16px;
+.pb-Container-options-panel .form-section .form-section-title {
+  font-size: 14px;
+  font-weight: bold;
 }
-.pb-Container--settings-open .pb-Container-settings-panel {
+.pb-Container-options-panel input[type="text"],
+.pb-Container-options-panel select {
+  margin-top: 2px;
+  padding: 3px 3px 2px;
+  font-size: 12px;
+}
+.pb-Container--options-open .pb-Container-options-panel {
   display: block;
+}
+.pb-Container--options-open .pb-Container-options {
+  background-color: #fff;
+  padding-bottom: 1px;
 }
 [data-type="row"] {
   position: relative;
@@ -1144,6 +1177,7 @@
 }
 .medium-editor-code {
   display: none;
+  white-space: pre-wrap;
 }
 .list.routes,
 .list.layout-attributes {

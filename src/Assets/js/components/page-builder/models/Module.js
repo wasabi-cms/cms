@@ -26,7 +26,7 @@ define(function (require) {
       var data = this.get('data');
 
       return {
-        meta: !_.isEmpty(meta) ? meta.toJSON() : {},
+        meta: !_.isEmpty(meta) ? meta.getData() : {},
         data: !_.isEmpty(data) ? data : {}
       };
     }

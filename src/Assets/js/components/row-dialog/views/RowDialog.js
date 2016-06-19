@@ -1,53 +1,60 @@
 define(function (require) {
 
+  var _ = require('underscore');
   var $ = require('jquery');
   var WS = require('wasabi');
   var DialogView = require('common/DialogView');
   var RowEditorView = require('wasabi.cms.package/components/row-dialog/views/RowEditor');
-  var RowEditorModel = require('wasabi.cms.package/components/row-dialog/models/RowEditor');
+  var RowEditorModel = require('wasabi.cms.package/components/page-builder/models/Row');
 
   var RowDialog = DialogView.extend({
 
-    events: function () {
-      return _.extend(DialogView.prototype.events, {
-        'click button[type="submit"]': 'onSubmit'
-      });
-    },
+    el: '.row-dialog-wrapper',
 
-    type: 'add',
+    events: _.extend(DialogView.prototype.events, {
+      'click button[type="submit"]': 'onSubmit'
+    }),
+
+    type: null,
 
     rowEditorView: null,
 
+    rowModel: null,
+
     initialize: function (options) {
       this.pageBuilder = options.pageBuilder;
-      DialogView.prototype.initialize.call(this, options);
-    },
+      this.type = options.type || 'add';
+      this.rowModel = options.rowModel || null;
 
-    beforeRender: function () {
       var translations = WS.get('wasabi.cms').translations.dialog[this.type + 'Row'];
       this.templateData = {
         title: translations.title,
         primaryAction: translations.primaryAction
       };
+
+      DialogView.prototype.initialize.apply(this, arguments);
     },
 
     initDialogContent: function () {
-      var rowEditorModel = new RowEditorModel({
-        meta: {type: 'Row'},
-        data: [
-          {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []},
-          {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []},
-          {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []},
-          {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []}
-        ]
-      });
+      if (this.rowModel === null) {
+        this.clonedModel = new RowEditorModel({
+          meta: {type: 'Row'},
+          data: [
+            {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []},
+            {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []},
+            {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []},
+            {meta: {type: 'Cell', grid: {colWidth: 4, baseWidth: 16}}, data: []}
+          ]
+        });
+      } else {
+        this.clonedModel = new RowEditorModel($.extend(true, {}, this.rowModel.getData()));
+      }
       this.rowEditorView = WS.createView(RowEditorView, {
         pageBuilder: this.pageBuilder,
         dialog: this,
-        model: rowEditorModel
-      });
-      this.rowEditorView.render();
-      this.$content.html(this.rowEditorView.el);
+        model: this.clonedModel
+      }).render();
+      this.ui.content.html(this.rowEditorView.el);
     },
 
     setType: function (type) {
@@ -64,6 +71,12 @@ define(function (require) {
       this.rowEditorView.model.set('data', this.rowEditorView.model.cells.toJSON());
       if (this.type === 'add') {
         this.pageBuilder.addRow(this.rowEditorView.model.getData());
+      } else {
+        var collection = this.rowModel.collection;
+        var index = collection.indexOf(this.rowModel);
+        collection.remove(this.rowModel);
+        collection.add(this.rowEditorView.model.getData(), {at: index});
+        WS.Cms.views.pageBuilder.model.rebuildContentData();
       }
       this.closeDialog();
     }

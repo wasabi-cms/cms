@@ -1,5 +1,6 @@
 define(function(require) {
 
+  var _ = require('underscore');
   var WS = require('wasabi');
   var DialogView = require('common/DialogView');
   var ModuleDialogModel = require('wasabi.cms.package/components/module-dialog/models/ModuleDialogModel');
@@ -9,11 +10,11 @@ define(function(require) {
 
   return DialogView.extend({
 
-    events: function () {
-      return _.extend(DialogView.prototype.events, {
+    el: '.module-dialog-wrapper',
+
+    events: _.extend(DialogView.prototype.events, {
         'click button[type="submit"]': 'closeDialog'
-      });
-    },
+    }),
 
     initialize: function(options) {
       this.model = new ModuleDialogModel({
@@ -21,12 +22,8 @@ define(function(require) {
         group: null
       });
 
-      WS.eventBus.on('add-module', _.bind(this.closeDialog, this));
+      WS.eventBus.on('add-module', this.closeDialog, this);
 
-      DialogView.prototype.initialize.call(this, options);
-    },
-
-    beforeRender: function(options) {
       var translations = WS.get('wasabi.cms').translations.dialog.addModule;
 
       this.templateData = {
@@ -34,6 +31,8 @@ define(function(require) {
         primaryAction: translations.primaryAction,
         sidebarLeft: true
       };
+
+      DialogView.prototype.initialize.call(this, options);
     },
 
     initDialogContent: function () {
@@ -42,14 +41,14 @@ define(function(require) {
       var moduleCollection = new ModuleCollection(modules);
 
       this.modulesView = new ModulesView({
-        $contentContainer: this.$content,
+        $contentContainer: this.ui.content,
         collection: moduleCollection,
         moduleDialogModel: this.model
       });
       this.modulesView.render();
 
       this.sidebarView = new SidebarView({
-        $sidebarContainer: this.$sidebarLeft,
+        $sidebarContainer: this.ui.sidebarLeft,
         moduleCollection: moduleCollection,
         moduleDialogModel: this.model
       });

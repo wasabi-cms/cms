@@ -27,47 +27,55 @@
     <header class="pb-Container-header">
         <h6 class="pb-Container-move"><%= name %> <small><%= containerElement %><%= cssClasses %><% if(useInnerContainer) { %> > div<% if(innerCssClasses !== '') { %><%= innerCssClasses %><% } %><% } %></small></h6>
         <nav class="pb-Container-actions">
-            <ul>
-                <li><a href="javascript:void(0)" class="pb-Container-settings" title="<?= __d('wasabi_cms', 'Settings') ?>"><i class="icon-settings"></i></a></li>
+            <ul class="row">
+                <li><a href="javascript:void(0)" class="pb-Container-options" title="<?= __d('wasabi_cms', 'Options') ?>"><i class="icon-cogs"></i></a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="pb-Container-settings" title="<?= __d('wasabi_cms', 'Settings') ?>" data-toggle="dropdown"><i class="icon-settings"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="javascript:void(0)" class="pb-Container-clear"><?= __d('wasabi_cms', 'Clear Container') ?></a></li>
+                        <li><a href="javascript:void(0)" class="pb-Container-duplicate"><?= __d('wasabi_cms', 'Duplicate Container') ?></a></li>
+                        <li><a href="javascript:void(0)" class="pb-Container-delete"><?= __d('wasabi_cms', 'Delete Container') ?></a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
-        <div class="pb-Container-settings-panel">
-            <div class="form-row">
-                <label><?= __d('wasabi_cms', 'Container Element') ?></label>
-                <div class="field">
-                    <select class="pb-Container-element">
-                        <option value="article"<% if (containerElement === 'article') { %> selected<% } %>>article</option>
-                        <option value="section"<% if (containerElement === 'section') { %> selected<% } %>>section</option>
-                        <option value="div"<% if (containerElement === 'div') { %> selected<% } %>>div</option>
-                    </select>
-                </div>
+    </header>
+    <div class="pb-Container-options-panel">
+        <div class="form-row">
+            <label><?= __d('wasabi_cms', 'Container Element') ?></label>
+            <div class="field">
+                <select class="pb-Container-element">
+                    <option value="article"<% if (containerElement === 'article') { %> selected<% } %>>article</option>
+                    <option value="section"<% if (containerElement === 'section') { %> selected<% } %>>section</option>
+                    <option value="div"<% if (containerElement === 'div') { %> selected<% } %>>div</option>
+                </select>
             </div>
-            <div class="form-row">
-                <label><?= __d('wasabi_cms', 'CSS Classes') ?></label>
-                <div class="field">
-                    <input class="pb-Container-css-classes" type="text" value="<%= cssClassesValue %>" />
-                </div>
+        </div>
+        <div class="form-row">
+            <label><?= __d('wasabi_cms', 'CSS Classes') ?></label>
+            <div class="field">
+                <input class="pb-Container-css-classes" type="text" value="<%= cssClassesValue %>" />
             </div>
-            <div class="form-section">
-                <div class="form-section-title"><?= __d('wasabi_cms', 'Inner Container') ?></div>
-                <div class="form-section-description"><?= __d('wasabi_cms', 'Wrap the content of this container in an additional div.') ?></div>
-            </div>
-            <div class="form-row">
-                <label><?= __d('wasabi_cms', 'Use Inner Container') ?></label>
-                <div class="field">
-                    <div class="row">
-                        <label><input type="checkbox" class="pb-Container-use-inner-container" value="1"<% if (useInnerContainer) { %> checked<% } %>/><?= __d('wasabi_cms', 'Use inner Container') ?></label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-row">
-                <label><?= __d('wasabi_cms', 'CSS Classes') ?></label>
-                <div class="field">
-                    <input class="pb-Container-inner-container-css-classes" type="text" value="<%= innerCssClassesValue %>" placeholder="<?= __d('wasabi_cms', 'e.g.: container') ?>"/>
+        </div>
+        <div class="form-section">
+            <div class="form-section-title"><?= __d('wasabi_cms', 'Inner Container') ?></div>
+            <div class="form-section-description"><?= __d('wasabi_cms', 'Wrap the content of this container in an additional div.') ?></div>
+        </div>
+        <div class="form-row">
+            <label><?= __d('wasabi_cms', 'Use Inner Container') ?></label>
+            <div class="field">
+                <div class="row">
+                    <label><input type="checkbox" class="pb-Container-use-inner-container" value="1"<% if (useInnerContainer) { %> checked<% } %>/><?= __d('wasabi_cms', 'Use inner Container') ?></label>
                 </div>
             </div>
         </div>
-    </header>
+        <div class="form-row">
+            <label><?= __d('wasabi_cms', 'CSS Classes') ?></label>
+            <div class="field">
+                <input class="pb-Container-inner-container-css-classes" type="text" value="<%= innerCssClassesValue %>" placeholder="<?= __d('wasabi_cms', 'e.g.: container') ?>"/>
+            </div>
+        </div>
+    </div>
     <div class="pb-Container-content row"></div>
 </script>
 
@@ -80,6 +88,7 @@
                 <a href="javascript:void(0)" class="pb-Row-settings" title="<?= __d('wasabi_cms', 'Settings') ?>" data-toggle="dropdown"><i class="icon-settings"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="javascript:void(0)" class="pb-Row-edit"><?= __d('wasabi_cms', 'Edit Row') ?></a></li>
+                    <li><a href="javascript:void(0)" class="pb-Row-duplicate"><?= __d('wasabi_cms', 'Duplicate Row') ?></a></li>
                     <li><a href="javascript:void(0)" class="pb-Row-clear"><?= __d('wasabi_cms', 'Clear Row') ?></a></li>
                     <li><a href="javascript:void(0)" class="pb-Row-delete"><?= __d('wasabi_cms', 'Delete Row') ?></a></li>
                 </ul>

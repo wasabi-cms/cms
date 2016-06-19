@@ -55,8 +55,10 @@ define(function (require) {
 
       if (hasLeftCell) {
         leftCell.get('meta').get('grid').set('colWidth', leftCell.get('meta').get('grid').get('colWidth') + cell.get('meta').get('grid').get('colWidth'));
+        leftCell.modules.add(cell.modules.models);
       } else {
         rightCell.get('meta').get('grid').set('colWidth', rightCell.get('meta').get('grid').get('colWidth') + cell.get('meta').get('grid').get('colWidth'));
+        rightCell.modules.add(cell.modules.models);
       }
 
       this.collection.remove(cell);

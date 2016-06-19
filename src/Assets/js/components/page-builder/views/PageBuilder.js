@@ -67,15 +67,15 @@ define(function (require) {
     initialize: function (options) {
       // create all dialog boxes that the page builder uses
       this.dialogs = {
-        module: WS.createView(ModuleDialogView, {
-          pageBuilder: this
-        }),
-        row: WS.createView(RowDialogView, {
-          pageBuilder: this
-        }),
-        editModule: WS.createView(EditModuleDialog, {
-          pageBuilder: this
-        })
+        // module: WS.createView(ModuleDialogView, {
+        //   pageBuilder: this
+        // }),
+        // row: WS.createView(RowDialogView, {
+        //   pageBuilder: this
+        // }),
+        // editModule: WS.createView(EditModuleDialog, {
+        //   pageBuilder: this
+        // })
       };
 
       this.$hiddenDataField = options.$hiddenDataField;
@@ -156,13 +156,38 @@ define(function (require) {
     },
 
     showAddModuleDialog: function () {
-      this.dialogs.module.render();
+      $('#content').append('<div class="module-dialog-wrapper"/>');
+      this.dialogs.addModule = WS.createView(ModuleDialogView, {
+        pageBuilder: this
+      });
+      this.dialogs.addModule.render();
+    },
+
+    showEditModuleDialog: function (model) {
+      $('#content').append('<div class="edit-module-dialog-wrapper"/>');
+      this.dialogs.editModule = WS.createView(EditModuleDialog, {
+        pageBuilder: this
+      });
+      this.dialogs.editModule.setModel(model);
+      this.dialogs.editModule.render();
     },
 
     showAddRowDialog: function () {
-      this.dialogs.row
-        .setType('add')
-        .render();
+      $('#content').append('<div class="row-dialog-wrapper"/>');
+      this.dialogs.row = WS.createView(RowDialogView, {
+        pageBuilder: this,
+        type: 'add',
+        rowModel: null
+      }).render();
+    },
+
+    showEditRowDialog: function (model) {
+      $('#content').append('<div class="row-dialog-wrapper"/>');
+      this.dialogs.row = WS.createView(RowDialogView, {
+        pageBuilder: this,
+        type: 'edit',
+        rowModel: model
+      }).render();
     },
 
     /**
@@ -282,6 +307,8 @@ define(function (require) {
         selectedElement.collection.addRow(data);
       } else if (selectedElement.viewType === 'Cell') {
         selectedElement._parent._parent.collection.addRow(data);
+      } else if (selectedElement.viewType === 'Container') {
+        selectedElement.collection.addRow(data);
       }
       this.model.rebuildContentData();
     },

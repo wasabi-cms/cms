@@ -26,16 +26,24 @@ define(function (require) {
     ui: {
       header: '.pb-Container-header',
       dragHandle: '.pb-Container-move',
+      options: '.pb-Container-options',
       settings: '.pb-Container-settings',
       cssClasses: '.pb-Container-css-classes',
       containerElement: '.pb-Container-element',
       useInnerContainer: '.pb-Container-use-inner-container',
-      innerCssClasses: '.pb-Container-inner-container-css-classes'
+      innerCssClasses: '.pb-Container-inner-container-css-classes',
+      clearContainer: '.pb-Container-clear',
+      duplicateContainer: '.pb-Container-duplicate',
+      deleteContainer: '.pb-Container-delete'
     },
 
     events: {
       'click @ui.header': 'selectContainer',
-      'click @ui.settings': 'toggleSettings',
+      'click @ui.options': 'toggleOptions',
+      'click @ui.settings': 'onClickSettings',
+      'click @ui.clearContainer': 'onClearContainer',
+      'click @ui.duplicateContainer': 'onDuplicateContainer',
+      'click @ui.deleteContainer': 'onDeleteContainer',
       'keyup @ui.cssClasses': 'updateCssClasses',
       'change @ui.containerElement': 'updateContainerElement',
       'change @ui.useInnerContainer': 'updateUseInnerContainer',
@@ -55,10 +63,10 @@ define(function (require) {
       this.collection = this.model.content;
       this.parent = options.parent;
       WS.Cms.views.pageBuilder.droppableViews.push(this);
-      this.model.get('meta').on('change:cssClasses', this.refreshCssClasses, this);
-      this.model.get('meta').on('change:containerElement', this.render);
-      this.model.get('meta').on('change:useInnerContainer', this.render);
-      this.model.get('meta').on('change:innerCssClasses', this.refreshInnerCssClasses, this);
+      this.listenTo(this.model.get('meta'), 'change:cssClasses', this.refreshCssClasses, this);
+      this.listenTo(this.model.get('meta'), 'change:containerElement', this.render, this);
+      this.listenTo(this.model.get('meta'), 'change:useInnerContainer', this.render, this);
+      this.listenTo(this.model.get('meta'), 'change:innerCssClasses', this.refreshInnerCssClasses, this);
     },
 
     onRender: function () {
@@ -156,8 +164,10 @@ define(function (require) {
      *
      * @returns {boolean}
      */
-    selectContainer: function () {
-      WS.Cms.views.pageBuilder.selectElement(this);
+    selectContainer: function (event) {
+      if (event.target === this.ui.header.get(0)) {
+        WS.Cms.views.pageBuilder.selectElement(this);
+      }
     },
 
     /**
@@ -186,11 +196,11 @@ define(function (require) {
       return (draggable.viewType === 'Row' || draggable.viewType === 'Module');
     },
 
-    toggleSettings: function (event) {
+    toggleOptions: function (event) {
       event.preventDefault();
       event.stopPropagation();
 
-      this.$el.toggleClass('pb-Container--settings-open');
+      this.$el.toggleClass('pb-Container--options-open');
     },
 
     updateCssClasses: function (event) {
@@ -243,6 +253,45 @@ define(function (require) {
         elem.selectionEnd = elemLen;
         elem.focus();
       }
+    },
+
+    /**
+     * Event handler
+     * Handle clearing the container content.
+     *
+     * @param {Event} event
+     */
+    onClearContainer: function (event) {
+      this.model.content.reset();
+      WS.Cms.views.pageBuilder.model.rebuildContentData();
+    },
+
+    /**
+     * Event handler
+     * Handle duplication of a container.
+     *
+     * @param {Event} event
+     */
+    onDuplicateContainer: function (event) {
+      var index = this._parent.collection.indexOf(this.model);
+      var clone = $.extend(true, {}, this.model.getData());
+      this._parent.collection.add(clone, {at: index + 1});
+      WS.Cms.views.pageBuilder.model.rebuildContentData();
+    },
+
+    /**
+     * Event handler
+     * Handle deletion of a container.
+     *
+     * @param {Event} event
+     */
+    onDeleteContainer: function (event) {
+      this.$el.fadeOut(_.bind(function() {
+        setTimeout(_.bind(function() {
+          this._parent.collection.remove(this.model);
+          WS.Cms.views.pageBuilder.model.rebuildContentData();
+        }, this), 200);
+      }, this));
     }
 
   });

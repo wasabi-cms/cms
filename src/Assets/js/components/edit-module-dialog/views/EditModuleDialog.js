@@ -1,5 +1,6 @@
 define(function (require) {
 
+  var _ = require('underscore');
   var $ = require('jquery');
   var WS = require('wasabi');
   var DialogView = require('common/DialogView');
@@ -7,34 +8,31 @@ define(function (require) {
 
   return DialogView.extend({
 
-    ui: {
-      submitBtn: '.dialog-controls button[type="submit"]'
-    },
+    el: '.edit-module-dialog-wrapper',
 
-    events: function () {
-      return _.extend(DialogView.prototype.events, {
+    ui: _.extend(DialogView.prototype.ui, {
+      submitBtn: '.dialog-controls button[type="submit"]'
+    }),
+
+    events: _.extend(DialogView.prototype.events, {
         'click .module-type': 'onClickModuleType',
         'keyup .module-search': 'onSearch',
         'click button[type="submit"]': 'saveModule',
         'click .cancel': 'closeDialog',
         'click @ui.submitBtn': 'onSubmit'
-      });
-    },
+    }),
 
     $form: null,
 
     initialize: function(options) {
-
-      DialogView.prototype.initialize.call(this, options);
-    },
-
-    beforeRender: function(options) {
       var translations = WS.get('wasabi.cms').translations.dialog.editModule;
 
       this.templateData = {
         title: translations.title,
         primaryAction: translations.primaryAction
       };
+
+      DialogView.prototype.initialize.call(this, options);
     },
 
     initDialogContent: function () {
@@ -42,7 +40,7 @@ define(function (require) {
       var data = this.model.getData();
       data.fetch = 1;
 
-      WS.blockElement(this.$content, {
+      WS.blockElement(this.ui.content, {
         zIndex: 11000
       });
 
@@ -51,8 +49,8 @@ define(function (require) {
         data: data,
         type: 'post',
         success: _.bind(function(data) {
-          WS.unblockElement(this.$content);
-          this.$content.html(data.module);
+          WS.unblockElement(this.ui.content);
+          this.ui.content.html(data.module);
           this.registerForm();
         }, this)
       });
@@ -66,14 +64,14 @@ define(function (require) {
     onSubmit: function(event) {
       event.preventDefault();
 
-      WS.blockElement(this.$content);
+      WS.blockElement(this.ui.content);
 
       $.ajax({
         url: this.$form.attr('action'),
         data: this.$form.serialize(),
         type: 'post',
         success: _.bind(function(data) {
-          WS.unblockElement(this.$content);
+          WS.unblockElement(this.ui.content);
           if (data.error) {
             this.handleValidationError(data);
           } else {
@@ -84,13 +82,13 @@ define(function (require) {
     },
 
     registerForm: function() {
-      this.$form = this.$content.find('form');
+      this.$form = this.ui.content.find('form');
       this.$form.append('<input type="hidden" value="' + this.model.get('meta').get('moduleId') +'" name="meta[moduleId]">');
     },
 
     handleValidationError: function(data) {
-      this.$content.html(data.module);
-      this.$content.scrollTop(0);
+      this.ui.content.html(data.module);
+      this.ui.content.scrollTop(0);
       this.registerForm();
     },
 

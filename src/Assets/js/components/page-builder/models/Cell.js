@@ -21,6 +21,8 @@ define(function (require) {
       if (data) {
         this.modules = new ModulesCollection(data);
         this.unset('data');
+      } else {
+        this.modules = new ModulesCollection();
       }
       this.set('meta', new MetaModel(this.get('meta')), {silent: true});
       return this;
@@ -44,9 +46,27 @@ define(function (require) {
       this.get('meta').get('grid').set('colWidth', colWidth);
     },
 
+    /**
+     * Get the baseWidth of this cell.
+     *
+     * @returns {number}
+     */
+    getBaseWidth: function () {
+      return this.get('meta').get('grid').get('baseWidth');
+    },
+
+    /**
+     * Set the baseWidth of this cell.
+     *
+     * @param {number} baseWidth
+     */
+    setBaseWidth: function (baseWidth) {
+      this.get('meta').get('grid').set('baseWidth', baseWidth);
+    },
+
     getData: function () {
       var data = {
-        meta: this.get('meta').toJSON(),
+        meta: this.get('meta').getData(),
         data: []
       };
       this.modules.each(function (moduleModel) {

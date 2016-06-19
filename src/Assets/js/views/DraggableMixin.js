@@ -135,7 +135,7 @@ define(function (require) {
         });
 
         var containers = _.filter(dropTargetViews, function(v) {
-          return v.viewType === 'Container'
+          return v.viewType === 'Container';
         });
 
         var length = cells.length;

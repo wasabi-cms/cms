@@ -1,5 +1,6 @@
 define(function (require) {
 
+  var $ = require('jquery');
   var BaseView = require('common/BaseView');
 
   return BaseView.extend({
@@ -60,7 +61,10 @@ define(function (require) {
     unblockUpdate: function (event, data) {
       this.unblockThis();
       if (data.content) {
-        this.$el.html(data.content);
+        var $content = $(data.content);
+        var hiddenFormDiv = $content.find('div').prop('outerHTML');
+        $content.html($content.html().split(hiddenFormDiv)[1]);
+        this.$el.html($content.html());
       }
     },
 

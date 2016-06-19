@@ -30,6 +30,9 @@ define(function (require) {
      * DOM events handled by this view.
      */
     events: {
+      'click .pb-Row-edit': 'onEditRow',
+      'click .pb-Row-duplicate': 'onDuplicateRow',
+      'click .pb-Row-clear': 'onClearRow',
       'click .pb-Row-delete': 'onDeleteRow'
     },
 
@@ -73,6 +76,42 @@ define(function (require) {
      */
     getPlaceholderWidth: function () {
       return this.$placeholder.outerWidth() + 20;
+    },
+
+    /**
+     * Event handler
+     * Handle editing of a row.
+     *
+     * @param {Event} event
+     */
+    onEditRow: function (event) {
+      WS.Cms.views.pageBuilder.showEditRowDialog(this.model);
+    },
+
+    /**
+     * Event handler
+     * Handle duplication of a row.
+     *
+     * @param {Event} event
+     */
+    onDuplicateRow: function (event) {
+      var index = this._parent.collection.indexOf(this.model);
+      var clone = $.extend(true, {}, this.model.getData());
+      this._parent.collection.add(clone, {at: index + 1});
+      WS.Cms.views.pageBuilder.model.rebuildContentData();
+    },
+
+    /**
+     * Event handler
+     * Handle clearing the row content.
+     *
+     * @param {Event} event
+     */
+    onClearRow: function (event) {
+      this.model.cells.each(function (cell) {
+        cell.modules.reset();
+      });
+      WS.Cms.views.pageBuilder.model.rebuildContentData();
     },
 
     /**
