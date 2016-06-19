@@ -17,18 +17,15 @@ if ($this->request->params['action'] === 'add') {
     $isEdit = true;
 }
 
-$nameOpts = ['label' => __d('wasabi_cms', 'Menu Name')];
-
-if (!$isEdit) {
-    $nameOpts['autofocus'] = '';
-}
-
 echo $this->Form->create($menu, ['class' => 'no-top-section']);
 
 if ($isEdit) {
     echo $this->Form->input('id', ['type' => 'hidden']);
 }
-echo $this->Form->input('name', $nameOpts); ?>
+echo $this->Form->input('name', [
+    'label' => __d('wasabi_cms', 'Menu Name')
+]);
+?>
 <div class="form-row row">
     <label class="cursor--default"><?= __d('wasabi_cms', 'Menu Items') ?></label>
     <div class="field<?= (!$isEdit) ? ' no-input' : '' ?>">
