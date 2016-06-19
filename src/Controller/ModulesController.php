@@ -7,7 +7,7 @@ use Wasabi\Cms\View\Module\Module;
 class ModulesController extends BackendAppController
 {
     /**
-     * Initialization hook method
+     * Initialization hook method.
      */
     public function initialize()
     {

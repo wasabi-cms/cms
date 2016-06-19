@@ -67,7 +67,7 @@ class TextModule extends Module
 
     /**
      * Get the context class.
-     * 
+     *
      * @return mixed
      */
     public function getContext()
