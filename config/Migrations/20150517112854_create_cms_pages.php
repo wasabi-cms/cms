@@ -21,9 +21,12 @@ class CreateCmsPages extends AbstractMigration
             ->addColumn('page_title', 'string', ['limit' => 255, 'null' => true, 'default' => null])
             ->addColumn('display_page_title_suffix', 'boolean', ['signed' => false, 'null' => false, 'default' => 0])
             ->addColumn('meta_description', 'string', ['limit' => 255, 'null' => true, 'default' => null])
+            ->addColumn('meta_robots_index', 'boolean', ['signed' => false, 'null' => true, 'default' => null])
+            ->addColumn('meta_robots_follow', 'boolean', ['signed' => false, 'null' => true, 'default' => null])
             ->addColumn('status', 'integer', ['limit' => 11, 'signed' => false, 'null' => false, 'default' => 0])
             ->addColumn('created', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('modified', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP']);
+            ->addColumn('modified', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
+            ->addColumn('published', 'datetime', ['null' => true, 'default' => null]);
         $table->addIndex('name', ['name' => 'BY_NAME']);
         $table->create();
 
