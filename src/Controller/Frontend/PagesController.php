@@ -4,7 +4,6 @@ namespace Wasabi\Cms\Controller\Frontend;
 
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Cms\Model\Table\PagesTable;
 use Wasabi\Cms\WasabiCms;
 use Wasabi\Core\Wasabi;
@@ -27,17 +26,14 @@ class PagesController extends FrontendAppController
 
         $this->loadModel('Wasabi/Cms.Pages');
 
-        /** @var Page $page */
-        $page = $this->Pages->get($pageId, ['contain' => ['Current']]);
-        WasabiCms::page($page);
-
-        $startPage = $this->Pages->find()->order(['lft ASC'])->first();
-        WasabiCms::startPage($startPage);
-
+        $page = $this->Pages->getForFrontend($pageId);
+        $startPage = $this->Pages->getStartPage();
         $titleSuffix = Configure::read('Settings.Core.html_title_suffix');
-        WasabiCms::titleSuffix($titleSuffix);
-
         $instanceName = Configure::read('Settings.Core.instance_name');
+
+        WasabiCms::page($page);
+        WasabiCms::startPage($startPage);
+        WasabiCms::titleSuffix($titleSuffix);
         WasabiCms::instanceName($instanceName);
 
         $page->initializeContentAreas();
