@@ -24,15 +24,18 @@ $this->start('requirejs'); ?>
             'wasabi.cms.package': '../../../../wasabi/cms/ASSETS/js'
         }
     });
-<?php else: ?>
-
-<?php endif; ?>
     require(['wasabi.cms.package/cms_common'], function() {
         WS.registerModule('wasabi.cms', <?= json_encode($this->get('jsCmsOptions', [])) ?>, {
             debug: <?= Configure::read('debug') ? 'true' : 'false' ?>
         });
         WS.boot();
     });
+<?php else: ?>
+    WS.registerModule('wasabi.cms', <?= json_encode($this->get('jsCmsOptions', [])) ?>, {
+        debug: <?= Configure::read('debug') ? 'true' : 'false' ?>
+    });
+    WS.boot();
+<?php endif; ?>
 <?php
 $this->end();
 
