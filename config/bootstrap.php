@@ -18,7 +18,6 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\EventManager;
 use Cake\Filesystem\Folder;
-use Cake\Routing\DispatcherFactory;
 use Wasabi\Cms\Event\DispatcherListener;
 use Wasabi\Cms\Event\MenuListener;
 use Wasabi\Cms\Event\RouteListener;
