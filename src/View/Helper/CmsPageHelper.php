@@ -58,7 +58,7 @@ class CmsPageHelper extends Helper
                 $classes[] = 'closed';
             }
 
-            $pageRow = $this->_View->element('Wasabi/Cms.Pages/__page-row', [
+            $pageRow = $this->_View->element('Wasabi/Cms.../Pages/__page-row', [
                 'page' => $page,
                 'closed' => $closed,
                 'langId' => $langId

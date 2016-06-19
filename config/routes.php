@@ -45,6 +45,7 @@ Router::scope('/backend/cms', ['plugin' => 'Wasabi/Cms'], function (RouteBuilder
 
     $routes->scope('/settings', ['controller' => 'Settings'], function(RouteBuilder $routes) {
        $routes->connect('/theme', ['action' => 'theme']);
+       $routes->connect('/seo', ['action' => 'seo']);
     });
 
     /**

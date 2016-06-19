@@ -1,19 +1,18 @@
 <?php
 /**
  * @var \Wasabi\Cms\View\AppView $this
- * @var Route[] $routes
+ * @var \Cake\ORM\Query $routes
  * @var array $routeTypes
  * @var string $model
  * @var string $element
+ * @var Route $formRoute
  */
 use Cake\Routing\Router;
 use Wasabi\Core\Model\Entity\Route;
-use Wasabi\Core\Routing\RouteTypes;
 
-$error = false;
 if ($this->request->is('ajax')) {
-	$error = ($this->request->session()->read('Message.flash.params.class') === 'error') && ($this->request->params['action'] !== 'delete');
-	echo $this->Flash->render('routes');
+    echo $this->Form->create($formRoute);
+    echo $this->Flash->render('routes');
 }
 
 $addRouteUrl = Router::url([
@@ -90,12 +89,12 @@ $addRouteUrl = Router::url([
 			</td>
 		</tr>
 	<?php endforeach; ?>
-	<tr class="new-route<?= $error ? ' valign-top' : '' ?>">
+	<tr class="new-route valign-top">
 		<td>
 			<?= $this->Form->input('Routes.url', ['label' => false, 'type' => 'text', 'templates' => 'Wasabi/Cms.form_templates_routes']) ?>
 		</td>
 		<td class="center">
-			<?= $this->Form->input('Routes.type', ['label' => false, 'options' => $routeTypes, 'default' => (count($routes) >= 1) ? RouteTypes::get(RouteTypes::TYPE_REDIRECT_ROUTE) : RouteTypes::get(RouteTypes::TYPE_DEFAULT_ROUTE), 'templates' => 'Wasabi/Cms.form_templates_routes']) ?>
+			<?= $this->Form->input('Routes.type', ['label' => false, 'options' => $routeTypes, 'templates' => 'Wasabi/Cms.form_templates_routes']) ?>
 		</td>
 		<td class="actions center">
 			<?= $this->Form->button(__d('wasabi_cms', 'Submit'), ['div' => false, 'class' => 'button small']) ?>
@@ -104,3 +103,7 @@ $addRouteUrl = Router::url([
 	</tbody>
 </table>
 <small><?= __d('wasabi_cms', 'The different URLs define all locations this page will be available on.') ?></small>
+<?php
+if ($this->request->is('ajax')) {
+    echo $this->Form->end();
+}

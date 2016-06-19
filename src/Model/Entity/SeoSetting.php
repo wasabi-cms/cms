@@ -1,7 +1,5 @@
 <?php
 /**
- * Wasabi Cms Plugin Config
- *
  * Wasabi CMS
  * Copyright (c) Frank Förster (http://frankfoerster.com)
  *
@@ -12,14 +10,10 @@
  * @copyright     Copyright (c) Frank Förster (http://frankfoerster.com)
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Wasabi\Cms;
+namespace Wasabi\Cms\Model\Entity;
 
-class Config
+use Wasabi\Core\Model\Entity\Setting;
+
+class SeoSetting extends Setting
 {
-    /**
-     * The global Event priority for all Wasabi events.
-     *
-     * @var integer
-     */
-    public static $priority = 2000;
 }

@@ -88,8 +88,8 @@ class MenuListener implements EventListenerInterface
             ])
             ->addMenuItem([
                 'alias' => 'settings_theme',
-                'name' => __d('wasabi_core', 'Theme'),
-                'priority' => 50,
+                'name' => __d('wasabi_cms', 'Theme'),
+                'priority' => 350,
                 'parent' => 'settings',
                 'url' => [
                     'plugin' => 'Wasabi/Cms',
@@ -97,7 +97,19 @@ class MenuListener implements EventListenerInterface
                     'action' => 'theme'
                 ],
                 'matchAction' => true
-            ]);
+            ])
+            ->addMenuItem([
+                'alias' => 'settings_seo',
+                'name' => __d('wasabi_cms', 'SEO'),
+                'priority' => 400,
+                'parent' => 'settings',
+                'url' => [
+                    'plugin' => 'Wasabi/Cms',
+                    'controller' => 'Settings',
+                    'action' => 'seo'
+                ],
+                'matchAction' => true
+            ]);;
     }
 
     /**

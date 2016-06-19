@@ -5,6 +5,20 @@
  * @var int $langId
  * @var \Wasabi\Cms\Model\Entity\Page $page
  */
+
+use Wasabi\Cms\Collections;
+use Wasabi\Cms\Model\Entity\Collection;
+
+$collection = false;
+$collectionItem = false;
+if ($page->collection !== null) {
+    if ($page->collection->type === Collection::TYPE_COLLECTION) {
+        $collection = Collections::getDisplayName($page->collection->identifier);
+    }
+    if ($page->collection->type === Collection::TYPE_ITEM) {
+        $collectionItem = Collections::getDisplayName($page->collection->identifier);
+    }
+}
 ?>
 <div class="row">
     <div class="grid-1-16 center">
@@ -27,8 +41,8 @@
             ) ?>
             <div class="page-meta">
                 <small class="layout"><?= $page->getLayout()->name() ?></small>
-    <!--//                ($collection ? ' <small class="collection">' . $collection . '</small>' : '') .
-    //                ($collectionItem ? ' <small class="collection-item">' . $collectionItem . '</small>' : '') .-->
+                <?= ($collection ? ' <small class="collection">' . $collection . '</small>' : '') ?>
+                <?= ($collectionItem ? ' <small class="collection-item">' . $collectionItem . '</small>' : '') ?>
             </div>
         </div>
     </div>

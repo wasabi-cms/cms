@@ -32,15 +32,12 @@ use Wasabi\Core\Wasabi;
  * @property string slug
  * @property string theme
  * @property string layout
- * @property string page_title
- * @property bool display_page_title_suffix
- * @property string meta_description
  * @property int status
  * @property DateTime created
- * @property DateTime modified
  * @property Content[] current
+ * @property Collection collection
  */
-class Page extends Entity
+class Page extends PublishableEntity
 {
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
@@ -122,6 +119,11 @@ class Page extends Entity
         throw new \Exception('Status "' . $this->status . '" not found for Page with id ' . $this->id . '.');
     }
 
+    /**
+     * Initialize the content areas of this page.
+     *
+     * @return void
+     */
     public function initializeContentAreas()
     {
         $content = $this->_getContent();

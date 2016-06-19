@@ -51,7 +51,9 @@ class PagesController extends BackendAppController
      */
     public function index()
     {
-        $pages = $this->Pages->find('threaded')->order(['lft' => 'ASC']);
+        $pages = $this->Pages->find('threaded')
+            ->contain(['Collections'])
+            ->order(['lft' => 'ASC']);
         $this->set([
             'pages' => $pages,
             'closedPages' => isset($_COOKIE['closed_pages']) ? json_decode($_COOKIE['closed_pages'], true) : [],
@@ -85,7 +87,8 @@ class PagesController extends BackendAppController
             $this->Pages->behaviors()->unload('Translate');
             $page = $this->Pages->newEntity([
                 'name' => $this->request->data('name'),
-                'parent_id' => $this->request->data('parent_id')
+                'parent_id' => $this->request->data('parent_id'),
+                'layout' => $this->request->data('layout')
             ]);
 
             if ($this->Pages->save($page, ['associated' => false])) {
@@ -113,6 +116,14 @@ class PagesController extends BackendAppController
             $page->display_page_title_suffix = true;
         }
 
+        if ($page->meta_robots_index === null) {
+            $page->meta_robots_index = (bool)Configure::read('Settings.Cms.SEO.meta-robots-index');
+        }
+
+        if ($page->meta_robots_follow === null) {
+            $page->meta_robots_follow = (bool)Configure::read('Settings.Cms.SEO.meta-robots-follow');
+        }
+
         $this->set([
             'page' => $page,
             'layouts' => ThemeManager::theme()->getLayoutsForSelect(),
@@ -122,7 +133,7 @@ class PagesController extends BackendAppController
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'Pages',
                 'action' => 'attributes'
-            ]),
+            ])
         ]);
     }
 
@@ -137,7 +148,7 @@ class PagesController extends BackendAppController
         $this->request->allowMethod(['get', 'put']);
 
         /** @var Page $page */
-        $page = $this->Pages->get($id, ['contain' => ['Current', 'Attributes']]);
+        $page = $this->Pages->get($id, ['contain' => ['Current', 'Attributes', 'Collections']]);
 
         ThemeManager::theme(Wasabi::setting('Cms.Theme.id'));
 
@@ -164,6 +175,18 @@ class PagesController extends BackendAppController
             }
         }
 
+        if ($page->meta_robots_index === null) {
+            $page->meta_robots_index = (bool)Configure::read('Settings.Cms.SEO.meta-robots-index');
+        }
+
+        if ($page->meta_robots_follow === null) {
+            $page->meta_robots_follow = (bool)Configure::read('Settings.Cms.SEO.meta-robots-follow');
+        }
+
+        $routes = $this->Routes
+            ->findAllFor('Wasabi/Cms.Pages', $id, Wasabi::contentLanguage()->id)
+            ->order([$this->Routes->aliasField('url') => 'asc']);
+
         $this->set([
             'page' => $page,
             'layouts' => ThemeManager::theme()->getLayoutsForSelect(),
@@ -174,10 +197,11 @@ class PagesController extends BackendAppController
                 'action' => 'attributes'
             ]),
             'attributes' => $page->getLayout()->attributes(),
-            'routes' => $this->Routes
-                ->findAllFor('Wasabi/Cms.Pages', $id, Wasabi::contentLanguage()->id)
-                ->order([$this->Routes->aliasField('url') => 'asc']),
-            'routeTypes' => RouteTypes::getForSelect()
+            'routes' => $routes,
+            'routeTypes' => RouteTypes::getForSelect(),
+            'formRoute' => $this->Routes->newEntity([
+                'type' => ($routes->count() >= 1) ? RouteTypes::TYPE_REDIRECT_ROUTE : RouteTypes::TYPE_DEFAULT_ROUTE
+            ])
         ]);
 
         $this->render('add');
