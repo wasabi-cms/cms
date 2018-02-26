@@ -8,7 +8,7 @@
   "authors": [
     {
       "name": "Frank Förster",
-      "homepage": "http://frankfoerster.com",
+      "homepage": "https://frankfoerster.com",
       "role": "Author"
     }
   ],
@@ -17,9 +17,7 @@
     "source": "https://github.com/wasabi-cms/cms"
   },
   "require": {
-      "cakephp/cakephp": "~3.2",
-      "mustache/mustache": "2.*",
-      "wasabi-cms/core": "dev-master"
+      "wasabi-cms/core": "dev-es6"
   },
   "require-dev": {
     "cakephp/cakephp-codesniffer": "dev-master",
@@ -33,7 +31,6 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Cake\\Test\\": "vendor/cakephp/cakephp/tests",
       "Wasabi\\Cms\\Test\\": "tests"
     }
   }
