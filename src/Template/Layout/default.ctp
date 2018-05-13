@@ -8,41 +8,29 @@ $this->extend('Wasabi/Core.default');
 
 $this->append('head_css');
 echo $this->Asset->css('css/cms' . (!Configure::read('debug') ? '.min.css' : '.css'), 'Wasabi/Cms');
+echo $this->Asset->css('css/tree.css', 'Wasabi/Cms');
 $this->end();
 
-if (!Configure::read('debug')) {
-    $this->append('js-files');
-    echo $this->Asset->js('js/cms.js', 'Wasabi/Cms');
-    $this->end();
-}
+$debugJavascript = (Configure::read('debug') && Configure::read('debugJS'));
 
-$this->start('requirejs'); ?>
-<?php if (Configure::read('debug')): ?>
-    require.config({
-        paths: {
-            'wasabi.cms': '../../../../wasabi/cms/ASSETS/js/cms',
-            'wasabi.cms.package': '../../../../wasabi/cms/ASSETS/js'
-        }
-    });
-    require(['wasabi.cms.package/cms_common'], function() {
-        WS.registerModule('wasabi.cms', <?= json_encode($this->get('jsCmsOptions', [])) ?>, {
-            debug: <?= Configure::read('debug') ? 'true' : 'false' ?>
-        });
-        WS.boot();
-    });
-<?php else: ?>
-    WS.registerModule('wasabi.cms', <?= json_encode($this->get('jsCmsOptions', [])) ?>, {
-        debug: <?= Configure::read('debug') ? 'true' : 'false' ?>
-    });
-    WS.boot();
-<?php endif; ?>
-<?php
+$this->append('backend-js-assets');
+    echo $this->Asset->js('js/cms' . (!$debugJavascript ? '.min' : '') . '.js', 'Wasabi/Cms');
 $this->end();
 
-echo $this->fetch('content');
+$this->append('backend-js-assets-after-init');
+    echo $this->Asset->js('js/vendor' . (!$debugJavascript ? '.min' : '') . '.js', 'Wasabi/Cms');
+    echo $this->Asset->js('js/tree' . (!$debugJavascript ? '.min' : '') . '.js', 'Wasabi/Cms');
+$this->end();
 
-//require.config({
-//        paths: {
-//    'wasabi.cms': '../js/cms'
-//        }
-//    });
+$this->append('backend-js');?>
+window.WS.configureModule('Wasabi/Cms', <?= json_encode(['assetUrl' => $this->Url->build('/wasabi/cms')]) ?>);
+<?php $this->end();
+
+$this->start('content-area'); ?>
+<div class="cms--pages">
+    <?= $this->Flash->render('auth') ?>
+    <?= $this->Html->titlePad() ?>
+    <?= $this->Flash->render('flash') ?>
+    <?= $this->fetch('content') ?>
+</div>
+<?php $this->end();
