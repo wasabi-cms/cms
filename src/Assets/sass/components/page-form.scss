@@ -1,0 +1,23 @@
+.page-form {
+
+  @include respond-to-min($breakpoint-menu-slide-in) {
+
+    & > .form-row {
+      border-top: 1px solid $form-row-border-color;
+      border-bottom: 1px solid $form-row-border-color;
+    }
+
+    & > .tabs {
+      @include rem(margin-top, 20px);
+    }
+  }
+
+  @include respond-to-min($breakpoint-menu-collapsed) {
+
+    & > .form-row {
+      label {
+        @include rem(padding-top, 26px);
+      }
+    }
+  }
+}

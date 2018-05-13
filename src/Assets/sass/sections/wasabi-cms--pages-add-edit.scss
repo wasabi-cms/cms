@@ -1,0 +1,10 @@
+.wasabi-cms--pages-add,
+.wasabi-cms--pages-edit {
+
+  .tab-content[data-tabify-tab="seo"] {
+
+    .toggle-switch {
+      @include rem(max-width, 180px);
+    }
+  }
+}

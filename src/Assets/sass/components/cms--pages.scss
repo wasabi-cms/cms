@@ -1,0 +1,23 @@
+.cms--pages {
+  display: flex;
+}
+
+.cms--content--tree {
+  @include rem(width, 240px);
+  position: relative;
+
+  &.collapsed {
+    width: 0!important;
+  }
+}
+
+.cms--content--active {
+  position: relative;
+  width: calc(100% - #{rem-convert(px, 240px)});
+  width: calc(100% - #{rem-convert(rem, 240px)});
+  background-color: #f6f6f9;
+
+  *.collapsed + & {
+    width: 100% !important;
+  }
+}
