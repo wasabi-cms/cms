@@ -43,7 +43,7 @@ class ThemeManager
      */
     public static function loadThemes()
     {
-        $themesFolder = new Folder(ROOT . DS . 'themes');
+        $themesFolder = new Folder(APP . 'Themes');
         $themes = $themesFolder->read()[0];
         $loader = require ROOT . DS . 'vendor' . DS . 'autoload.php';
         foreach ($themes as $theme) {
@@ -139,7 +139,7 @@ class ThemeManager
         list($theme, $themeName) = pluginSplit($registeredTheme);
         $themeNamespace = preg_replace('/\\//', '\\', $theme);
         $themeClass = $themeNamespace . '\\' . $themeName;
-        
+
         try {
             $theme = new $themeClass();
         } catch (Exception $e) {
