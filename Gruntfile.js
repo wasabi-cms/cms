@@ -2,37 +2,47 @@ module.exports = function(grunt) {
   "use strict";
 
   // measures the time each task takes
+  require('jit-grunt')(grunt);
   require('time-grunt')(grunt);
-
-  var excludeModules = [
-    'jquery',
-    'underscore',
-    'backbone',
-    'marionette',
-    'purl',
-    'bootstrap.dropdown',
-    'common/BaseView',
-    'common/BaseViewFactory',
-    'jquery.color',
-    'jquery.eventMagic',
-    'jquery.scrollParent',
-    'jquery.livequery',
-    'jquery.nSortable',
-    'jquery.tSortable',
-    'bootstrap.dropdown',
-    'wasabi'
-  ];
+  require('babelify');
 
   grunt.initConfig({
 
     //-------------------------------------------- STYLE PROCESSING --------------------------------------------------//
-    less: {
-      compile: {
+    sass: {
+      dev: {
         options: {
-          sourceMap: true
+          sourceMap: true,
+          sourceMapEmbed: true
         },
         files: {
-          'webroot/css/cms.css': 'src/Assets/less/cms.less'
+          'src/Assets/_build/css/cms.compiled.dev.css': 'src/Assets/sass/styles.scss'
+        }
+      },
+      prod: {
+        options: {
+          sourceMap: false
+        },
+        files: {
+          'src/Assets/_build/css/cms.compiled.prod.css': 'src/Assets/sass/styles.scss'
+        }
+      }
+    },
+    postcss: {
+      options: {
+        map: false,
+        processors: [
+          require('autoprefixer')()
+        ]
+      },
+      dev: {
+        files: {
+          'src/Assets/_build/css/cms.dev.css': 'src/Assets/_build/css/cms.compiled.dev.css'
+        }
+      },
+      prod: {
+        files: {
+          'src/Assets/_build/css/cms.prod.css': 'src/Assets/_build/css/cms.compiled.prod.css'
         }
       }
     },
@@ -41,99 +51,104 @@ module.exports = function(grunt) {
         shorthandCompacting: false,
         roundingPrecision: -1
       },
-      cms: {
+      default: {
         files: {
-          'webroot/css/cms.min.css': 'webroot/css/cms.css'
+          'src/Assets/_build/css/cms.min.css': 'src/Assets/_build/css/cms.prod.css'
         }
       }
     },
 
-    //--------------------------------------------- JS PROCESSING -----------------------------------------------------//
-    jshint: {
-      cms: [
-        'package.json',
-        'Gruntfile.js',
-        'src/Assets/js/**/*.js'
-      ]
-    },
-    requirejs: {
-      compile: {
+    //--------------------------------------------- JS PROCESSING ----------------------------------------------------//
+    eslint: {
+      app: {
+        src: ['src/Assets/js/**/*.js'],
         options: {
-          // Define our base URL - all module paths are relative to this
-          // base directory.
-          baseUrl: 'src/Assets/js',
-
-          // Define our build directory. All files in the base URL will be
-          // COPIED OVER into the build directory as part of the
-          // concatentation and optimization process.
-          dir: '.build/js/',
-
-          // Load the RequireJS config() definition from the config.js file.
-          // Otherwise, we'd have to redefine all of our paths again here.
-          mainConfigFile: 'src/Assets/js/cms_common.build.js',
-          findNestedDependencies: true,
-
-          fileExclusionRegExp: /^\.|\.md$|^LICENSE$|\.json$|^src$|\.map$|^demo$|^test$|^tests$|\.TXT$|\.txt$|^fonts$|^css$|\.css$|^less$|\.less$|^grunt$|\.sh$|^r.js$/,
-
-          // Define the modules to compile.
-          modules: [
-            // Main cms module.
-            // All basic resources, vendor files will be included here automatically.
-            {
-              name: 'wasabi.cms',
-              include: 'cms_common',
-              exclude: excludeModules
-            }
-          ],
-
-          // Minify all js files via uglify2 and set DEBUG to false during the build.
-          // This way you can use statements like:
-          //      if (DEBUG) {
-          //        console.log('foobar')
-          //      }
-          // during development (Configure::write('debug', 2))
-          // which will be excluded from the build.
-          optimize: 'uglify2',
-          uglify2: {
-            compress:{
-              global_defs: {
-                DEBUG: false
+          quiet: true
+        }
+      }
+    },
+    browserify: {
+      cms: {
+        src: [
+          'src/Assets/js/module.js',
+        ],
+        dest: 'src/Assets/_build/js/cms.js',
+        options: {
+          debug: true,
+          transform: [
+            ['babelify', {
+              presets: [
+                ['es2015'/*, { modules: 'commonjs' }*/]
+              ],
+              parserOpts: {
+                sourceType: 'module'
               }
-            }
-          }
+            }]
+          ]
+        }
+      }
+    },
+    uglify: {
+      options: {
+        mangle: true
+      },
+      cms: {
+        files: {
+          'src/Assets/_build/js/cms.min.js': ['src/Assets/_build/js/cms.js']
         }
       }
     },
     copy: {
       js: {
         files: [
-          { src: '.build/js/cms.js', dest: 'webroot/js/cms.js' }
+          { src: 'src/Assets/_build/js/cms.js', dest: 'webroot/js/cms.js' },
+          { src: 'src/Assets/_build/js/cms.min.js', dest: 'webroot/js/cms.min.js' }
+        ]
+      },
+      css: {
+        files: [
+          { src: 'src/Assets/_build/css/cms.dev.css', dest: 'webroot/css/cms.css' },
+          { src: 'src/Assets/_build/css/cms.min.css', dest: 'webroot/css/cms.min.css' }
         ]
       }
     },
 
     //----------------------------------------------- WATCHERS -------------------------------------------------------//
     watch: {
-      less: {
-        files: ['src/Assets/less/**/*.less'],
-        tasks: ['less:compile', 'cssmin:cms']
+      sass: {
+        files: ['src/Assets/sass/**/*.scss'],
+        tasks: ['sass', 'postcss', 'cssmin', 'copy:css']
+      },
+      js: {
+        files: ['src/Assets/js/**/*.js'],
+        tasks: ['browserify', 'uglify', 'copy:js']
       }
     }
 
   });
 
   //--------------------------------------------- REGISTERED TASKS ---------------------------------------------------//
-  grunt.registerTask('default', [
-    'less:compile',
-    'cssmin:cms',
-    'jshint:cms',
-    'requirejs:compile',
+  grunt.registerTask('eslint-run', [
+    'eslint'
+  ]);
+
+  grunt.registerTask('watch-sass', [
+    'watch:sass'
+  ]);
+
+  grunt.registerTask('watch-js', [
+    'watch:js'
+  ]);
+
+  grunt.registerTask('build-js', [
+    'eslint-run',
+    'browserify',
+    'uglify',
     'copy:js'
   ]);
 
-  grunt.registerTask('watch2', [
-    'watch:less'
+  grunt.registerTask('dev-js', [
+    'browserify',
+    'copy:js'
   ]);
-
-  require('jit-grunt')(grunt);
 };
