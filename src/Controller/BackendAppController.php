@@ -27,12 +27,4 @@ class BackendAppController extends \Wasabi\Core\Controller\BackendAppController
      * @var string
      */
     public $viewClass = 'Wasabi/Cms.App';
-
-    /**
-     * initialization hook method
-     */
-    public function initialize()
-    {
-        parent::initialize();
-    }
 }
