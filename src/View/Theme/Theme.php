@@ -68,6 +68,7 @@ abstract class Theme
         if ($name !== null) {
             $this->_name = $name;
         }
+
         return $this->_name;
     }
 

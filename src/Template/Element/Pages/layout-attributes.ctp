@@ -20,22 +20,22 @@ use Wasabi\Cms\View\Layout\AttributeType;
         <tr>
             <td><?php
                 echo $this->Form->label($field, $attr['name']);
-                echo $this->Form->input('attributes.' . $key . '.id', array('type' => 'hidden'));
-                echo $this->Form->input('attributes.' . $key . '.model', array('type' => 'hidden', 'value' => 'Wasabi/Cms.Pages'));
-                echo $this->Form->input('attributes.' . $key . '.foreign_key', array('type' => 'hidden', 'value' => $page->id));
-                echo $this->Form->input('attributes.' . $key . '.name', array('type' => 'hidden', 'value' => $attrId));
+                echo $this->Form->control('attributes.' . $key . '.id', array('type' => 'hidden'));
+                echo $this->Form->control('attributes.' . $key . '.model', array('type' => 'hidden', 'value' => 'Wasabi/Cms.Pages'));
+                echo $this->Form->control('attributes.' . $key . '.foreign_key', array('type' => 'hidden', 'value' => $page->id));
+                echo $this->Form->control('attributes.' . $key . '.name', array('type' => 'hidden', 'value' => $attrId));
             ?></td>
             <td><?php
 
                 switch ($attr['type']) {
                     case AttributeType::TYPE_TEXT:
-                        echo $this->Form->input($field, ['label' => false, 'type' => 'text', 'templates' => 'Wasabi/Cms.form_templates_attributes']);
+                        echo $this->Form->control($field, ['label' => false, 'type' => 'text', 'templates' => 'Wasabi/Cms.form_templates_attributes']);
                         break;
                     case AttributeType::TYPE_TEXTAREA:
-                        echo $this->Form->input($field, ['label' => false, 'type' => 'textarea', 'templates' => 'Wasabi/Cms.form_templates_attributes']);
+                        echo $this->Form->control($field, ['label' => false, 'type' => 'textarea', 'templates' => 'Wasabi/Cms.form_templates_attributes']);
                         break;
                     case AttributeType::TYPE_SELECT:
-                        echo $this->Form->input($field, ['label' => false, 'options' => $attr['options'], 'templates' => 'Wasabi/Cms.form_templates_attributes']);
+                        echo $this->Form->control($field, ['label' => false, 'options' => $attr['options'], 'templates' => 'Wasabi/Cms.form_templates_attributes']);
                         break;
                 }
 
@@ -43,7 +43,7 @@ use Wasabi\Cms\View\Layout\AttributeType;
 //                switch ($attr['type']) {
 //						case 'page_id':
 //							$pages = $OOPage->generatetreelist(null, null, null, '___');
-//							echo $this->Form->input('PagesAttribute.'. $i .'.content', array('label' => $a['Attribute']['name'].':', 'type' => 'select', 'options' => $pages, 'value' => $value));
+//							echo $this->Form->control('PagesAttribute.'. $i .'.content', array('label' => $a['Attribute']['name'].':', 'type' => 'select', 'options' => $pages, 'value' => $value));
 //							break;
 //
 //                    case 'select':
@@ -59,7 +59,7 @@ use Wasabi\Cms\View\Layout\AttributeType;
 //                            if ($default !== false) {
 //                                $options['value'] = $default;
 //                            }
-//                            echo $this->Form->input('CmsPageLayoutAttribute.'. $key .'.content', $options);
+//                            echo $this->Form->control('CmsPageLayoutAttribute.'. $key .'.content', $options);
 //                        }
 //                        break;
 
@@ -70,19 +70,19 @@ use Wasabi\Cms\View\Layout\AttributeType;
 //                            $parts = explode(':', $p);
 //                            $options[$parts[0]] = $parts[1];
 //                        }
-//                        echo $this->Form->input('CmsPageLayoutAttribute.'. $key .'.content', array('legend' => false, 'type' => 'radio', 'options' => $options));
+//                        echo $this->Form->control('CmsPageLayoutAttribute.'. $key .'.content', array('legend' => false, 'type' => 'radio', 'options' => $options));
 //                        break;
 
 //                    case 'date':
-//                        echo $this->Form->input('CmsPageLayoutAttribute.'. $key .'.content', array('type' => 'hidden', 'class' => 'datepicker'));
+//                        echo $this->Form->control('CmsPageLayoutAttribute.'. $key .'.content', array('type' => 'hidden', 'class' => 'datepicker'));
 //                        break;
 
 //                    case 'datetime':
-//                        echo $this->Form->input('CmsPageLayoutAttribute.'. $key .'.content', array('type' => 'hidden', 'class' => 'datetimepicker'));
+//                        echo $this->Form->control('CmsPageLayoutAttribute.'. $key .'.content', array('type' => 'hidden', 'class' => 'datetimepicker'));
 //                        break;
 
 //                    case 'image':
-//                        echo $this->Form->input('CmsPageLayoutAttribute.'. $key .'.content', array('type' => 'hidden'));
+//                        echo $this->Form->control('CmsPageLayoutAttribute.'. $key .'.content', array('type' => 'hidden'));
 //                        break;
 
 //                    default:
@@ -93,7 +93,7 @@ use Wasabi\Cms\View\Layout\AttributeType;
 //                        if ($options['type'] === 'textarea') {
 //                            $options['rows'] = 1;
 //                        }
-//                        echo $this->Form->input('CmsPageLayoutAttribute.'. $key .'.content', $options);
+//                        echo $this->Form->control('CmsPageLayoutAttribute.'. $key .'.content', $options);
 //                }
                 ?></td>
         </tr>

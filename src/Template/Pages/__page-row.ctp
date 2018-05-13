@@ -2,7 +2,6 @@
 /**
  * @var \Wasabi\Cms\View\AppView $this
  * @var bool $closed
- * @var int $langId
  * @var \Wasabi\Cms\Model\Entity\Page $page
  */
 
@@ -20,11 +19,11 @@ if ($page->collection !== null) {
     }
 }
 ?>
-<div class="row">
-    <div class="grid-1-16 center">
+<div class="row table-body--row">
+    <div class="table-body--cell grid-1-16 center">
         <a href="javascript:void(0)" class="move" title="<?= __d('wasabi_cms', 'Change the position of this Page') ?>"><i class="icon-grab"></i></a>
     </div>
-    <div class="grid-9-16">
+    <div class="table-body--cell grid-9-16">
         <div class="page-info">
             <span class="expander wicon-<?= ($closed ? 'expand' : 'collapse') ?>"></span>
             <span class="wicon-page"></span>
@@ -40,13 +39,13 @@ if ($page->collection !== null) {
                 ]
             ) ?>
             <div class="page-meta">
-                <small class="layout"><?= $page->getLayout()->name() ?></small>
+                <small class="layout">Layout Name<?php #= $page->getLayout()->name() ?></small>
                 <?= ($collection ? ' <small class="collection">' . $collection . '</small>' : '') ?>
                 <?= ($collectionItem ? ' <small class="collection-item">' . $collectionItem . '</small>' : '') ?>
             </div>
         </div>
     </div>
-    <div class="grid-2-16 center">
+    <div class="table-body--cell grid-2-16 center">
         <?= $this->Html->link(
             $page->getStatus(),
             [
@@ -60,14 +59,13 @@ if ($page->collection !== null) {
             ]
         ) ?>
     </div>
-    <div class="grid-2-16 center">
+    <div class="table-body--cell grid-2-16 center">
         <?= $this->Html->link(
             '<i class="wicon-preview"></i>',
             [
                 'plugin' => 'Wasabi/Cms',
                 'controller' => 'FrontendPages',
                 'action' => 'preview',
-                'langId' => $langId,
                 'id' => $page->id
             ],
             [
@@ -77,7 +75,7 @@ if ($page->collection !== null) {
             ]
         ) ?>
     </div>
-    <div class="grid-2-16 center">
+    <div class="table-body--cell grid-2-16 center">
         <?= $this->Html->link(
             '<i class="wicon-add"></i>',
             [

@@ -20,7 +20,7 @@ use Wasabi\Core\Model\Table\SettingsTable;
  * Class GeneralSettingsTable
  *
  * @method getKeyValues(Entity $entity, array $fields) KeyValueBehavior::getKeyValues(Entity $entity, array $fields)
- * @method saveKeyValues(Entity $entity, array $fields) KeyValueBehavrio::saveKeyValues(Entity $entity, array $fields)
+ * @method saveKeyValues(Entity $entity, array $fields) KeyValueBehavior::saveKeyValues(Entity $entity, array $fields)
  */
 class ThemeSettingsTable extends SettingsTable
 {
@@ -31,7 +31,7 @@ class ThemeSettingsTable extends SettingsTable
      */
     public function initialize(array $config)
     {
-        $this->table('settings');
+        $this->setTable('settings');
 
         $this->addBehavior('Wasabi/Core.KeyValue', [
             'scope' => 'Cms'

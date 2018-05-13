@@ -20,9 +20,9 @@ if ($this->request->params['action'] === 'add') {
 echo $this->Form->create($menu, ['class' => 'no-top-section']);
 
 if ($isEdit) {
-    echo $this->Form->input('id', ['type' => 'hidden']);
+    echo $this->Form->control('id', ['type' => 'hidden']);
 }
-echo $this->Form->input('name', [
+echo $this->Form->control('name', [
     'label' => __d('wasabi_cms', 'Menu Name')
 ]);
 ?>

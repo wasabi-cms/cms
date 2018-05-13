@@ -2,21 +2,14 @@
 /**
  * @var \Wasabi\Cms\View\AppView $this
  * @var \Wasabi\Cms\Model\Entity\Page $page
- * @var array $pageTypes
- * @var array $collections
- * @var array $collectionItems
- * @var array $themes
  * @var array $layouts
  * @var string $changeAttributesUrl
- * @var array $routeTypes
  * @var array $availableModules
  */
 
 use Cake\Core\Configure;
-use Wasabi\Cms\Model\Entity\Collection;
 
-$isAddAction = ($this->request->params['action'] === 'add');
-$isCollectionItem = ($page->collection !== null && $page->collection->type === Collection::TYPE_ITEM);
+$isAddAction = ($this->request->getParam('action') === 'add');
 
 $this->set('jsCmsOptions', [
     'translations' => [
@@ -44,7 +37,7 @@ $this->set('jsCmsOptions', [
     'moduleAction' => $this->Url->build(['plugin' => 'Wasabi/Cms', 'controller' => 'Modules', 'action' => 'edit'], true)
 ]);
 
-if ($this->request->params['action'] == 'add') {
+if ($isAddAction) {
     $this->Html->setTitle(__d('wasabi_cms', 'Add a new Page') . '<span class="lang">' . Configure::read('contentLanguage')->iso2 . '</span>');
 } else {
     $this->Html->setTitle(__d('wasabi_cms', 'Edit Page') . '<span class="lang">' . Configure::read('contentLanguage')->iso2 . '</span>');
@@ -58,37 +51,20 @@ echo $this->Form->create($page, [
 
 echo $this->Form->hidden('current.0.content', ['class' => 'page-content']);
 
-if ($this->request->params['action'] == 'edit') {
-    echo $this->Form->input('id', ['type' => 'hidden', 'id' => 'page-id']);
+if (!$isAddAction) {
+    echo $this->Form->control('id', ['type' => 'hidden', 'id' => 'page-id']);
 }
 ?>
+    <?= $this->Form->control('pageRevision.title', [
+        'label' => __d('wasabi_cms', 'Title')
+    ]) ?>
     <ul class="tabs row" data-tabify-id="page">
-        <li data-tabify-target="general"><a href="javascript:void(0)"><?php echo __d('wasabi_cms', 'General') ?></a></li>
-        <li data-tabify-target="layout"><a href="javascript:void(0)"><?php echo __d('wasabi_cms', 'Layout') ?></a></li>
-        <li data-tabify-target="seo"<?php echo ($isCollectionItem) ? ' data-tabify-disabled="1"' : '' ?>><a href="javascript:void(0)"><?php echo __d('wasabi_cms', 'SEO') ?></a></li>
-        <li data-tabify-target="urls"<?php echo ($isAddAction || $isCollectionItem) ? ' data-tabify-disabled="1"' : '' ?>><a href="javascript:void(0)"><?php echo __d('wasabi_cms', 'URLs') ?></a></li>
+        <li data-tabify-target="layout"><a href="javascript:void(0)"><?= __d('wasabi_cms', 'Layout') ?></a></li>
+        <li data-tabify-target="seo"><a href="javascript:void(0)"><?= __d('wasabi_cms', 'SEO') ?></a></li>
+        <li data-tabify-target="urls"<?= ($isAddAction) ? ' data-tabify-disabled="1"' : '' ?>><a href="javascript:void(0)"><?= __d('wasabi_cms', 'URLs') ?></a></li>
     </ul>
-    <div class="tab-content" data-tabify-tab="general" data-tabify-id="page">
-        <?php
-        echo $this->Form->input('name', [
-            'label' => __d('wasabi_cms', 'Page Name')
-        ]);
-        echo $this->Form->input('cached', [
-            'options' => [
-                '1' => __d('wasabi_cms', 'Yes'),
-                '0' => __d('wasabi_cms', 'No')
-            ],
-            'label' => __d('wasabi_cms', 'Enable Caching?')
-        ]);
-        ?>
-    </div>
-    <div class="tab-content" data-tabify-tab="layout" data-tabify-id="page" style="display: none;" data-attributes-url="<?= $this->Url->build([
-        'plugin' => 'Wasabi/Cms',
-        'controller' => 'Pages',
-        'action' => 'attributes',
-        'id' => $page->id
-    ]) ?>">
-        <?php echo $this->Form->input('layout', [
+    <div class="tab-content" data-tabify-tab="layout" data-tabify-id="page" data-attributes-url="<?= $changeAttributesUrl ?>">
+        <?php echo $this->Form->control('layout', [
             'options' => $layouts,
             'label' => __d('wasabi_cms', 'Layout'),
             'templateVars' => [
@@ -102,13 +78,12 @@ if ($this->request->params['action'] == 'edit') {
             </div>
         </div>
     </div>
-<?php if (!$isCollectionItem): ?>
     <div class="tab-content" data-tabify-tab="seo" data-tabify-id="page" style="display: none">
         <?php
-        echo $this->Form->input('page_title', [
+        echo $this->Form->control('page_title', [
             'label' => __d('wasabi_cms', 'Title')
         ]);
-        echo $this->Form->input('display_page_title_suffix', [
+        echo $this->Form->control('display_page_title_suffix', [
             'type' => 'toggleSwitch',
             'onLabel' => __d('wasabi_cms', 'yes'),
             'offLabel' => __d('wasabi_cms', 'no'),
@@ -117,7 +92,7 @@ if ($this->request->params['action'] == 'edit') {
                 'formRowInfo' => __d('wasabi_cms', 'Whether to display the page title suffix configured under Settings > General.')
             ]
         ]);
-        echo $this->Form->input('meta_description', [
+        echo $this->Form->control('meta_description', [
             'label' => __d('wasabi_cms', 'Meta Description'),
             'templateVars' => [
                 'info' => __d('wasabi_cms', 'Describe in short what this page is about.')
@@ -125,7 +100,7 @@ if ($this->request->params['action'] == 'edit') {
             'type' => 'textarea',
             'rows' => 2,
         ]);
-        echo $this->Form->input('meta_robots_index', [
+        echo $this->Form->control('meta_robots_index', [
             'type' => 'toggleSwitch',
             'onLabel' => 'index',
             'offLabel' => 'noindex',
@@ -134,7 +109,7 @@ if ($this->request->params['action'] == 'edit') {
                 'formRowInfo' => __d('wasabi_cms', 'Whether to allow Search Engines to index this page.')
             ]
         ]);
-        echo $this->Form->input('meta_robots_follow', [
+        echo $this->Form->control('meta_robots_follow', [
             'type' => 'toggleSwitch',
             'onLabel' => 'follow',
             'offLabel' => 'nofollow',
@@ -145,8 +120,7 @@ if ($this->request->params['action'] == 'edit') {
         ]);
         ?>
     </div>
-<?php endif; ?>
-<?php if (!$isAddAction && !$isCollectionItem): ?>
+<?php if (!$isAddAction): ?>
     <div class="tab-content" data-tabify-tab="urls" data-tabify-id="page" style="display: none;">
         <div class="form-row row">
             <label><?php echo __d('cms', 'Default URL slug') ?></label>

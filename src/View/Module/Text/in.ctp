@@ -9,7 +9,7 @@
 <div class="form-row">
     <label><?= __d('module_text', 'Content') ?></label>
     <div class="field">
-        <?= $this->Form->input('content', ['type' => 'textarea', 'id' => false, 'label' => false, 'class' => 'medium-editor-content']) ?>
+        <?= $this->Form->control('content', ['type' => 'textarea', 'id' => false, 'label' => false, 'class' => 'medium-editor-content']) ?>
         <div class="medium-editor"><?= $this->request->data['content'] ?? '' ?></div>
         <a href="javascript:void(0)" class="medium-editor-show-code"><?= __d('module_text', 'Code Preview') ?></a>
         <xmp class="medium-editor-code"></xmp>

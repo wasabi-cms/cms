@@ -11,7 +11,7 @@ echo $this->Form->widget('section', [
     'title' => __d('wasabi_cms', 'Theme Settings'),
     'description' => __d('wasabi_cms', 'Control your overall page theme.')
 ]);
-echo $this->Form->input('Theme__id', [
+echo $this->Form->control('Theme__id', [
     'label' => __d('wasabi_cms', 'Theme'),
     'options' => $themes
 ]);

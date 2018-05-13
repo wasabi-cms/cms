@@ -2,6 +2,7 @@
 
 namespace Wasabi\Cms\Controller;
 
+use Wasabi\Cms\Model\Entity\SeoSetting;
 use Wasabi\Cms\Model\Table\SeoSettingsTable;
 use Wasabi\Cms\Model\Table\ThemeSettingsTable;
 use Wasabi\Cms\View\Theme\ThemeManager;
@@ -15,11 +16,13 @@ class SettingsController extends BackendAppController
     /**
      * theme action
      * GET | POST
+     *
+     * @return void
      */
     public function theme()
     {
         $keys = [
-            'Theme_id'
+            'Theme__id'
         ];
 
         /** @var ThemeSettingsTable $ThemeSettings */
@@ -27,9 +30,10 @@ class SettingsController extends BackendAppController
 
         $settings = $ThemeSettings->getKeyValues(new GeneralSetting(), $keys);
 
-        if ($this->request->is('post') && !empty($this->request->data)) {
-            $settings = $ThemeSettings->newEntity($this->request->data);
-            if (!$settings->errors()) {
+        if ($this->request->is('post') && !empty($this->request->getData())) {
+            /** @var SeoSetting $settings */
+            $settings = $ThemeSettings->newEntity($this->request->getData());
+            if (!$settings->getErrors()) {
                 if ($ThemeSettings->saveKeyValues($settings, $keys)) {
                     $this->Flash->success(__d('wasabi_cms', 'The theme settings have been updated.'));
                     $this->redirect(['action' => 'theme']);
@@ -41,6 +45,7 @@ class SettingsController extends BackendAppController
                 $this->Flash->error($this->formErrorMessage);
             }
         }
+
         $this->set([
             'settings' => $settings,
             'themes' => ThemeManager::getThemesForSelect()
@@ -50,6 +55,8 @@ class SettingsController extends BackendAppController
     /**
      * seo action
      * GET | POST
+     *
+     * @return void
      */
     public function seo()
     {
@@ -76,10 +83,11 @@ class SettingsController extends BackendAppController
 
         $settings = $SeoSettings->getKeyValues(new GeneralSetting(), $keys);
 
-        if ($this->request->is('post') && !empty($this->request->data)) {
-            $this->request->data['SEO__Social__twitter_username'] = ltrim(trim($this->request->data['SEO__Social__twitter_username']), '@');
-            $settings = $SeoSettings->newEntity($this->request->data);
-            if (!$settings->errors()) {
+        if ($this->request->is('post') && !empty($this->request->getData())) {
+            $this->request = $this->request->withData('SEO__Social__twitter_username', ltrim(trim($this->request->getData('SEO__Social__twitter_username', '')), '@'));
+            /** @var SeoSetting $settings */
+            $settings = $SeoSettings->newEntity($this->request->getData());
+            if (!$settings->getErrors()) {
                 if ($SeoSettings->saveKeyValues($settings, $keys)) {
                     $this->Flash->success(__d('wasabi_cms', 'The SEO settings have been updated.'));
                     $this->redirect(['action' => 'seo']);
@@ -91,6 +99,7 @@ class SettingsController extends BackendAppController
                 $this->Flash->error($this->formErrorMessage);
             }
         }
+
         $this->set([
             'settings' => $settings
         ]);

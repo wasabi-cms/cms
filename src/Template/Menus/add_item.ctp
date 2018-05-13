@@ -28,10 +28,10 @@ $this->Html->addAction($this->Guardian->protectedLink(
 
 echo $this->Form->create($menuItem, ['class' => 'no-top-section']);
     if ($isEdit) {
-        echo $this->Form->input('id', ['type' => 'hidden']);
+        echo $this->Form->control('id', ['type' => 'hidden']);
     }
-    echo $this->Form->input('name', ['label' => __d('wasabi_cms', 'Menu Item Name')]);
-    echo $this->Form->input('link_to', ['options' => $linkTypes, 'empty' => __d('wasabi_core', 'Please Choose...')]);
+    echo $this->Form->control('name', ['label' => __d('wasabi_cms', 'Menu Item Name')]);
+    echo $this->Form->control('link_to', ['options' => $linkTypes, 'empty' => __d('wasabi_core', 'Please Choose...')]);
     echo $this->Html->div('form-controls');
         echo $this->Form->button('<span>' . __d('wasabi_core', 'Save') . '</span>', ['div' => false, 'class' => 'button']);
         echo $this->Guardian->protectedLink(__d('wasabi_core', 'Cancel'), [
