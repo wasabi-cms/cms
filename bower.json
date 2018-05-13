@@ -1,9 +1,0 @@
-{
-  "name": "wasabi-cms/cms",
-  "dependencies": {
-    "js-cookie": "~2.1.0",
-    "medium-editor": "^5.18.0"
-  },
-  "license": "MIT",
-  "private": true
-}
