@@ -1,4 +1,5 @@
 .idea
 node_modules
-.build/*
-src/Assets/js/vendor/*
+composer.lock
+src/Assets/_build/*
+src/Assets/cms/dist
