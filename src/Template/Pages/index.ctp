@@ -18,7 +18,10 @@ $leftPanelCollapsed = isset($_COOKIE['wasabi_cms_tree_collapsed']) ? (bool)$_COO
     <div class="gm-scrollbar -vertical"><div class="thumb"></div></div>
     <div class="gm-scrollbar -horizontal"><div class="thumb"></div></div>
     <div class="gm-scroll-view">
-        <div class="content--padding"></div>
+        <div class="content--padding">
+            <?= $this->Flash->render('auth') ?>
+            <div id="cms-content"></div>
+        </div>
     </div>
     <div class="cms--content--split">
         <div class="cms--content--split--bar"></div>

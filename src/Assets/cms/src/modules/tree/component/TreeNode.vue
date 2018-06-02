@@ -1,11 +1,14 @@
 <template>
   <li class="tree--node" :class="nodeClasses()">
-    <div class="tree--node--details" @click.prevent="setActive" @dragenter.prevent="onNativeDragEnter" @dragover.prevent="onNativeDragOver" @dragleave.prevent="onNativeDragLeave">
+    <div class="tree--node--details" @click.prevent="setActive">
       <div class="tree--node--spacers" v-if="level > 0">
         <div v-for="lvl in range(0, level - 1)" :class="nodeSpacerClasses(lvl)"></div>
       </div>
-      <div :class="nodeStateClasses()" v-touch="toggleExpand"></div>
-      <div class="tree--node--icon"><img class="tree--node--icon--image" :src="imageUrl" width="16" height="16"></div>
+      <div :class="treeStateIconsClasses()" v-touch="toggleExpand">
+        <div :class="treeStateIconClasses()"></div>
+        <div class="tree--state--icon--expander" v-show="hasChildren"></div>
+      </div>
+      <div :class="nodeIconClasses()"><img class="tree--node--icon--image" :src="imageUrl" width="16" height="16"></div>
       <div class="tree--node--name">{{name}}</div>
     </div>
     <slot></slot>
@@ -15,12 +18,13 @@
 <script>
   const Cookies = window.WS.exports.Cookies;
   import {addToArray, range, removeFromArray, truncate} from '../../../util';
+  import NewPage from '../../tree-actions/component/NewPage.vue';
 
   export default {
     name: 'tree-node',
 
     props: {
-      object: Object,
+      node: Object,
       level: {
         type: Number,
         required: false,
@@ -36,46 +40,21 @@
         required: false,
         default: () => []
       },
-      dragObject: {
+      parentRefs: {
         type: Object,
-        required: true
-      },
-      dragOver: {
-        type: Object,
-        required: true
-      },
-      dragBefore: {
-        type: Object,
-        required: true
-      },
-      dragAfter: {
-        type: Object,
-        required: true
-      },
-      dragTarget: {
-        type: Object,
-        required: true
-      },
-      scrollbar: {
-        required: true,
-        validator: (scrollbar) => {
-          return ['object', 'undefined'].indexOf(typeof scrollbar) !== -1;
-        }
+        required: false,
+        default: () => {}
       }
     },
 
     data() {
       return {
-        expanded: this.getExpandedIds().includes(this.object.id),
+        expanded: this.getExpandedIds().includes(this.node.id),
         expanding: false
       };
     },
 
     computed: {
-      node() {
-        return this.object;
-      },
-
       name() {
         return truncate(this.node.name, 50, '...');
       },
@@ -84,12 +63,12 @@
         return this.node.children.length > 0;
       },
 
-      isSelected() {
-        if (typeof this.dragObject.id !== 'undefined') {
-          return this.dragObject.id === this.node.id;
-        }
+      isCurrentDragComponent() {
+        return this.dragComponentPresent && this.$root.draggableStore.dragComponent._uid === this._uid;
+      },
 
-        return this.$store.state.tree.active !== null && this.$store.state.tree.active.id === this.node.id;
+      isSelected() {
+        return !this.dragComponentPresent && this.$store.getters['tree/getActiveNode'].id === this.node.id;
       },
 
       assetUrl() {
@@ -100,20 +79,44 @@
         return this.assetUrl + '/img/tree-page-default.svg';
       },
 
+      dragComponentPresent() {
+        return this.$root.draggableStore.dragComponent !== null;
+      },
+
+      dragTargetPresent() {
+        return this.$root.draggableStore.dragTargetComponent !== null;
+      },
+
+      dragOverPresent() {
+        return this.$root.draggableStore.dragOverComponent !== null;
+      },
+
+      dragBeforePresent() {
+        return this.$root.draggableStore.dragBeforeComponent !== null;
+      },
+
+      dragAfterPresent() {
+        return this.$root.draggableStore.dragAfterComponent !== null;
+      },
+
+      isCurrentDragTarget() {
+        return this.dragTargetPresent && this.$root.draggableStore.dragTargetComponent._uid === this._uid;
+      },
+
       isDragOver() {
-        return this.dragOver.id && this.dragOver.id === this.node.id;
+        return this.dragOverPresent && this.$root.draggableStore.dragOverComponent._uid === this._uid;
       },
 
       isDragBefore() {
-        return this.dragBefore.id && this.dragBefore.id === this.node.id;
+        return this.dragBeforePresent && this.$root.draggableStore.dragBeforeComponent._uid === this._uid;
       },
 
       isDragAfter() {
-        return this.dragAfter.id && this.dragAfter.id === this.node.id;
+        return this.dragAfterPresent && this.$root.draggableStore.dragAfterComponent._uid === this._uid;
       },
 
       isDragDenied() {
-        return this.dragTarget.id && this.dragTarget.id === this.node.id && !this.isDragOver && !this.isDragBefore && !this.isDragAfter;
+        return this.isCurrentDragTarget && !this.isDragOver && !this.isDragBefore && !this.isDragAfter;
       }
     },
 
@@ -122,7 +125,8 @@
       nodeClasses() {
         return {
           'tree--node__selected': this.isSelected,
-          'tree--node__expanded': this.expanding || this.expanded,
+          'tree--node__dragging': this.isCurrentDragComponent,
+          'tree--node__expanded': this.hasChildren && (this.expanding || this.expanded),
           'tree--node__drag-over': this.isDragOver,
           'tree--node__drag-before': this.isDragBefore,
           'tree--node__drag-after': this.isDragAfter,
@@ -137,7 +141,14 @@
         }
       },
 
-      nodeStateClasses() {
+      treeStateIconsClasses() {
+        return {
+          'tree--state--icons': true,
+          'tree--state--icons__expanded': this.hasChildren && (this.expanding || this.expanded)
+        }
+      },
+
+      treeStateIconClasses() {
         return {
           'tree--state--icon': true,
           'tree--state--icon__plus': this.hasChildren && !this.expanded && !this.isLast,
@@ -149,15 +160,26 @@
         };
       },
 
+      nodeIconClasses() {
+        return {
+          'tree--node--icon': true
+        }
+      },
+
       setActive() {
-        this.$store.commit('tree/SET_ACTIVE', this.node);
+        this.$store.dispatch('tree/SELECT_NODE', this.node);
       },
 
       range(start, end) {
         return range(start, end);
       },
 
-      toggleExpand() {
+      toggleExpand(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
         this.expanded = !this.expanded;
         this.expanding = true;
 
@@ -200,7 +222,9 @@
           container.style.display = '';
           container.style.height = '';
           container.style.overflow = '';
-          setTimeout(() => this.scrollbar && this.scrollbar.update(), 0);
+          setTimeout(() => {
+            this.parentRefs.scrollContainer && this.parentRefs.scrollContainer.scrollbar.update();
+          }, 0);
         }, {once: true});
       },
 
@@ -218,23 +242,128 @@
         Cookies.set('wasabi_cms_tree_expanded', expanded.join(','));
       },
 
-      onNativeDragEnter(event) {
-        console.log('Drag Enter auf TreeNode ' + this.node.name);
+      canReceiveDrop(type, dropComponent, data) {
+        const thisComponentName = this.$vnode.componentOptions.tag;
+        const dropComponentName = dropComponent.$vnode.componentOptions.tag;
+
+        if ([thisComponentName, NewPage.name].indexOf(dropComponentName) === -1) {
+          return false;
+        }
+
+        if (dropComponentName === NewPage.name) {
+          switch (type) {
+            case 'over':
+              return true;
+
+            case 'before':
+              return !this.previousSiblingIsDragComponent();
+
+            case 'after':
+              if (this.hasVisibleChildren(data)) {
+                return false;
+              }
+              return !this.nextSiblingIsDragComponent();
+          }
+        }
+
+        if (dropComponentName === thisComponentName) {
+          if (this.$root.draggableStore.dropMode === 'copy') {
+            return true;
+          }
+          if (dropComponent.node.id === this.node.id) {
+            return false;
+          }
+          if (this.hasParent(this, dropComponent)) {
+            return false;
+          }
+
+          switch (type) {
+            case 'over':
+              return true;
+
+            case 'before':
+              return !this.previousSiblingIsDragComponent();
+
+            case 'after':
+              if (this.hasVisibleChildren(data)) {
+                return false;
+              }
+              return !this.nextSiblingIsDragComponent();
+          }
+        }
+
+        return false;
       },
 
-      onNativeDragOver(event) {
-        event.dataTransfer.dropEffect = 'move';
+      hasParent(component, parentComponent) {
+        if (typeof component.$parent === 'undefined') {
+          return false;
+        }
+
+        if (component.$parent._uid === parentComponent._uid) {
+          return true;
+        }
+
+        return this.hasParent(component.$parent, parentComponent);
       },
 
-      onNativeDragLeave() {
-        console.log('Drag Leave auf TreeNode ' + this.node.name);
+      previousSiblingIsDragComponent() {
+        if (this.$el.previousSibling === null || typeof this.$el.previousSibling.__vue__ === 'undefined') {
+          return false;
+        }
+
+        return this.dragComponentPresent && this.$el.previousSibling.__vue__._uid === this.$root.draggableStore.dragComponent._uid;
+      },
+
+      nextSiblingIsDragComponent() {
+        if (this.$el.nextSibling === null || typeof this.$el.nextSibling.__vue__ === 'undefined') {
+          return false;
+        }
+
+        return this.dragComponentPresent && this.$el.nextSibling.__vue__._uid === this.$root.draggableStore.dragComponent._uid;
+      },
+
+      changeDropTarget(type, dropComponent, data) {
+        switch (type) {
+          case 'before':
+          case 'after':
+            if (this.canReceiveDrop('over', dropComponent, data)) {
+              this.$root.draggableStore.dragOverComponent = this;
+              this.$root.draggableStore.dragBeforeComponent = null;
+              this.$root.draggableStore.dragAfterComponent = null;
+              this.$root.draggableStore.dragTargetComponent = this;
+              return true;
+            }
+            break;
+        }
+
+        return false;
+      },
+
+      hasVisibleChildren(data) {
+        if (data.dropTarget.next === null || this.$children.length === 0 || this.$children[0].$children.length === 0) {
+          return false;
+        }
+        return (this.$children[0].$children[0].$el === data.dropTarget.next);
+      },
+
+      onDragStart(draggableStore) {
+        draggableStore.title = this.node.name;
+      },
+
+      onDrop(type, component) {
+        console.log(type, component, this.$el);
       }
     },
 
     watch: {
       isDragOver(val) {
         if (val && this.node.children.length > 0 && !this.expanded) {
-          this.expandTimeout = setTimeout(() => this.toggleExpand(), 750);
+          this.expandTimeout = setTimeout(() => {
+            if (this.isDragOver && !this.expanded) {
+              this.toggleExpand();
+            }
+          }, 750);
           return;
         }
         this.expandTimeout = 0;
@@ -247,11 +376,26 @@
   .tree--node {
     display: block;
 
+    .draggable--is-dragging & {
+      pointer-events: none;
+    }
+
     &.tree--node__selected {
 
       & > .tree--node--details {
-        background-color: #fff;
-        border-color: #d7d7d7;
+        background-color: #eff0f0;
+        border-color: #436a8d;
+
+        .tree--node--name {
+          color: #000;
+        }
+      }
+    }
+
+    &.tree--node__dragging {
+
+      & > .tree--node--details {
+        border-color: #439fc0;
       }
     }
 
@@ -259,7 +403,6 @@
 
       & > .tree--node--details {
         background-color: #d7e4f1;
-        border-color: transparent;
       }
     }
 
@@ -270,10 +413,10 @@
 
         &:after {
           position: absolute;
-          left: 0;
-          top: -2px;
+          right: 0;
+          top: -1px;
+          left: -2px;
           content: "";
-          width: 100%;
           height: 2px;
           background-color: #9eb2c5;
         }
@@ -287,10 +430,10 @@
 
         &:after {
           position: absolute;
-          left: 0;
-          bottom: -2px;
+          right: 0;
+          bottom: -1px;
+          left: -2px;
           content: "";
-          width: 100%;
           height: 2px;
           background-color: #9eb2c5;
         }
@@ -301,7 +444,6 @@
 
       & > .tree--node--details {
         background-color: #f6d3cf;
-        border-color: transparent;
       }
     }
   }
@@ -312,14 +454,15 @@
 
   .tree--node--details {
     display: flex;
-    padding-left: 5px;
+    padding-left: 3px;
     line-height: 18px;
-    border: 1px solid transparent;
+    border: solid transparent;
+    border-width: 0 0 0 3px;
     user-select: none;
 
     &:hover {
-      background-color: #f2f2f2;
-      border-color: #d7d7d7;
+      background-color: #eff0f0;
+      border-color: #eff0f0;
     }
   }
 
@@ -334,7 +477,18 @@
   }
 
   .tree--node--spacer__span {
-    background: transparent url(../img/tree-line.gif) repeat-y;
+    position: relative;
+
+    &:before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      content: "";
+      width: 1px;
+      transform: translateX(-1px);
+      background-color: #d7d7d7;
+    }
   }
 
   .tree--node--icon {
@@ -343,45 +497,117 @@
 
   .tree--node--icon--image {
     display: block;
-    transform: translateY(1px);
+    transform: translateY(5px);
   }
 
-  .tree--state--icon {
-    margin-top: -1px;
+  .tree--state--icons {
+    position: relative;
     width: 16px;
     min-width: 16px;
   }
 
-  .tree--state--icon__plus {
-    background: transparent url(../img/tree-plus.gif) repeat-y 0 2px;
+  .tree--state--icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 
+  .tree--state--icon__join,
+  .tree--state--icon__join-bottom,
+  .tree--state--icon__minus,
+  .tree--state--icon__minus-bottom,
+  .tree--state--icon__plus,
   .tree--state--icon__plus-bottom {
-    background: transparent url(../img/tree-plus-bottom.gif) repeat-y 0 2px;
-    height: 18px;
+
+    &:before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(50% - 1px);
+      content: "";
+      width: 1px;
+      background-color: #d7d7d7;
+    }
+
+    &:after {
+      position: absolute;
+      top: 13px;
+      left: calc(50% - 1px);
+      right: 0;
+      content: "";
+      height: 1px;
+      background-color: #d7d7d7;
+    }
   }
 
-  .tree--state--icon__minus {
-    background: transparent url(../img/tree-minus.gif) repeat-y 0 2px;
+  .tree--state--icon__join-bottom,
+  .tree--state--icon__minus-bottom,
+  .tree--state--icon__plus-bottom {
+
+    &:before {
+      bottom: calc(100% - 13px);
+    }
   }
 
+  .tree--state--icon__minus,
   .tree--state--icon__minus-bottom {
-    background: transparent url(../img/tree-minus-bottom.gif) repeat-y 0 2px;
-    height: 18px;
+
+    & + .tree--state--icon--expander {
+      transform: rotate(90deg);
+
+      &:before {
+        border-color: transparent transparent transparent #1f3648;
+      }
+    }
   }
 
-  .tree--state--icon__join {
-    background: transparent url(../img/tree-join.gif) repeat-y 0 2px;
+  .tree--state--icons__expanded {
+
+    & + .tree--node--icon {
+      position: relative;
+
+      &:before {
+        position: absolute;
+        top: 24px;
+        bottom: 0;
+        left: calc(50% - 2px);
+        content: "";
+        width: 1px;
+        background-color: #d7d7d7;
+      }
+    }
   }
 
-  .tree--state--icon__join-bottom {
-    background: transparent url(../img/tree-join-bottom.gif) repeat-y 0 2px;
-    height: 18px;
+  .tree--state--icon--expander {
+    width: 6px;
+    height: 8px;
+    position: absolute;
+    top: 10px;
+    left: calc(50% - 3px);
+    transition: transform 0.2s ease;
+    transform-origin: center center;
+    will-change: transform;
+
+    &:before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 4px 0 4px 6px;
+      border-color: transparent transparent transparent #9ba4ab;
+      content: "";
+      transition: border-color 0.3s ease;
+      will-change: border-color;
+    }
   }
 
   .tree--node--name {
     font-size: 13px;
     color: #2f3337;
-    white-space: nowrap;
+    padding: 4px 6px 4px 0;
   }
 </style>

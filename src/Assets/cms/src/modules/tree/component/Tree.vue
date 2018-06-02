@@ -1,30 +1,20 @@
 <template>
   <ul class="tree--nodes">
     <tree-node
-      v-for="(object, index) in objects"
-      :key="object.id"
-      :object="object"
+      v-for="(id, index) in nodes"
+      :key="id"
+      :node="getNodeById(id)"
       :level="level"
       :isLast="isLast(index)"
       :spanLevels="spanLevel"
-      :dragObject="dragObject"
-      :dragOver="dragOver"
-      :dragBefore="dragBefore"
-      :dragAfter="dragAfter"
-      :dragTarget="dragTarget"
-      :scrollbar="scrollbar"
+      :parentRefs="parentRefs"
     >
       <tree
-        :objects="object.children"
+        v-if="getNodeById(id).children.length > 0"
+        :nodes="getNodeById(id).children"
         :level="level+1"
         :spanLevel="spanLevels(level, isLast(index))"
-        :dragObject="dragObject"
-        :dragOver="dragOver"
-        :dragBefore="dragBefore"
-        :dragAfter="dragAfter"
-        :dragTarget="dragTarget"
-        :scrollbar="scrollbar"
-        v-if="object.children.length > 0"
+        :parentRefs="parentRefs"
       ></tree>
     </tree-node>
   </ul>
@@ -37,7 +27,7 @@
     name: 'tree',
 
     props: {
-      objects: Array,
+      nodes: Array,
       level: {
         type: Number,
         required: false,
@@ -48,31 +38,10 @@
         required: false,
         default: () => []
       },
-      dragObject: {
+      parentRefs: {
         type: Object,
-        required: true
-      },
-      dragOver: {
-        type: Object,
-        required: true
-      },
-      dragBefore: {
-        type: Object,
-        required: true
-      },
-      dragAfter: {
-        type: Object,
-        required: true
-      },
-      dragTarget: {
-        type: Object,
-        required: true
-      },
-      scrollbar: {
-        required: true,
-        validator: (scrollbar) => {
-          return ['object', 'undefined'].indexOf(typeof scrollbar) !== -1;
-        }
+        required: false,
+        default: () => {}
       }
     },
 
@@ -81,9 +50,8 @@
     },
 
     methods: {
-
       isLast(index) {
-        return (index + 1) === this.objects.length;
+        return (index + 1) === this.nodes.length;
       },
 
       spanLevels(level, isLast) {
@@ -96,6 +64,10 @@
         }
 
         return this.spanLevel.concat([level]);
+      },
+
+      getNodeById(id) {
+        return this.$store.getters['tree/getNodeById'](id);
       }
     }
   }

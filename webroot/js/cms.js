@@ -91,6 +91,7 @@ var Split = Marionette.View.extend({
       }
 
       this.state.dragging = true;
+      this.el.ownerDocument.querySelector('body').classList.add('split-active');
     }
 
     this.updatePanels(deltaX);
@@ -110,6 +111,7 @@ var Split = Marionette.View.extend({
     this.state.width = parseInt(this.$leftPanel.css('width').split('px').join(''));
     Cookies.set('wasabi_cms_tree_width', this.state.width);
 
+    this.el.ownerDocument.querySelector('body').classList.remove('split-active');
     this.state.dragging = false;
   },
   toggleLeftPanel: function toggleLeftPanel(event) {

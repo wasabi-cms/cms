@@ -104,6 +104,9 @@
       -webkit-transform: translateX(-50%) translateY(-50%) rotate(180deg);
               transform: translateX(-50%) translateY(-50%) rotate(180deg); }
 
+.split-active {
+  cursor: col-resize; }
+
 .wasabi-cms--pages-add .tab-content[data-tabify-tab="seo"] .toggle-switch,
 .wasabi-cms--pages-edit .tab-content[data-tabify-tab="seo"] .toggle-switch {
   max-width: 180px;

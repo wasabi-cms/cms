@@ -11,7 +11,7 @@ class CreateCmsPages extends AbstractMigration
      */
     public function up()
     {
-        $table = $this->table('cms_pages');
+        $table = $this->table('wasabi_cms_pages');
         $table->addColumn('parent_id', 'integer', ['limit' => 11, 'signed' => false, 'null' => true, 'default' => null])
             ->addColumn('lft', 'integer', ['limit' => 11, 'signed' => false, 'null' => false])
             ->addColumn('rght', 'integer', ['limit' => 11, 'signed' => false, 'null' => false])

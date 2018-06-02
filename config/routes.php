@@ -18,34 +18,47 @@ use Cake\Routing\RouteBuilder;
 
 Router::scope('/backend/cms', ['plugin' => 'Wasabi/Cms'], function (RouteBuilder $routes) {
 
+    $routes->prefix('api', function(RouteBuilder $routes) {
+        $routes->setExtensions(['json']);
+        $routes->scope('/pages', ['controller' => 'Pages'], function(RouteBuilder $routes) {
+            $routes->connect('/', ['action' => 'index', '_method' => 'GET']);
+            $routes->connect('/', ['action' => 'create', '_method' => 'POST']);
+            $routes->connect('/:id', ['action' => 'get', '_method' => 'GET'], ['id' => '[a-z\-0-9]+', 'pass' => ['id']]);
+            $routes->connect('/:id', ['action' => 'update', '_method' => 'PUT'], ['id' => '[a-z\-0-9]+', 'pass' => ['id']]);
+            $routes->connect('/:id', ['action' => 'delete', '_method' => 'DELETE'], ['id' => '[a-z\-0-9]+', 'pass' => ['id']]);
+        });
+    });
+
     $routes->scope('/pages', ['controller' => 'Pages'], function (RouteBuilder $routes) {
         $routes->connect('/', ['action' => 'index']);
-        $routes->connect('/add/:parentId', ['action' => 'add'], ['pass' => ['parentId'], 'parentId' => '[0-9]+']);
-        $routes->connect('/add', ['action' => 'add']);
-        $routes->connect('/reorder-pages', ['action' => 'reorderPages']);
-        $routes->connect('/attributes/:id', ['action' => 'attributes'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/edit/:id', ['action' => 'edit'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/delete/:id', ['action' => 'delete'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/clone/:id', ['action' => 'copy'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/publish/:id', ['action' => 'publish'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/unpublish/:id', ['action' => 'unpublish'], ['pass' => ['id'], 'id' => '[0-9]+']);
+        $routes->connect('/*', ['action' => 'index']);
+//        $routes->connect('/add/:languageId/:parentId', ['action' => 'add'], ['pass' => ['languageId', 'parentId'], 'languageId' => '[0-9]+', 'parentId' => '[0-9]+']);
+//        $routes->connect('/add/:languageId', ['action' => 'add'], ['pass' => ['languageId'], 'languageId' => '[0-9]+']);
+//        $routes->connect('/add', ['action' => 'add']);
+//        $routes->connect('/reorder-pages', ['action' => 'reorderPages']);
+//        $routes->connect('/attributes/:id', ['action' => 'attributes'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/edit/:id', ['action' => 'edit'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/delete/:id', ['action' => 'delete'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/clone/:id', ['action' => 'copy'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/publish/:id', ['action' => 'publish'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/unpublish/:id', ['action' => 'unpublish'], ['pass' => ['id'], 'id' => '[0-9]+']);
     });
 
-    $routes->scope('/menus', ['controller' => 'Menus'], function (RouteBuilder $routes) {
-        $routes->connect('/', ['action' => 'index']);
-        $routes->connect('/add', ['action' => 'add']);
-        $routes->connect('/reorder-items', ['action' => 'reorderItems']);
-        $routes->connect('/:id/edit', ['action' => 'edit'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/:id/delete', ['action' => 'delete'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/:menuId/item/add/:parentId', ['action' => 'addItem'], ['pass' => ['menuId', 'parentId'], 'menuId' => '[0-9]+', 'parentId' => '[0-9]+']);
-        $routes->connect('/:menuId/item/add', ['action' => 'addItem'], ['pass' => ['menuId'], 'menuId' => '[0-9]+']);
-        $routes->connect('/:menuId/item/edit/:id', ['action' => 'editItem'], ['pass' => ['id'], 'id' => '[0-9]+']);
-        $routes->connect('/:menuId/item/delete/:id', ['action' => 'deleteItem'], ['pass' => ['id'], 'id' => '[0-9]+']);
-    });
+//    $routes->scope('/menus', ['controller' => 'Menus'], function (RouteBuilder $routes) {
+//        $routes->connect('/', ['action' => 'index']);
+//        $routes->connect('/add', ['action' => 'add']);
+//        $routes->connect('/reorder-items', ['action' => 'reorderItems']);
+//        $routes->connect('/:id/edit', ['action' => 'edit'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/:id/delete', ['action' => 'delete'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/:menuId/item/add/:parentId', ['action' => 'addItem'], ['pass' => ['menuId', 'parentId'], 'menuId' => '[0-9]+', 'parentId' => '[0-9]+']);
+//        $routes->connect('/:menuId/item/add', ['action' => 'addItem'], ['pass' => ['menuId'], 'menuId' => '[0-9]+']);
+//        $routes->connect('/:menuId/item/edit/:id', ['action' => 'editItem'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//        $routes->connect('/:menuId/item/delete/:id', ['action' => 'deleteItem'], ['pass' => ['id'], 'id' => '[0-9]+']);
+//    });
 
     $routes->scope('/settings', ['controller' => 'Settings'], function(RouteBuilder $routes) {
-       $routes->connect('/theme', ['action' => 'theme']);
-       $routes->connect('/seo', ['action' => 'seo']);
+        $routes->connect('/theme', ['action' => 'theme']);
+        $routes->connect('/seo', ['action' => 'seo']);
     });
 
     /**

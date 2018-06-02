@@ -24,8 +24,8 @@ use Wasabi\Core\Wasabi;
 /**
  * Class Page
  *
- * @property int id
- * @property int parent_id
+ * @property string id
+ * @property string parent_id
  * @property int lft
  * @property int rght
  * @property string name

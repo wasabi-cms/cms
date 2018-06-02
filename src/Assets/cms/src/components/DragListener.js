@@ -1,12 +1,9 @@
-import {closest, css, on, off} from '../../../util';
+import {closest, css, on, off} from '../util';
 
 const defaults = {
-  handle: null,
-  scroll: true,
-  scrollSensitivity: 30,
-  scrollSpeed: 10,
   draggable: '>*',
-  dropTarget: null,
+  handleSelector: null,
+  dropTargetComponent: null,
   disabled: false,
   dragStartThreshold: parseInt(window.devicePixelRatio, 10) || 1,
   positionGhostToPointer: false,
@@ -22,32 +19,50 @@ const defaults = {
   onCtrlPressed: null
 };
 
-class TreeDraggable {
+class DragListener {
 
-  /**
-   * Constructor
-   *
-   * @param {Element|*} el
-   * @param {Object} options
-   */
   constructor(el, options) {
     this.el = el;
     this.options = {...defaults, ...options};
+    this.dropTargets = [];
     this.isDragging = false;
     this.dragEl = null;
+    this.lastEventName = null;
+    this.lastDropTarget =  null;
     this.initialX = 0;
     this.initialY = 0;
     this.translate3d = null;
-    this.droppableList = [];
+    this.keypressActive = false;
 
     this._onTapStart = this._onTapStart.bind(this);
     this._onDrag = this._onDrag.bind(this);
     this._onDrop = this._onDrop.bind(this);
     this._onKeyDown = this._onKeyDown.bind(this);
+    this._onKeyUp = this._onKeyUp.bind(this);
 
     on(this.el, 'mousedown', this._onTapStart);
     on(this.el, 'touchstart', this._onTapStart);
     on(this.el, 'pointerdown', this._onTapStart);
+  }
+
+  /**
+   * Add a new drop target for the given context and selector.
+   * Ensures all drop targets are unique.
+   *
+   * @param {Element|*} context
+   * @param {String} selector
+   */
+  addDropTarget(context, selector) {
+    let dropTargets = [...this.dropTargets];
+
+    for (let index in dropTargets) {
+      const target = dropTargets[index];
+      if (target.context === context && target.selector === selector) {
+        return;
+      }
+    }
+
+    this.dropTargets.push({context, selector});
   }
 
   /**
@@ -57,8 +72,6 @@ class TreeDraggable {
    * @private
    */
   _onTapStart(event) {
-    event.preventDefault();
-
     // Only start dragging if dragging is enabled.
     if (this.options.disabled) {
       return;
@@ -83,6 +96,10 @@ class TreeDraggable {
       return;
     }
 
+    if (this.options.handleSelector !== null && !closest(target, this.options.handleSelector, this.el)) {
+      return;
+    }
+
     target = closest(target, this.options.draggable, this.el);
 
     // No valid drag target found.
@@ -91,6 +108,7 @@ class TreeDraggable {
     }
 
     this._prepareDrag(event, touch, target);
+    event.preventDefault();
   }
 
   /**
@@ -106,6 +124,8 @@ class TreeDraggable {
     this.initialX = (touch || event).clientX;
     this.initialY = (touch || event).clientY;
     this.translate3d = 'translate3d(0,0,0)';
+    this.lastEventName = null;
+    this.lastDropTarget =  null;
 
     on(this.el.ownerDocument, 'mouseup', this._onDrop);
     on(this.el.ownerDocument, 'touchend', this._onDrop);
@@ -143,9 +163,13 @@ class TreeDraggable {
       }
 
       this.isDragging = true;
+      this.droppableList = [];
 
-      if (this.options.dropTarget !== null) {
-        this.droppableList = Array.prototype.slice.call(this.el.querySelectorAll(this.options.dropTarget));
+      if (this.dropTargets.length > 0) {
+        [...this.dropTargets].forEach((target) => {
+          let context = target.context || this.$el.ownerDocument;
+          this.droppableList = [...this.droppableList, ...Array.prototype.slice.call(context.querySelectorAll(target.selector))];
+        });
       }
 
       this._dispatch('dragStart', event, {dragEl: this.dragEl, ghostStyles: styles});
@@ -155,14 +179,24 @@ class TreeDraggable {
       this._dispatch('dragMove', event, {transform: translate3d});
       this.translate3d = translate3d;
 
-      const {eventName, dropTarget, canDropTarget} = this._dropTarget(clientX, clientY);
+      const {eventName, dropTarget} = this._getDropTarget(clientX, clientY);
 
-      if (eventName !== null && dropTarget !== null && canDropTarget !== null) {
-        this._dispatch(eventName, event, {
-          dropTarget: closest(dropTarget, this.options.draggable, this.el),
-          canDropTarget: closest(canDropTarget, this.options.draggable, this.el)
-        });
+      if (eventName !== null && dropTarget.current !== null) {
+        if (this.lastEventName !== eventName || this.lastDropTarget !== dropTarget.current) {
+          this.lastEventName = eventName;
+          this.lastDropTarget = dropTarget.current;
+
+          this._dispatch(eventName, event, {
+            dropTarget: {
+              current: closest(dropTarget.current, this.options.dropTargetComponent),
+              previous: dropTarget.previous !== null ? closest(dropTarget.previous, this.options.dropTargetComponent) : null,
+              next: dropTarget.next !== null ? closest(dropTarget.next, this.options.dropTargetComponent) : null
+            }
+          });
+        }
       } else {
+        this.lastEventName = null;
+        this.lastDropTarget = null;
         this._dispatch('resetDrag', event);
       }
     }
@@ -172,9 +206,10 @@ class TreeDraggable {
    * Handle Dropping
    *
    * @param {Event} event
+   * @param {Boolean} cancel
    * @private
    */
-  _onDrop(event) {
+  _onDrop(event, cancel) {
     off(this.el.ownerDocument, 'mouseup', this._onDrop);
     off(this.el.ownerDocument, 'touchend', this._onDrop);
     off(this.el.ownerDocument, 'touchcancel', this._onDrop);
@@ -185,16 +220,23 @@ class TreeDraggable {
     off(this.el.ownerDocument, 'pointermove', this._onDrag);
 
     off(this.el.ownerDocument, 'keydown', this._onKeyDown);
+    off(this.el.ownerDocument, 'keydown', this._onKeyUp);
 
     if (this.isDragging) {
-      event.preventDefault();
-      this._dispatch('dragEnd', event);
+      event && event.preventDefault();
+      if (cancel) {
+        this._dispatch('dragCancel', event);
+      } else {
+        this._dispatch('dragEnd', event);
+      }
     }
 
     this.dragEl = null;
     this.initialX = 0;
     this.initialY = 0;
     this.translate3d = null;
+    this.lastEventName = null;
+    this.lastDropTarget =  null;
     this.droppableList = [];
     this.isDragging = false;
   }
@@ -206,9 +248,25 @@ class TreeDraggable {
    * @private
    */
   _onKeyDown(event) {
-    if (event.ctrlKey) {
+    if (event.ctrlKey && !this.keypressActive) {
+      this.keypressActive = true;
+      on(this.el.ownerDocument, 'keyup', this._onKeyUp);
       this._dispatch('ctrlPressed', event);
     }
+    if (event.code === 'Escape') {
+      this._onDrop(event, true);
+    }
+  }
+
+  /**
+   * Handle keyup event.
+   *
+   * @param {KeyboardEvent} event
+   * @private
+   */
+  _onKeyUp(event) {
+    this.keypressActive = false;
+    off(this.el.ownerDocument, 'keyup', this._onKeyUp);
   }
 
   /**
@@ -267,10 +325,13 @@ class TreeDraggable {
     };
   }
 
-  _dropTarget(clientX, clientY) {
-    let dropTarget = null;
-    let canDropTarget = null;
+  _getDropTarget(clientX, clientY) {
     let eventName = null;
+    let dropTarget = {
+      current: null,
+      previous: null,
+      next: null
+    };
     const BreakException = {};
 
     const visibleDroppables = this.droppableList.filter(d => d.clientHeight > 0);
@@ -303,37 +364,20 @@ class TreeDraggable {
 
         if (topPart.top <= clientY && clientY <= topPart.bottom) {
           eventName = 'dragBefore';
-          const itemIndex = visibleDroppables.indexOf(item);
-          if (itemIndex === 0) {
-            canDropTarget = item;
-          } else {
-            canDropTarget = visibleDroppables[itemIndex - 1];
-          }
-          dropTarget = item;
+          dropTarget.current = item;
 
           throw BreakException;
         }
 
         if (centerPart.top <= clientY && clientY <= centerPart.bottom) {
           eventName = 'dragOver';
-          dropTarget = item;
-          canDropTarget = item;
+          dropTarget.current = item;
           throw BreakException;
         }
 
         if (bottomPart.top <= clientY && clientY <= bottomPart.bottom) {
-          const draggable = closest(item, this.options.draggable, this.el);
-          const droppableChildren = draggable.querySelectorAll(this.options.dropTarget);
-          const itemIndex = visibleDroppables.indexOf(item);
-
-          if (itemIndex + 1 < visibleDroppables.length && Array.from(droppableChildren).indexOf(visibleDroppables[itemIndex + 1]) !== -1) {
-            eventName = 'dragOver';
-          } else {
-            eventName = 'dragAfter';
-          }
-
-          dropTarget = item;
-          canDropTarget = item;
+          eventName = 'dragAfter';
+          dropTarget.current = item;
           throw BreakException;
         }
       });
@@ -341,8 +385,18 @@ class TreeDraggable {
       if (e !== BreakException) throw e;
     }
 
-    return {eventName, dropTarget, canDropTarget};
+    if (dropTarget.current !== null) {
+      const currentIndex = visibleDroppables.indexOf(dropTarget.current);
+      if (currentIndex > 0) {
+        dropTarget.previous = visibleDroppables[currentIndex - 1];
+      }
+      if (currentIndex < visibleDroppables.length - 2) {
+        dropTarget.next = visibleDroppables[currentIndex + 1];
+      }
+    }
+
+    return {eventName, dropTarget};
   }
 }
 
-export default TreeDraggable;
+export default DragListener;

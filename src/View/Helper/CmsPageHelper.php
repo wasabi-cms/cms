@@ -26,12 +26,11 @@ class CmsPageHelper extends Helper
      * Renders a complete tree of pages without the toplevel ul element.
      *
      * @param array $pages
-     * @param array $closedPages
-     * @param integer $langId
+     * @param array $closedPageIds
      * @param integer|null $level
      * @return string
      */
-    public function renderTree($pages, $closedPages, $langId, $level = null) {
+    public function renderTree($pages, $closedPageIds, $level = null) {
         if (empty($pages)) {
             $newPageLink = $this->Html->link(
                 __d('wasabi_cms', 'Please add your first Page'),
@@ -53,19 +52,18 @@ class CmsPageHelper extends Helper
         foreach ($pages as $page) {
             $closed = false;
             $classes =  ['page'];
-            if (in_array($page->id, $closedPages)) {
+            if (in_array($page->id, $closedPageIds)) {
                 $closed = true;
                 $classes[] = 'closed';
             }
 
             $pageRow = $this->_View->element('Wasabi/Cms.../Pages/__page-row', [
                 'page' => $page,
-                'closed' => $closed,
-                'langId' => $langId
+                'closed' => $closed
             ]);
 
             if (!empty($page->children)) {
-                $pageRow .= '<ul' . ($closed ? ' style="display: none;"' : '') . '>' . $this->renderTree($page->children, $closedPages, $langId, $depth + 1) . '</ul>';
+                $pageRow .= '<ul' . ($closed ? ' class="closed"' : '') . '>' . $this->renderTree($page->children, $closedPageIds, $depth + 1) . '</ul>';
             } else {
                 $classes[] = 'no-children';
             }

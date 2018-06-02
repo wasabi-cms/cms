@@ -23,7 +23,11 @@ $this->append('backend-js-assets-after-init');
 $this->end();
 
 $this->append('backend-js');?>
-window.WS.configureModule('Wasabi/Cms', <?= json_encode(['assetUrl' => $this->Url->build('/wasabi/cms')]) ?>);
+window.WS.configureModule('Wasabi/Cms', <?= json_encode([
+    'assetUrl' => $this->Url->build('/wasabi/cms'),
+    'baseUrl' => $this->Url->build(['plugin' => 'Wasabi/Cms', 'controller' => 'Pages', 'action' => 'index']),
+    'apiPagesUrl' => $this->Url->build(['plugin' => 'Wasabi/Cms', 'controller' => 'Pages', 'action' => 'index', 'prefix' => 'api', '_method' => 'GET'])
+]) ?>);
 <?php $this->end();
 
 $this->start('content-area'); ?>
