@@ -936,6 +936,10 @@ function cloneRoute (to, from) {
 __WEBPACK_IMPORTED_MODULE_0_vue__["default"].use(__WEBPACK_IMPORTED_MODULE_1_vue_resource__["a" /* default */]);
 
 __WEBPACK_IMPORTED_MODULE_0_vue__["default"].http.interceptors.push(function (request, next) {
+
+  request.headers.set('Accept', 'application/json, text/javascript, */*; q=0.01');
+  request.headers.set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
   next(function (response) {
     if (response.status === 403) {
       global.window.WS.getModule('Wasabi/Core').eventBus.trigger('auth-error');
