@@ -18,7 +18,7 @@ use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Composer\Config;
-use Wasabi\Cms\Model\Entity\Content;
+use Wasabi\Cms\Model\Entity\PageRevision;
 use Wasabi\Cms\Model\Entity\Page;
 use Wasabi\Cms\Model\Table\PagesTable;
 use Wasabi\Cms\View\Module\ModuleManager;
@@ -83,7 +83,7 @@ class PagesController extends BackendAppController
         } else {
             $page->layout = 'Default';
             $page->current = [
-                (new Content())->set('content', json_encode($page->getLayout()->content()))
+                (new PageRevision())->set('content', json_encode($page->getLayout()->content()))
             ];
             $page->display_page_title_suffix = true;
         }

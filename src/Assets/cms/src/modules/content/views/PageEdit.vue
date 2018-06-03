@@ -1,5 +1,5 @@
 <template>
-  <div class="view-page-edit">{{ node.name }}</div>
+  <div class="view-page-edit">{{ node.title }}</div>
 </template>
 
 <script>

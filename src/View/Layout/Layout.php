@@ -99,7 +99,7 @@ abstract class Layout
 	 *
 	 * @return string
 	 */
-	public function id()
+	public function getId()
     {
 		return $this->_id;
 	}

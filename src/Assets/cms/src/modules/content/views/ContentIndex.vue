@@ -1,5 +1,5 @@
 <template>
-  <div class="view-content-index">{{ node.name }}</div>
+  <div class="view-content-index">{{ node.title }}</div>
 </template>
 
 <script>

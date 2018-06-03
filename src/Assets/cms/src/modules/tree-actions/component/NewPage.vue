@@ -8,6 +8,14 @@
   export default {
     name: 'new-page',
 
+    data() {
+      return {
+        params: {
+          pageType: 'page'
+        }
+      }
+    },
+
     methods: {
       onDragStart(draggableStore) {
         draggableStore.title = 'New Page';

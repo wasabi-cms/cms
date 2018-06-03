@@ -67,7 +67,7 @@
 
       createPage() {
         this.loading = true;
-        this.$store.dispatch('CREATE_PAGE', title)
+        this.$store.dispatch('CREATE_PAGE', this.title)
           .then(() => this.close())
           .catch((error) => {
             this.loading = false;

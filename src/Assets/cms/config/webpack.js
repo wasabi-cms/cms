@@ -8,17 +8,13 @@ module.exports = {
     tree: './src/index.js',
     vendor: [
       'axios',
-      'crypto-js',
       'es6-promise',
-      'moment',
-      'sortablejs',
-      'uuid',
-      'v-tooltip',
+      'scroll-into-view-if-needed',
       'vue',
-      'vue-sortable',
       'vue2-touch-events',
-      'vuedraggable',
-      'vuex'
+      'vuelidate',
+      'vuex',
+      'vuex-router-sync'
     ]
   },
   output: {

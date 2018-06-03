@@ -2,7 +2,7 @@
   <div class="tree--ghost-node" :class="containerClasses()">
     <div class="tree--ghost-node--details">
       <div class="tree--ghost-node--image" :class="imageClasses()"></div>
-      <div class="tree--ghost-node--name">{{ dragObject.name }}</div>
+      <div class="tree--ghost-node--name">{{ dragObject.title }}</div>
     </div>
     <div class="tree--ghost--node--info">
       <span v-if="dropMode === 'copy'">Zum Verschieben Strg drücken</span>

@@ -2,11 +2,17 @@
 
 namespace Wasabi\Cms\Controller\Api;
 
-use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\MethodNotAllowedException;
 use Wasabi\Cms\Controller\BackendAppController;
+use Wasabi\Cms\Model\Table\PagesTable;
+use Wasabi\Core\Wasabi;
 
+/**
+ * Class PagesController
+ *
+ * @property PagesTable Pages
+ */
 class PagesController extends BackendAppController
 {
     public function initialize()
@@ -14,32 +20,64 @@ class PagesController extends BackendAppController
         parent::initialize();
 
         $this->loadComponent('RequestHandler');
+        $this->loadModel('Wasabi/Cms.Pages');
     }
 
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
 
-        $this->viewBuilder()->setClassName('Json');
-//        $this->RequestHandler->renderAs($this, 'json');
+        if (!$this->request->is('ajax')) {
+            throw new MethodNotAllowedException();
+        }
     }
 
     public function index()
     {
-        var_dump('ok');die;
+        $pages = $this->Pages->findForObjectTree();
+
+        $data = [
+            'rootNode' => [
+                'title' => Wasabi::setting('Core.instance_name'),
+                'root' => true,
+                'children' => $this->Pages->findChildIdsOf(null)->toArray()
+            ],
+            'nodes' => $pages->toArray()
+        ];
+
+        $this->set('data', $data);
+        $this->set('_serialize', ['data']);
     }
 
     public function create()
     {
-        throw new \Exception('dfghdfh');
+        $parentId = $this->request->getData('parentId');
 
-        $data = [
-            'blub' => 'ok'
-        ];
+        $recalculatePagePositions = false;
+        $page = $this->Pages->create($this->request, $recalculatePagePositions);
 
-        $this->set('b', $data);
-        $this->set('_serialize', ['b']);
+        if ($this->Pages->save($page)) {
+            if ($recalculatePagePositions) {
+                $this->Pages->recalculatePosition($parentId);
+            }
+            $page->set('title', $page->current_revision->title);
 
-//        return $this->response->withType('json');
+            $data = [
+                'page' => $page,
+                'updateChildNodesOf' => $page->parent_id,
+                'childNodes' => $this->Pages->findDirectChildrenOf($page->parent_id)
+            ];
+
+            $this->set('data', $data);
+        } else {
+            if (!empty($page->getErrors())) {
+                $this->set('error', $this->formErrorMessage);
+                $this->set('entityErrors', $page->getErrors());
+            } else {
+                $this->set('error', $this->dbErrorMessage);
+            }
+        }
+
+        $this->set('_serialize', ['data', 'error', 'entityErrors']);
     }
 }

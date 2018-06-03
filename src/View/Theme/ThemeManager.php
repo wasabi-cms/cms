@@ -5,6 +5,7 @@ namespace Wasabi\Cms\View\Theme;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
+use Cake\Utility\Text;
 
 class ThemeManager
 {
@@ -88,12 +89,31 @@ class ThemeManager
     }
 
     /**
-     * Get or set the currently active theme.
+     * Set the currently active theme.
+     *
+     * @param string $theme the id of the theme
+     * @return void
+     */
+    public static function setTheme($theme)
+    {
+        if (!self::$_initialized) {
+            self::init();
+        }
+
+        if (!isset(self::$_themes[$theme])) {
+            throw new Exception(Text::insert('Theme ":theme" does not exist.', ['theme' => $theme]));
+        }
+
+        self::$_theme = self::$_themes[$theme];
+    }
+
+    /**
+     * Get the theme instance for the given $theme id or return the currently active theme.
      *
      * @param string $theme the id of the theme
      * @return Theme
      */
-    public static function theme($theme = null)
+    public static function getTheme($theme = null)
     {
         if (!self::$_initialized) {
             self::init();
@@ -101,9 +121,9 @@ class ThemeManager
 
         if ($theme !== null) {
             if (!isset(self::$_themes[$theme])) {
-                throw new Exception(__d('wasabi_cms', 'Theme "{0}" does not exist.', $theme));
+                throw new Exception(Text::insert('Theme ":theme" does not exist.', ['theme' => $theme]));
             }
-            self::$_theme = self::$_themes[$theme];
+            return self::$_themes[$theme];
         }
 
         return self::$_theme;

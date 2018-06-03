@@ -58,6 +58,7 @@
 
     mounted() {
       this.$refs.dragListener.addDropTarget(this.$refs.tree, '.tree--node--details');
+      this.$store.dispatch('GET_PAGES');
     }
   }
 </script>

@@ -3,6 +3,7 @@
 namespace Wasabi\Cms\View\Theme;
 
 use Cake\Core\Exception\Exception;
+use Cake\Utility\Text;
 use Wasabi\Cms\View\Layout\Layout;
 
 abstract class Theme
@@ -29,6 +30,13 @@ abstract class Theme
     protected $_layoutsInitialized = false;
 
     /**
+     * Holds an array of all registered layouts.
+     *
+     * @var array
+     */
+    protected $_registeredLayouts = [];
+
+    /**
      * Holds all initialized layouts for this theme.
      *
      * @var Layout[]
@@ -41,6 +49,13 @@ abstract class Theme
     public function __construct()
     {
         $this->_id = $this->_extractId();
+
+        if (method_exists($this, 'registerLayouts')) {
+            $this->_registeredLayouts = $this->registerLayouts();
+            if (empty($this->_registeredLayouts)) {
+                throw new Exception(Text::insert('Please register at least one layout with the theme ":theme"', ['theme' => $this->_id]));
+            }
+        }
 
         if (method_exists($this, 'initialize')) {
             $this->initialize();
@@ -85,10 +100,26 @@ abstract class Theme
 
         $results = [];
         foreach ($this->_layouts as $layout) {
-            $results[$layout->id()] = $layout->name();
+            $results[$layout->getId()] = $layout->name();
         }
 
         return $results;
+    }
+
+    /**
+     * Get the default layout of the theme.
+     *
+     * @return Layout
+     */
+    public function getDefaultLayout()
+    {
+        $layout = $this->_registeredLayouts[0];
+
+        if (!$this->_layoutsInitialized) {
+            $this->_initLayout($layout);
+        }
+
+        return $this->_layouts[$layout];
     }
 
     /**
@@ -104,7 +135,7 @@ abstract class Theme
             $this->_initLayout($id);
         }
         if (!isset($this->_layouts[$id])) {
-            throw new Exception(__d('wasabi_cms', 'Layout "{0}" for theme "{1}" does not exist.', $id, $this->id()));
+            throw new Exception(Text::insert('Layout ":layout" for theme ":theme" does not exist.', ['layout' => $id, 'theme' => $this->id()]));
         }
 
         return $this->_layouts[$id];
@@ -142,18 +173,16 @@ abstract class Theme
 
     /**
      * Initialize all layouts for the current theme.
+     *
+     * @return void
      */
     protected function _initLayouts()
     {
-        $layouts = [];
-
-        if (method_exists($this, 'registerLayouts')) {
-            $layouts = $this->registerLayouts();
-        }
-
-        foreach ($layouts as $layout) {
+        foreach ($this->_registeredLayouts as $layout) {
             $this->_initLayout($layout);
         }
+
+        $this->_layoutsInitialized = true;
     }
 
     /**
@@ -170,10 +199,10 @@ abstract class Theme
             /** @var Layout $layout */
             $layout = new $layoutClass();
         } catch (Exception $e) {
-            throw new Exception(__d('wasabi_cms', 'The layout "{0}" could not be instatiated. Check the namespace and file location.', $layoutClass));
+            throw new Exception(Text::insert('The layout ":layout" could not be instatiated. Check the namespace and file location.', ['layout' => $layoutClass]));
         }
 
-        $this->_layouts[$layout->id()] = $layout;
+        $this->_layouts[$layout->getId()] = $layout;
     }
 
     /**
@@ -187,7 +216,7 @@ abstract class Theme
         $id = explode('Theme', $className)[0];
 
         if (!$className || !$id) {
-            user_error(__d('wasabi_cms', 'The theme class {0} has an invalid name. The name has to end with "Theme".', $className));
+            user_error(Text::insert('The theme class :class has an invalid name. The name has to end with "Theme".', ['class' => $className]));
         }
 
         return $id;

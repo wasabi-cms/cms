@@ -2,7 +2,7 @@
   <div class="tree--node tree--node__root" :class="nodeClasses()">
     <div class="tree--node--details" @click.prevent="setActive()">
       <div class="tree--node--icon"><wasabi-logo :color="'#666'"></wasabi-logo></div>
-      <div class="tree--node--name">{{node.name}}</div>
+      <div class="tree--node--name">{{ node.title }}</div>
     </div>
   </div>
 </template>
@@ -110,7 +110,9 @@
       onDrop(type, component) {
         if (type === 'over') {
           this.$store.dispatch('OPEN_NEW_PAGE_MODAL', {
-            parentId: null
+            parentId: null,
+            insert: 'end',
+            ...component.params
           });
         }
       }

@@ -106,8 +106,6 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  margin-top: -3px;
-  margin-bottom: -2px;
 }
 .tree--node--spacer {
   width: 16px;

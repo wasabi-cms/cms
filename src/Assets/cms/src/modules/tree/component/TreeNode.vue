@@ -16,9 +16,11 @@
 </template>
 
 <script>
-  const Cookies = window.WS.exports.Cookies;
+  import scrollIntoView from 'scroll-into-view-if-needed'
   import {addToArray, range, removeFromArray, truncate} from '../../../util';
   import NewPage from '../../tree-actions/component/NewPage.vue';
+
+  const Cookies = window.WS.exports.Cookies;
 
   export default {
     name: 'tree-node',
@@ -56,7 +58,7 @@
 
     computed: {
       name() {
-        return truncate(this.node.name, 50, '...');
+        return truncate(this.node.title, 50, '...');
       },
 
       hasChildren() {
@@ -117,6 +119,9 @@
 
       isDragDenied() {
         return this.isCurrentDragTarget && !this.isDragOver && !this.isDragBefore && !this.isDragAfter;
+      },
+      scrollIntoView() {
+        return this.$store.getters['tree/scrollIntoView'];
       }
     },
 
@@ -348,11 +353,51 @@
       },
 
       onDragStart(draggableStore) {
-        draggableStore.title = this.node.name;
+        draggableStore.title = this.node.title;
       },
 
       onDrop(type, component) {
-        console.log(type, component, this.$el);
+        const componentTag = component.$vnode.componentOptions.tag;
+
+        if (['new-page'].indexOf(componentTag) !== -1) {
+          if (type === 'over') {
+            this.$store.dispatch('OPEN_NEW_PAGE_MODAL', {
+              parentId: this.node.id,
+              insert: 'end',
+              ...component.params
+            });
+            return;
+          }
+
+          if (type === 'before' || type === 'after') {
+            this.$store.dispatch('OPEN_NEW_PAGE_MODAL', {
+              parentId: this.node.parent_id,
+              targetId: this.node.id,
+              insert: type,
+              ...component.params
+            });
+            return;
+          }
+        }
+
+        if (['tree-node'].indexOf(componentTag) !== -1) {
+          console.log('move', type, component, this.$el);
+          if (type === 'over') {
+          }
+        }
+      }
+    },
+
+    mounted() {
+      if (this.$store.getters['tree/scrollIntoView'] === this.node.id) {
+        console.log();
+        if (this.$parent.$parent.$vnode.componentOptions.tag === 'tree-node' && !this.$parent.$parent.expanded) {
+          this.$parent.$parent.toggleExpand();
+        }
+        scrollIntoView(this.$el, {
+          scrollMode: 'if-needed'
+        });
+        this.$store.dispatch('tree/SCROLL_INTO_VIEW', null);
       }
     },
 
@@ -468,8 +513,6 @@
 
   .tree--node--spacers {
     display: flex;
-    margin-top: -3px;
-    margin-bottom: -2px;
   }
 
   .tree--node--spacer {

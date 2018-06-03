@@ -26,7 +26,7 @@ $this->append('backend-js');?>
 window.WS.configureModule('Wasabi/Cms', <?= json_encode([
     'assetUrl' => $this->Url->build('/wasabi/cms'),
     'baseUrl' => $this->Url->build(['plugin' => 'Wasabi/Cms', 'controller' => 'Pages', 'action' => 'index']),
-    'apiPagesUrl' => $this->Url->build(['plugin' => 'Wasabi/Cms', 'controller' => 'Pages', 'action' => 'index', 'prefix' => 'api', '_method' => 'GET'])
+    'apiBaseUrl' => $this->Url->build('/backend/cms/api')
 ]) ?>);
 <?php $this->end();
 
