@@ -52,7 +52,7 @@ class PagesTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->table('wasabi_cms_pages');
+        $this->setTable('wasabi_cms_pages');
 
 //        $this->hasOne('Collections', [
 //            'className' => 'Wasabi/Cms.Collections',
