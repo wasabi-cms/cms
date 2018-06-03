@@ -6,8 +6,8 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 
 class DispatcherListener implements EventListenerInterface
 {
@@ -24,7 +24,7 @@ class DispatcherListener implements EventListenerInterface
         ];
     }
 
-    public function beforeDispatch(Event $event, Request $request, Response $response)
+    public function beforeDispatch(Event $event, ServerRequest $request, Response $response)
     {
         if (Configure::read('debug')) {
             return;
@@ -41,7 +41,7 @@ class DispatcherListener implements EventListenerInterface
         }
     }
 
-    public function afterDispatch(Event $event, Request $request, Response $response)
+    public function afterDispatch(Event $event, ServerRequest $request, Response $response)
     {
         if (Configure::read('debug') || !isset($request->params['cache']) || $request->params['cache'] !== true) {
             return;
@@ -57,7 +57,7 @@ class DispatcherListener implements EventListenerInterface
         }
     }
 
-    protected function _getCacheKey(Request $request)
+    protected function _getCacheKey(ServerRequest $request)
     {
         $requestPath = join('.', [
             $request->params['plugin'],

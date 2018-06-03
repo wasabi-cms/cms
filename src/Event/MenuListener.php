@@ -16,12 +16,12 @@ namespace Wasabi\Cms\Event;
 
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Wasabi\Cms\Model\Entity\MenuItem;
 use Wasabi\Cms\View\Helper\MenuHelper;
 use Wasabi\Cms\WasabiCms;
-use Wasabi\Core\Menu;
+use Wasabi\Core\Navigation\Menu;
 use Wasabi\Core\Wasabi;
 
 class MenuListener implements EventListenerInterface
@@ -61,7 +61,7 @@ class MenuListener implements EventListenerInterface
     public function initBackendMenuMainItems(Event $event)
     {
         /** @var Menu $menu the "backend.main" Nav instance */
-        $menu = $event->subject();
+        $menu = $event->getSubject();
 
         $menu
             ->addMenuItem([
@@ -168,7 +168,7 @@ class MenuListener implements EventListenerInterface
         $event->stopPropagation();
     }
 
-    public function isMenuItemActive(Event $event, Request $request)
+    public function isMenuItemActive(Event $event, ServerRequest $request)
     {
         /** @var MenuItem $menuItem */
         $menuItem = $event->subject();

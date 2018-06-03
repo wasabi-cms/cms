@@ -29,7 +29,7 @@ try {
     Configure::load('Wasabi/Cms.cache', 'default');
     foreach (Configure::consume('Cache') as $key => $config) {
         new Folder($config['path'], true, 0775);
-        Cache::config($key, $config);
+        Cache::setConfig($key, $config);
     }
 } catch (\Exception $e) {
     die($e->getMessage() . "\n");
